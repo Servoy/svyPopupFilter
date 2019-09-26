@@ -491,9 +491,9 @@ function initSvyGridFilters() {
 	 * @this {SvyGridFilters}
 	 *  */
 	SvyGridFilters.prototype.getFoundSet = function() {
-		var form = forms[this.formName];
-		return form.foundset
-//		return this.getTable().myFoundset.foundset;
+//		var form = forms[this.formName];
+//		return form.foundset
+		return this.getTable().myFoundset.foundset;
 	}
 	
 	/**
@@ -559,7 +559,7 @@ function initSvyGridFilters() {
 	/**
 	 * @public 
 	 * @param {CustomType<aggrid-groupingtable.column>} column
-	 * \@param {scopes.svyPopupFilter.AbstractPopupFilter} filter
+	 * @param {scopes.svyPopupFilter.AbstractPopupFilter} filter
 	 *
 	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
 	 * @this {SvyGridFilters}
@@ -659,11 +659,11 @@ function initSvyGridFilters() {
 			simpleSearch.setDateFormat("dd-MM-yyyy");
 			simpleSearch.loadRecords(foundset);			
 		} else {
-			
-			if (newFilterApplied || hasFilterApplied) {
+			// TODO compare last search
+			//if (newFilterApplied || hasFilterApplied) {
 				// apply the filter
 				foundset.loadRecords();
-			}
+			//}
 		}
 		application.output(databaseManager.getSQL(foundset));
 		application.output(databaseManager.getSQLParameters(foundset))
@@ -680,6 +680,19 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype = Object.create(AbstractToolbarFilterUX.prototype);
 	AbstractToolbarFilterUX.prototype.constructor = AbstractToolbarFilterUX;
 
+	/**
+	 * @public
+	 * @return {RuntimeComponent}
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.getElement = function() {
+		var form = forms[this.formName];
+		/** @type {RuntimeComponent} */
+		var element = form.elements[this.elementName];
+		return element;
+	}
+	
 	/**
 	 * @param {CustomType<aggrid-groupingtable.column>} column
 	 * @protected
@@ -911,6 +924,25 @@ function initAbstractToolbarFilterUX() {
 	}
 
 	/**
+     * @public  
+     * @param {CustomType<aggrid-groupingtable.column>} column
+     * @param {Array} values
+     * @param {String} operator
+     *
+     * @this {AbstractToolbarFilterUX}
+     *  */
+    AbstractToolbarFilterUX.prototype.setFilterValue = function (column, values, operator) {
+        if (!this.hasActiveFilter(column)) {
+            this.addGridFilter(column);
+        }
+        var filter = this.getOrCreateToolbarFilter(column);
+        filter.setValues(values);
+        filter.setOperator(operator);
+        this.onFilterApply(values,operator,filter)
+        
+    }
+    
+	/**
 	 * @protected 
 	 * @param {Array} values
 	 * @param {String} operator
@@ -956,6 +988,14 @@ function initAbstractToolbarFilterUX() {
 		
 		// apply the search
 		gridFilters.search();
+		
+		// if has active filters
+		var element = thisIntance.getElement();
+		if (gridFilters.getActiveFilters().length) {
+			element.addStyleClass('has-active-filter');
+		} else {
+			element.removeStyleClass('has-active-filter');
+		}
 	}
 }
 
@@ -1081,6 +1121,19 @@ function initListComponentFilterRender() {
 		newFilter.text = column.headerTitle;
 		newFilter.dataprovider = column.dataprovider;
 		newFilter.value = "";
+		
+		// if has active filters
+		var element = this.getElement();
+		element.addStyleClass('has-filter');
+		
+		// TODO Expose this as an event to be handled within the form
+		if (this.svyGridFilters['tableName']){
+			if (this.svyGridFilters['tableName'].endsWith('Sub')){
+				plugins.ngclientutils.addFormStyleClass(this.formName, 'has-filter-row-sub');
+			}else{
+				plugins.ngclientutils.addFormStyleClass(this.formName, 'has-filter-row');
+			}		
+		}
 	}
 
 	/**
@@ -1096,6 +1149,23 @@ function initListComponentFilterRender() {
 			this.getElement().removeEntry(index);
 		}
 		this.svyGridFilters.removeGridFilter(column);
+		
+		// if has no filters
+		var element = this.getElement();
+		if (!element.getEntriesCount()) {
+			element.removeStyleClass('has-filter');
+			
+			// TODO Expose this as an event to be handled within the form
+			if (this.svyGridFilters['tableName']){
+				if (this.svyGridFilters['tableName'].endsWith('Sub')){
+					plugins.ngclientutils.removeFormStyleClass(this.formName, 'has-filter-row-sub');
+				}else{
+					plugins.ngclientutils.removeFormStyleClass(this.formName, 'has-filter-row');
+				}		
+			}
+			
+		}
+			
 	}
 
 	/**
@@ -1129,7 +1199,7 @@ function initListComponentFilterRender() {
 				var entry = element.newEntry();
 
 				entry.text = entryCopy.text;
-				entry.dataprovider = entryCopy.dataprovider;
+				if (entryCopy.dataprovider) entry.dataprovider = entryCopy.dataprovider;
 				entry.value = entryCopy.value;
 				if (i === index) {
 					entry.value = displayValues.join(",");
@@ -1151,6 +1221,10 @@ function initListComponentFilterRender() {
 	ListComponentFilterRender.prototype.clearGridFilters = function() {
 		this.getElement().clear();
 		this.svyGridFilters.clearGridFilters();
+		
+		// if has no filters
+		var element = this.getElement();
+		element.removeStyleClass('has-filter');
 	}
 
 	/**
