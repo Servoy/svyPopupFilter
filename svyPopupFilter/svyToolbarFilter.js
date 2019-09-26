@@ -306,7 +306,12 @@ function applyFilters(filters, foundset) {
 				return true;
 			}
 		});
-
+		
+		//Dont use lower on date
+		if(qValues.length && qValues[0] instanceof Date) {
+			useIgnoreCase = false;
+		}
+		
 		if (useIgnoreCase != false) {
 			// Clean up values from empty values
 			qValues = qValues.map(function(v) {
