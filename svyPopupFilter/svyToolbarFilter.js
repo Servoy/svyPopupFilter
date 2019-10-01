@@ -227,6 +227,7 @@ function ListComponentFilterRender(listComponent, table) {
 
 	// set default template
 	listComponent.entryRendererFunc = this.getRenderTemplate();
+	listComponent.addStyleClass("svy-toolbar-filter")
 	
 }
 

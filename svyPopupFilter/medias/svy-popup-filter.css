@@ -95,3 +95,17 @@
 	border: 0;
 	color: transparent;
 }
+
+
+/** Number Filter */
+.svy-toolbar-filter {
+	
+}
+
+.svy-toolbar-filter .list-item {
+	display: inline-block;
+}
+
+.svy-toolbar-filter .toolbar-filter-tag {
+	display: inline-flex;
+}
