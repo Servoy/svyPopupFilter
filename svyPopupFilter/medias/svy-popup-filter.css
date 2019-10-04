@@ -96,8 +96,16 @@
 	color: transparent;
 }
 
+/* Token Filter */
+.svy-popup-filter .svy-layoutcontainer .btn-close {
+    position: absolute;
+    line-height: 24px;
+    top: 8px;
+    right: 10px;
+    cursor: pointer;
+}
 
-/** Number Filter */
+/** Toolbar Filter */
 .svy-toolbar-filter {
 	
 }

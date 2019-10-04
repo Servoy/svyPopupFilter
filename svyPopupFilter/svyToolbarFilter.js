@@ -309,7 +309,7 @@ function applyFilters(filters, foundset) {
 		});
 		
 		//Dont use lower on date
-		if(qValues.length && qValues[0] instanceof Date) {
+		if(qValues.length && qValues[0] instanceof Date || qValues[0] instanceof Number) {
 			useIgnoreCase = false;
 		}
 		

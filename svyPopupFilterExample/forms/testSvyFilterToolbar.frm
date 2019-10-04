@@ -57,7 +57,7 @@ json:{
 columns:[
 {
 dataprovider:"orderid",
-filterType:"TEXT",
+filterType:"NUMBER",
 headerTitle:"ID",
 id:"id",
 svyUUID:"C427D1E0-F1F9-4A9A-97F4-5204AE37B50A"
