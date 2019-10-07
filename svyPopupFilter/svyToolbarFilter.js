@@ -194,6 +194,12 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 }
 
 /**
+ * Filter Toolbar implementation using the listcomponent from the custom-rendered-components package.
+ * This implementation requires a "List Component" element and an "Data-Grid" element;
+ * You should create a toolbar filter instance at the onLoad of your form and assign it to a form variable.
+ * 
+ * 
+ * 
  * @constructor
  * @param {RuntimeWebComponent<customrenderedcomponents-listcomponent>} listComponent
  * @param {RuntimeWebComponent<aggrid-groupingtable>} table
@@ -201,9 +207,33 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
  * @extends {AbstractToolbarFilterUX}
  * @this {ListComponentFilterRender}
  * @public
+ * @example <pre>
+ * //keep track of toolbarFilter object in a form variable
+ * var toolbarFilter;
+ * 
+ * function onLoad(event) {
+ * 	toolbarFilter = new scopes.svyToolbarFilter.ListComponentFilterRender(elements.filterToolbar, elements.table)
+ * }
+ * </pre>
+ * 
  * @properties={typeid:24,uuid:"3DA99E05-2496-479B-BAEC-761249725BA3"}
  */
 function ListComponentFilterRender(listComponent, table) {
+	if (!listComponent) {
+		throw 'listComponent element is required';
+	}
+	
+	if (!table) {
+		throw 'table element is required';
+	}
+	
+	if (listComponent.getElementType() != "customrenderedcomponents-listcomponent") {
+		throw "The given listComponent element should be an element of type customrenderedcomponents-listcomponent; check the 'List Component' from the custom-rendered-components package";
+	}
+	
+	if (table.getElementType() != "aggrid-groupingtable") {
+		throw "The given table element should be an element of type aggrid-groupingtable; check the 'Data Grid' from the NG Grids package";
+	}
 	
 	AbstractToolbarFilterUX.call(this, listComponent, table);
 	
@@ -226,6 +256,11 @@ function ListComponentFilterRender(listComponent, table) {
 	this.svyGridFilters = new SvyGridFilters(table);
 
 	// set default template
+	if (listComponent.foundset) {
+		// TODO use logger
+		application.output('ListComponentFilterRender "List Compoenent" should have the foundset property set to "-none-"; Setting the foundset for the "List Component" {' + listComponent.getName() +'} to "-none-"', LOGGINGLEVEL.WARNING)
+		listComponent.foundset = null;
+	}
 	listComponent.entryRendererFunc = this.getRenderTemplate();
 	listComponent.addStyleClass("svy-toolbar-filter")
 	

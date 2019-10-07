@@ -122,7 +122,6 @@ right:"24",
 top:"10",
 width:"0"
 },
-foundset:null,
 onClick:"8AB6C6C0-B9C4-412F-8A2D-B4282166D61A"
 },
 name:"filterToolbar",

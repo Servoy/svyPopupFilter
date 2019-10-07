@@ -6,7 +6,7 @@
 var searchText = null;
 
 /**
- * @type {scopes.svyToolbaFilter}
+ * @type {scopes.svyToolbaFilter.ListComponentFilterRender}
  *
  * @properties={typeid:35,uuid:"30AE6150-1BE1-41D9-A9C2-99E5E9DB97BA",variableType:-4}
  */
