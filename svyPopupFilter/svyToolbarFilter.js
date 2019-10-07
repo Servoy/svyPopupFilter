@@ -195,9 +195,10 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 
 /**
  * Filter Toolbar implementation using the listcomponent from the custom-rendered-components package.
- * This implementation requires a "List Component" element and an "Data-Grid" element;
+ * This implementation requires a "List Component" element and an "Data-Grid" element.
  * You should create a toolbar filter instance at the onLoad of your form and assign it to a form variable.
- * 
+ * The "List Component" must have it's 'foundset' property set to '-none-'.
+ * Make sure to re-direct the onClick event of the "List Component" to the toolbar.onClick(entry, index, dataTarget, event);
  * 
  * 
  * @constructor
@@ -211,8 +212,20 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
  * //keep track of toolbarFilter object in a form variable
  * var toolbarFilter;
  * 
+ * //init the toolbarFilter at the onLoad.
  * function onLoad(event) {
- * 	toolbarFilter = new scopes.svyToolbarFilter.ListComponentFilterRender(elements.filterToolbar, elements.table)
+ *  toolbarFilter = new scopes.svyToolbarFilter.ListComponentFilterRender(elements.filterToolbar, elements.table)
+ * }
+ * 
+ * //propagate the onClick event of the "List Component" to the toolbar filter.
+ * function onClick(entry, index, dataTarget, event) {
+ *  toolbarFilter.onClick(entry,index,dataTarget,event);
+ * }
+ * 
+ * //optionally set a searchText for a cross-field search to further filter the result set
+ * function search() {
+ *  toolbarFilter.setSearchText(searchText);
+ *  toolbarFilter.search();
  * }
  * </pre>
  * 
