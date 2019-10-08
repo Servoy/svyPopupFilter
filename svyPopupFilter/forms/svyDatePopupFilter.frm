@@ -184,7 +184,7 @@ right:"0",
 top:"0",
 width:"25"
 },
-faclass:"fas fa-close",
+faclass:"fa fa-close",
 onActionMethodID:"F18750A2-44A6-4CC0-B6A9-C973F0569851",
 size:{
 height:25,
@@ -244,7 +244,7 @@ displayType:2,
 editable:false,
 name:"selectSelectionType",
 onDataChangeMethodID:"5F50F324-FFA8-4B4B-9C78-F010DE4CC94F",
-styleClass:"border-round",
+styleClass:"border-round svy-popup-filter-select",
 typeid:4,
 uuid:"D8610419-6788-463C-BB7E-4BCF08485EE5",
 valuelistID:"AB7E5251-B609-47A3-BE05-B8F9302656C5"

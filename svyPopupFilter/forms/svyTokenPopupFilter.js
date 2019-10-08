@@ -29,10 +29,10 @@ function onLoad(event) {
  */
 function renderFilterEntry(entry) {
 	var template = '';
-	template += '<div class="row hr">' + 
-	'<div class="col-md-12 padding-15">' + 
-		'<span class="fa fa-trash text-danger clickable" data-target="close"></span>' + 
-		'<span class="margin-left-10 font-weight-bold">' + 
+	template += '<div class="row">' + 
+	'<div class="col-md-12 svy-popup-filter-token">' + 
+		'<span class="fa fa-trash text-danger svy-popup-filter-token-icon" data-target="close"></span>' + 
+		'<span class="svy-popup-filter-token-text">' + 
 				entry.text + 
 		'</span>' +
 	'</div>' + 

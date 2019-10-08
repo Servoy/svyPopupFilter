@@ -6,20 +6,46 @@ extendsID:"1DCD824B-10F0-4335-942A-DAE5B448C7B3",
 items:[
 {
 customProperties:"attributes:{\
-class:\"row hr\"\
+class:\"customDiv\"\
 },\
 properties:{\
 packagename:\"12grid\",\
-specname:\"row\"\
+specname:\"div\"\
 }",
 items:[
 {
+json:{
+foundset:null,
+location:{
+x:1,
+y:1
+},
+onClick:"A67A8863-8ACB-48BF-BDC1-0F65B9F0C566",
+responsiveHeight:300,
+size:{
+height:100,
+width:200
+}
+},
+location:"1,1",
+name:"listTags",
+size:"200,100",
+typeName:"customrenderedcomponents-listcomponent",
+typeid:47,
+uuid:"D5B3E944-465E-4EDF-8ECA-173D744AB0A6"
+}
+],
+location:"4,4",
+typeid:46,
+uuid:"4388358E-6D1F-44B4-85EC-C64B39900344"
+},
+{
 customProperties:"attributes:{\
-class:\"col-md-12 svy-popup-filter-header\"\
+class:\"svy-popup-filter-header\"\
 },\
 properties:{\
 packagename:\"12grid\",\
-specname:\"column\"\
+specname:\"div\"\
 }",
 items:[
 {
@@ -70,51 +96,11 @@ uuid:"9606DB15-6E86-4E27-B200-2F79DFEDFE8E"
 ],
 location:"1,1",
 typeid:46,
-uuid:"5E747F90-2EC9-420B-9D53-7E87024A71D9"
-}
-],
-location:"1,1",
-typeid:46,
-uuid:"178615A9-6DC7-44B3-AA60-FF3FF55F31B0"
+uuid:"5028030E-7E48-4A24-87E5-F067ACA95F53"
 },
 {
 customProperties:"attributes:{\
-class:\"customDiv\"\
-},\
-properties:{\
-packagename:\"12grid\",\
-specname:\"div\"\
-}",
-items:[
-{
-json:{
-foundset:null,
-location:{
-x:1,
-y:1
-},
-onClick:"A67A8863-8ACB-48BF-BDC1-0F65B9F0C566",
-responsiveHeight:300,
-size:{
-height:100,
-width:200
-}
-},
-location:"1,1",
-name:"listTags",
-size:"200,100",
-typeName:"customrenderedcomponents-listcomponent",
-typeid:47,
-uuid:"D5B3E944-465E-4EDF-8ECA-173D744AB0A6"
-}
-],
-location:"3,3",
-typeid:46,
-uuid:"4388358E-6D1F-44B4-85EC-C64B39900344"
-},
-{
-customProperties:"attributes:{\
-class:\"row hr\"\
+class:\"row\"\
 },\
 properties:{\
 packagename:\"12grid\",\
@@ -123,7 +109,7 @@ specname:\"row\"\
 items:[
 {
 customProperties:"attributes:{\
-class:\"col-md-12 padding-15\"\
+class:\"col-md-12 svy-popup-filter-actions\"\
 },\
 properties:{\
 packagename:\"12grid\",\
@@ -141,13 +127,13 @@ size:{
 height:100,
 width:200
 },
-styleClass:"margin-left-10 text-danger clickable",
+styleClass:"text-danger clickable",
 text:"Remove All"
 },
 location:"2,2",
 name:"labelRemoveAll",
 size:"200,100",
-styleClass:"margin-left-10 text-danger clickable",
+styleClass:"text-danger clickable",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"565D5A67-1ADE-49B3-B570-660DD736BC81"
@@ -155,7 +141,7 @@ uuid:"565D5A67-1ADE-49B3-B570-660DD736BC81"
 {
 json:{
 alignment:null,
-faclass:"fa fa-trash text-danger clickable",
+faclass:"fa fa-trash text-danger clickable svy-popup-filter-token-icon",
 formIndex:0,
 location:{
 x:1,
@@ -180,7 +166,7 @@ typeid:46,
 uuid:"65651E16-32E3-4BDC-BB97-C44437C0DC53"
 }
 ],
-location:"2,2",
+location:"3,3",
 typeid:46,
 uuid:"DD4D7F61-344A-43AC-8D1B-5E421BB0C5F9"
 }
