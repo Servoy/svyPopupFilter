@@ -691,11 +691,12 @@ function initSvyGridFilters() {
 	}
 	
 	/**
-	 * @public  
+	 * @public
+	 * @return {QBSelect}
 	 *
 	 * @this {SvyGridFilters}
 	 *  */
-	SvyGridFilters.prototype.search = function() {
+	SvyGridFilters.prototype.getQuery = function() {
 		var activeFilters = this.getActiveFilters();
 		var foundset = this.getFoundSet();
 		
@@ -711,16 +712,30 @@ function initSvyGridFilters() {
 			}
 			simpleSearch.setSearchText(this.searchText);
 			simpleSearch.setDateFormat("dd-MM-yyyy");
-			simpleSearch.loadRecords(foundset);			
+			return simpleSearch.getQuery();
 		} else {
-			// TODO compare last search
-			//if (newFilterApplied || hasFilterApplied) {
-				// apply the filter
-				foundset.loadRecords();
-			//}
+			foundset.loadAllRecords();
+			return foundset.getQuery();
+		}
+	}
+	
+	/**
+	 * @public 
+	 *
+	 * @this {SvyGridFilters}
+	 *  */
+	SvyGridFilters.prototype.search = function() {
+		var foundset = this.getFoundSet();
+
+		// quick search
+		if (this.searchText) {
+			var searchQuery = this.getQuery();
+			foundset.loadRecords(searchQuery);
+		} else {
+			foundset.loadAllRecords();
 		}
 		application.output(databaseManager.getSQL(foundset));
-		application.output(databaseManager.getSQLParameters(foundset))
+		application.output(databaseManager.getSQLParameters(foundset));
 	}
 }
 
@@ -823,6 +838,16 @@ function initAbstractToolbarFilterUX() {
 	 *  */
 	AbstractToolbarFilterUX.prototype.hasFilters = function() {
 		return this.svyGridFilters.getFilters().length > 0 ? true : false;
+	}
+	
+	/**
+	 * @public
+	 * @return {QBSelect}
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.getQuery = function() {
+		return this.svyGridFilters.getQuery();
 	}
 
 	/**
