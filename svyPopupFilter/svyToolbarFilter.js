@@ -47,7 +47,7 @@ function PopupUIFormRendered() {
 	 * @protected
 	 * @type {RuntimeForm<AbstractLookup>} 
 	 * */
-	this.selectFilterTemplate = forms.svyLookupTableMulti;
+	this.selectFilterTemplate = forms.svySelectPopupFilter;
 }
 
 

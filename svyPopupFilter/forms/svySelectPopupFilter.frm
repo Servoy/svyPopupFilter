@@ -1,0 +1,19 @@
+customProperties:"formComponent:false,\
+layout:{\
+responsive:true\
+}",
+extendsID:"A4F31626-43DC-4159-AD5E-75EB04AF3BEB",
+items:[
+{
+customProperties:"attributes:{\
+class:\"svy-popup-filter-header\"\
+}",
+extendsID:"3C8E3ED8-EFDF-48D7-B443-B7B6D66151E4",
+typeid:46,
+uuid:"D497F64B-C01B-4693-AC8C-371A62392E93"
+}
+],
+name:"svySelectPopupFilter",
+styleClass:"svy-lookup svy-lookup-multi svy-popup-filter",
+typeid:3,
+uuid:"1434A229-4B9C-4D6C-A7C7-C50793813A07"

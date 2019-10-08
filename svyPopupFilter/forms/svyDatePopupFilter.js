@@ -60,7 +60,13 @@ function getSelectedFilterValues() {
 	case OPERATOR.SMALLER_EQUAL:
 		return [scopes.svyDateUtils.toEndOfDay(dateTo)];
 	case OPERATOR.BETWEEN:
-		return [scopes.svyDateUtils.toStartOfDay(dateFrom), scopes.svyDateUtils.toEndOfDay(dateTo)];
+		if (dateFrom && dateTo) {
+			return [scopes.svyDateUtils.toStartOfDay(dateFrom), scopes.svyDateUtils.toEndOfDay(dateTo)];
+		} else {
+			// TODO should handle scenario where not selected !?
+			return [];
+		}
+	
 	default:
 		return [];
 	}
