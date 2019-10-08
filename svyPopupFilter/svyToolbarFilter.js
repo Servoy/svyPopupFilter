@@ -308,14 +308,15 @@ function SvyGridFilters(table) {
 	
 	/**
 	 * @protected
-	 */
-	this.searchProviders = [];
-	
-	/**
-	 * @protected
 	 * @type {String}
 	 */
 	this.searchText = null;
+		
+	/**
+	 * @protected
+	 * @type {scopes.svySearch.SimpleSearch}
+	 */
+	this.simpleSearch = this.getDefaultSearch();
 }
 
 /**
@@ -528,15 +529,25 @@ function initSvyGridFilters() {
 	
 	/**
 	 * @public
-	 * @return {SvyGridFilters}
+	 * @return {scopes.svySearch.SimpleSearch}
 	 *
 	 * @this {SvyGridFilters}
 	 *  */
-	SvyGridFilters.prototype.setSearchProviders = function(searchProviders) {
-		this.searchProviders = searchProviders;
-		return this;
+	SvyGridFilters.prototype.getSimpleSearch = function() {
+		return this.simpleSearch;
 	}
 	
+	
+	/** 
+	 * @param {CustomType<aggrid-groupingtable.column>} column
+	 * @public
+	 * @return {SearchProvider}
+	 *
+	 * @this {SvyGridFilters}
+	 *  */
+	SvyGridFilters.prototype.getSearchProvider = function(column) {
+		return this.simpleSearch.getSearchProvider(column.dataprovider);
+	}
 	
 	/**
 	 * @public
@@ -705,18 +716,71 @@ function initSvyGridFilters() {
 
 		// quick search
 		if (this.searchText) {
-			var simpleSearch = scopes.svySearch.createSimpleSearch(this.getFoundSet().getDataSource());
-			var dataProviders = this.searchProviders;
-			for (var i = 0; i < dataProviders.length; i++) {
-				simpleSearch.addSearchProvider(dataProviders[i])
-			}
+			var simpleSearch = this.simpleSearch;
 			simpleSearch.setSearchText(this.searchText);
-			simpleSearch.setDateFormat("dd-MM-yyyy");
 			return simpleSearch.getQuery();
 		} else {
 			foundset.loadAllRecords();
 			return foundset.getQuery();
 		}
+	}
+	
+	/**
+	 * @public
+	 * @return {scopes.svySearch.SimpleSearch}
+	 *
+	 * @this {SvyGridFilters}
+	 *  */
+	SvyGridFilters.prototype.getDefaultSearch = function() {
+
+		var columns = this.getTable().columns;
+		var tableFoundset = this.getTable().myFoundset.foundset;
+		var tableDataSource;
+		if (tableFoundset) {
+			tableDataSource = tableFoundset.getDataSource()
+		} else {
+			var form = forms[this.formName];
+			tableDataSource = form ? form.foundset.getDataSource() : null;
+		}
+		
+		if (!tableDataSource) {
+			return null;
+		}
+
+		// create a simple search
+		var simpleSearch = scopes.svySearch.createSimpleSearch(tableDataSource);
+		simpleSearch.setSearchText(this.searchText);
+		simpleSearch.setDateFormat("dd-MM-yyyy");
+
+		for (var i = 0; tableDataSource && columns && i < columns.length; i++) {
+			var column = columns[i];
+			if (column.valuelist) {
+				// TODO valuelist column have to be handled differently
+				// TODO should use substitution or what !?
+				application.output("skip search on column with valuelist " + column.dataprovider);
+				continue;
+			}
+
+			// TODO should search only on visible columns ?
+			if (column.dataprovider && column.visible) {
+
+				// Check if column exists
+				var relationName = scopes.svyDataUtils.getDataProviderRelationName(column.dataprovider)
+				var dataSource = relationName ? scopes.svyDataUtils.getRelationForeignDataSource(relationName) : tableDataSource;
+
+				var table = databaseManager.getTable(dataSource);
+				var col = table.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(column.dataprovider));
+				if (col) {
+					var provider = simpleSearch.addSearchProvider(column.dataprovider);
+					// TODO shall i remove all white spaces !?
+					provider.setAlias(column.headerTitle ? column.headerTitle : column.dataprovider);
+					if (col.getType() === JSColumn.DATETIME) {
+						provider.setImpliedSearch(false);
+					}
+				}
+			}
+		}
+		return simpleSearch;
 	}
 	
 	/**
@@ -734,6 +798,7 @@ function initSvyGridFilters() {
 		} else {
 			foundset.loadAllRecords();
 		}
+		// TODO remove output
 		application.output(databaseManager.getSQL(foundset));
 		application.output(databaseManager.getSQLParameters(foundset));
 	}
@@ -863,13 +928,23 @@ function initAbstractToolbarFilterUX() {
 	
 	/**
 	 * @public
-	 * @return {AbstractToolbarFilterUX}
+	 * @return {scopes.svySearch.SimpleSearch}
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
-	AbstractToolbarFilterUX.prototype.setSearchProviders = function(searchProviders) {
-		this.svyGridFilters.setSearchProviders(searchProviders);
-		return this;
+	AbstractToolbarFilterUX.prototype.getSimpleSearch = function() {
+		return this.svyGridFilters.getSimpleSearch();
+	}
+	
+	/** 
+	 * @param {CustomType<aggrid-groupingtable.column>} column
+	 * @public
+	 * @return {SearchProvider}
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.getSearchProvider = function(column) {
+		return this.svyGridFilters.getSearchProvider(column);
 	}
 	
 	/**
@@ -1208,9 +1283,13 @@ function initListComponentFilterRender() {
 		// TODO Expose this as an event to be handled within the form
 		if (this.svyGridFilters['tableName']){
 			if (this.svyGridFilters['tableName'].endsWith('Sub')){
-				plugins.ngclientutils.addFormStyleClass(this.formName, 'has-filter-row-sub');
-			}else{
-				plugins.ngclientutils.addFormStyleClass(this.formName, 'has-filter-row');
+				if (!scopes.ngUtils.hasStyleClass(plugins.ngclientutils.getFormStyleClass(this.formName), "has-filter-row-sub")) {
+					plugins.ngclientutils.addFormStyleClass(this.formName, 'has-filter-row-sub');
+				}
+			} else {
+				if (!scopes.ngUtils.hasStyleClass(plugins.ngclientutils.getFormStyleClass(this.formName), "has-filter-row")) {
+					plugins.ngclientutils.addFormStyleClass(this.formName, 'has-filter-row');
+				}
 			}		
 		}
 	}
