@@ -67,7 +67,7 @@ dataprovider:"customerid",
 filterType:"TEXT",
 id:"customer",
 svyUUID:"8C8FE544-E1DA-4794-A304-648059582DDE",
-valuelist:"46AC7E83-19D0-40B1-B20D-D544218C7D56"
+valuelist:"7E3CD40D-90F4-487B-BD31-CAC76FE1B153"
 },
 {
 dataprovider:"orderdate",
