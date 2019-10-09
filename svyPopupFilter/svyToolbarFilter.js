@@ -754,12 +754,7 @@ function initSvyGridFilters() {
 
 		for (var i = 0; tableDataSource && columns && i < columns.length; i++) {
 			var column = columns[i];
-			if (column.valuelist) {
-				// TODO valuelist column have to be handled differently
-				// TODO should use substitution or what !?
-				application.output("skip search on column with valuelist " + column.dataprovider);
-				continue;
-			}
+
 
 			// TODO should search only on visible columns ?
 			if (column.dataprovider && column.visible) {
@@ -771,11 +766,34 @@ function initSvyGridFilters() {
 				var table = databaseManager.getTable(dataSource);
 				var col = table.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(column.dataprovider));
 				if (col) {
-					var provider = simpleSearch.addSearchProvider(column.dataprovider);
+					var vlItems = null;
+					
+					// check if valuelist substitions can be applied
+					if (column.valuelist) {
+						vlItems = application.getValueListItems(column.valuelist);
+						if (!vlItems.getMaxRowIndex()) {
+							application.output("skip search on column with valuelist " + column.valuelist);
+							continue;
+						}
+					}
+					
+					// create the search provider
 					// TODO shall i remove all white spaces !?
+					var provider = simpleSearch.addSearchProvider(column.dataprovider);
+					
+					// set the provider alias
 					provider.setAlias(column.headerTitle ? column.headerTitle : column.dataprovider);
+					
+					// if is a date use explicit search
 					if (col.getType() === JSColumn.DATETIME) {
 						provider.setImpliedSearch(false);
+					}
+
+					// add valuelist substitutions
+					for (var index = 1; vlItems && index <= vlItems.getMaxRowIndex(); index++) {
+						var vlItem = vlItems.getRowAsArray(index);
+						provider.addSubstitution(vlItem[0],vlItem[1])
+							
 					}
 				}
 			}
