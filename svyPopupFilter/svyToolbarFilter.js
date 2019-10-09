@@ -1000,7 +1000,7 @@ function initAbstractToolbarFilterUX() {
 		var popup = filter.createPopUp(this.onFilterApply);
 		popup.x(event.getX());
 		popup.y(event.getY());
-		popup.width(300);
+		// popup.width(300);
 		popup.show();
 	}
 	
@@ -1301,13 +1301,13 @@ function initListComponentFilterRender() {
 		// TODO Expose this as an event to be handled within the form
 		if (this.svyGridFilters['tableName']){
 			if (this.svyGridFilters['tableName'].endsWith('Sub')){
-				if (!scopes.ngUtils.hasStyleClass(plugins.ngclientutils.getFormStyleClass(this.formName), "has-filter-row-sub")) {
+				//if (!scopes.ngUtils.hasStyleClass(plugins.ngclientutils.getFormStyleClass(this.formName), "has-filter-row-sub")) {
 					plugins.ngclientutils.addFormStyleClass(this.formName, 'has-filter-row-sub');
-				}
+				//}
 			} else {
-				if (!scopes.ngUtils.hasStyleClass(plugins.ngclientutils.getFormStyleClass(this.formName), "has-filter-row")) {
+				//if (!scopes.ngUtils.hasStyleClass(plugins.ngclientutils.getFormStyleClass(this.formName), "has-filter-row")) {
 					plugins.ngclientutils.addFormStyleClass(this.formName, 'has-filter-row');
-				}
+				//}
 			}		
 		}
 	}

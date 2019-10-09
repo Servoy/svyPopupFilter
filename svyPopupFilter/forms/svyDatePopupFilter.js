@@ -71,3 +71,12 @@ function getSelectedFilterValues() {
 		return [];
 	}
 }
+
+/**
+ * @protected 
+ * @override 
+ * @properties={typeid:24,uuid:"49D922DD-72BD-42A4-81B3-32CC58E46551"}
+ */
+function defaultWidth() {
+	return 580;
+}

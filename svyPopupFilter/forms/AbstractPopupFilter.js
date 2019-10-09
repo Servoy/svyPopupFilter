@@ -387,6 +387,6 @@ function onHide(event) {
  * @properties={typeid:24,uuid:"3C5B0CAD-4EBE-4991-91E8-07E298AB2B38"}
  */
 function defaultWidth() {
-	return 250;
+	return 300;
 }
 
