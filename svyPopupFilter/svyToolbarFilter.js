@@ -810,12 +810,10 @@ function initSvyGridFilters() {
 		var foundset = this.getFoundSet();
 
 		// quick search
-		if (this.searchText) {
-			var searchQuery = this.getQuery();
-			foundset.loadRecords(searchQuery);
-		} else {
-			foundset.loadAllRecords();
-		}
+
+		var searchQuery = this.getQuery();
+		foundset.loadRecords(searchQuery);
+
 		// TODO remove output
 		application.output(databaseManager.getSQL(foundset));
 		application.output(databaseManager.getSQLParameters(foundset));
