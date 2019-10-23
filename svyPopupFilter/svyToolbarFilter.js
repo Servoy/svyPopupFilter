@@ -320,17 +320,15 @@ function SvyGridFilters(table) {
 }
 
 /**
- * @public
+ * @private 
  * @param {Array<scopes.svyPopupFilter.AbstractPopupFilter>} filters
  * @param {JSFoundSet} foundset
  * 
- * @return {Boolean}
+ * @return {QBSelect}
  *
- * @properties={typeid:24,uuid:"DE3A02D8-BD4A-42B7-9870-6E5BC70D9D2A"}
+ * @properties={typeid:24,uuid:"5B04853F-1A4F-4752-83E9-B332D697F935"}
  */
-function applyFilters(filters, foundset) {
-
-	foundset.removeFoundSetFilterParam(TOOLBAR_FILTER_NAME);
+function getFilterQuery(filters, foundset) {
 	var isFilterSet = false;
 
 	var query = databaseManager.createSelect(foundset.getDataSource());
@@ -474,10 +472,40 @@ function applyFilters(filters, foundset) {
 
 	}
 
-	if (isFilterSet) {
-		return foundset.addFoundSetFilterParam(query, TOOLBAR_FILTER_NAME);
+	return query;
+}
+
+/**
+ * @public
+ * @param {Array<scopes.svyPopupFilter.AbstractPopupFilter>} filters
+ * @param {JSFoundSet} foundset
+ * 
+ * @return {Boolean}
+ *
+ * @properties={typeid:24,uuid:"DE3A02D8-BD4A-42B7-9870-6E5BC70D9D2A"}
+ */
+function applyFilters(filters, foundset) {
+
+	// remove previous filter
+	foundset.removeFoundSetFilterParam(TOOLBAR_FILTER_NAME);
+
+	var success = true;
+	// get the filter query
+	if (filters.length) {
+		var query = getFilterQuery(filters,foundset);
+	
+		// apply the query as filter
+		success = foundset.addFoundSetFilterParam(query, TOOLBAR_FILTER_NAME);
+		if (success) {
+			success = foundset.loadRecords();
+		}
+		
+	} else {
+		
+		// refresh foundset since filters have been removed
+		foundset.loadRecords();
 	}
-	return false;
+	return success;
 }
 
 /**
@@ -704,6 +732,7 @@ function initSvyGridFilters() {
 	/**
 	 * @public
 	 * @return {QBSelect}
+	 * 
 	 *
 	 * @this {SvyGridFilters}
 	 *  */
@@ -711,18 +740,21 @@ function initSvyGridFilters() {
 		var activeFilters = this.getActiveFilters();
 		var foundset = this.getFoundSet();
 		
-		var hasFilterApplied = foundset.getFoundSetFilterParams(TOOLBAR_FILTER_NAME).length ? true : false;
-		var newFilterApplied = applyFilters(activeFilters, foundset);
+		// var hasFilterApplied = foundset.getFoundSetFilterParams(TOOLBAR_FILTER_NAME).length ? true : false;
+		applyFilters(activeFilters, foundset);
 
+		var query;
 		// quick search
 		if (this.searchText) {
 			var simpleSearch = this.simpleSearch;
 			simpleSearch.setSearchText(this.searchText);
-			return simpleSearch.getQuery();
+			query = simpleSearch.getQuery();
 		} else {
 			foundset.loadAllRecords();
-			return foundset.getQuery();
+			query = foundset.getQuery();
 		}
+		
+		return query;
 	}
 	
 	/**
