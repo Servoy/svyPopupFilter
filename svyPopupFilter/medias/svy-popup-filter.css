@@ -42,7 +42,7 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 	padding-left: 15px;	
 }
 
-.svy-popup-filter .btn-label {
+.svy-popup-filter .svy-lookup-action-label {
 	display: block;
 	margin-top: 10px;
 	margin-bottom: 10px;
