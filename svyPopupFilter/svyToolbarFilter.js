@@ -716,7 +716,75 @@ function initSvyGridFilters() {
 		
 		this.search();
 	}
+	
+	
+	/**
+	 * @public 
+	 * @return {Array<{
+				id: String,
+				dataprovider: String,
+				operator: String,
+				params: Object,
+				text: String,
+				values: Array}>}
+	 *
+	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * @this {SvyGridFilters}
+	 */
+	SvyGridFilters.prototype.getGridFiltersState = function() {
+		
+		var jsonState = [];
+		for (var dp in this.toolbarFilters) {
+			var filter = this.toolbarFilters[dp];
+			application.output(filter.constructor)
+			jsonState.push({
+				id: filter.getID(),
+				dataprovider: filter.getDataProvider(),
+				operator: filter.getOperator(),
+				params: filter.getParams(),
+				text: filter.getText(),
+				values: filter.getValues(),
+				constructor: filter.constructor.name})
+		}
+		
+		return jsonState;
+	}
 
+	/**
+	 * @public 
+	 * @param {Array<{
+				id: String,
+				dataprovider: String,
+				operator: String,
+				params: Object,
+				text: String,
+				values: Array}>} jsonState
+	 *
+	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * @this {SvyGridFilters}
+	 */
+	SvyGridFilters.prototype.restoreGridFiltersState = function(jsonState) {
+
+		for (var i = 0; i < jsonState.length; i++) {
+			var obj = jsonState[i];
+			
+			// FIXME check filter type
+			var filter = new scopes.svyPopupFilter.SvyTokenFilter();
+			
+			filter.setDataProvider(obj.dataprovider);
+			filter.setOperator(obj.operator);
+			filter.setText(obj.text);
+			filter.setValues(obj.values);
+
+			// TODO set the UI form Renderer
+			
+			var params = obj.params;
+			for (var j = 0; params && j < array.length; j++) {
+				filter.addParam(params[j]);
+			}	
+		}
+	}
+	
 	/**
 	 * @public  
 	 * @param {String} dataprovider
@@ -969,6 +1037,40 @@ function initAbstractToolbarFilterUX() {
 	 *  */
 	AbstractToolbarFilterUX.prototype.hasFilters = function() {
 		return this.svyGridFilters.getFilters().length > 0 ? true : false;
+	}
+	
+	/**
+	 * @public 
+	 * @return {Array<{
+				id: String,
+				dataprovider: String,
+				operator: String,
+				params: Object,
+				text: String,
+				values: Array}>} jsonState
+	 *
+	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.getToolbarFiltersState = function() {
+		return this.svyGridFilters.getGridFiltersState();
+	}
+	
+	/**
+	 * @public 
+	 * @param {Array<{
+				id: String,
+				dataprovider: String,
+				operator: String,
+				params: Object,
+				text: String,
+				values: Array}>} jsonState
+	 *
+	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.restoreToolbarFiltersState = function(jsonState) {
+		this.svyGridFilters.restoreGridFiltersState(jsonState);
 	}
 	
 	/**
