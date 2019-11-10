@@ -30,3 +30,15 @@ function getSelectedFilterValues() {
 	// return between start and end of the day
 	return values;
 }
+
+/**
+ * @protected 
+ * @param {Array} selectedValues
+ *
+ * @properties={typeid:24,uuid:"A4A7510D-4257-4040-91E3-A8FB41C66ACE"}
+ * @override
+ */
+function setSelectedFilterValues(selectedValues) {
+	values = selectedValues;
+	// TODO shall i do something here !?
+}

@@ -245,6 +245,12 @@ function newInstance(filterObj) {
 	/** @type {RuntimeForm<AbstractPopupFilter>} */
 	var form = forms[jsForm.name];
 	form['filter'] = filterObj;
+	
+	form.setSelectedFilterValues(filterObj.getValues());
+	
+	if (filterObj.getOperator()) {
+		form.setOperator(filterObj.getOperator());
+	}
 
 	return form;
 }
@@ -321,12 +327,34 @@ function getSelectedFilterValues() {
 }
 
 /**
+ * @protected 
+ * @param {Array} selectedValues
+ *
+ * @properties={typeid:24,uuid:"173ECAC9-9A4B-4070-B84A-9E8EE85962E8"}
+ */
+function setSelectedFilterValues(selectedValues) {
+	throw "To be implemented";
+}
+
+/**
  * @return {String}
  * @protected 
  * @properties={typeid:24,uuid:"4DDB2E2B-74ED-4961-8542-E459CE465440"}
  */
 function getOperator() {
 	return operator;
+}
+
+/**
+ * @protected 
+ * @param {Array} defaultOperator
+ *
+ * @properties={typeid:24,uuid:"922E1870-6AEE-46EC-91F6-BEB8F36657B9"}
+ */
+function setOperator(defaultOperator) {
+	if (defaultOperator) {
+		operator = defaultOperator;
+	}
 }
 
 /**

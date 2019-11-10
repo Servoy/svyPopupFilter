@@ -29,6 +29,23 @@ function onLoad(event) {
 }
 
 /**
+ * @protected 
+ * @param {Array} selectedValues
+ *
+ * @properties={typeid:24,uuid:"61DC1807-93A7-404C-8C3C-5418355F4597"}
+ * @override
+ */
+function setSelectedFilterValues(selectedValues) {
+	if (selectedValues && selectedValues.length) {
+		dateFrom = selectedValues[0];
+		dateTo = selectedValues[1];
+	} else {
+		dateFrom = null;
+		dateTo = null;
+	}
+}
+
+/**
  * @protected
  * @properties={typeid:24,uuid:"3663C0D4-B5FC-4A94-899D-41588025D5B4"}
  * @override

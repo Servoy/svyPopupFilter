@@ -40,6 +40,7 @@ var between2 = 0;
 
 
 /**
+ * @protected 
  * @param {JSEvent} event
  *
  * @properties={typeid:24,uuid:"CB21CCB8-503D-4506-9B20-B4528756E4DD"}
@@ -50,6 +51,29 @@ function onLoad(event) {
 	
 	// default operator to between
 	operator = scopes.svyPopupFilter.OPERATOR.EQUALS;
+}
+
+/**
+ * @protected 
+ * @param {Array} selectedValues
+ *
+ * @properties={typeid:24,uuid:"5AD8EFD8-E67C-416F-A3FF-FA7B5D451606"}
+ * @override
+ */
+function setSelectedFilterValues(selectedValues) {
+	if (selectedValues && selectedValues.length) {
+		minValue = selectedValues[0];
+		maxValue = selectedValues[1];
+		between1 = selectedValues[0];
+		between2 = selectedValues[1];
+		exactValue = selectedValues[0];
+	} else {
+		exactValue = null;
+		minValue = null;
+		maxValue = null;
+		between1 = null;
+		between2 = null;
+	}
 }
 
 /**
