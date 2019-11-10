@@ -21,6 +21,26 @@ function onLoad(event) {
 }
 
 /**
+ * @protected 
+ * @param selectedValues
+ *
+ * @properties={typeid:24,uuid:"9F26FAEA-39F7-41B5-80D8-7C2117A36A2E"}
+ * @override
+ */
+function setSelectedFilterValues(selectedValues) {
+	_super.setSelectedFilterValues(selectedValues);
+
+	// clear tags
+	elements.listTags.clear();
+
+	// set all values
+	for (var i = 0; i < values.length; i++) {
+		addTag(values[i]);
+	}
+	
+}
+
+/**
  * @param entry.dataprovider name
  * @param entry.text timeEntry
  *

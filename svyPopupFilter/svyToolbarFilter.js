@@ -182,6 +182,11 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 	 */
 	this.svyGridFilters = new SvyGridFilters(tableComponent);
 
+	/**
+	 * @protected
+	 * @type {Function}
+	 */
+	this.onFilterApplyEvent = null;
 	// TODO allow the form to implement such funcitonalities
 
 	// update grid filter
@@ -315,6 +320,8 @@ function SvyGridFilters(table) {
 	/**
 	 * @protected
 	 * @type {scopes.svySearch.SimpleSearch}
+	 * 
+	 * @this {SvyGridFilters}
 	 */
 	this.simpleSearch = this.getDefaultSearch();
 }
@@ -876,6 +883,17 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * @public
+	 * @return {AbstractToolbarFilterUX}
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.setOnFilterApplyEvent = function(callback) {
+		this.onFilterApplyEvent = callback;
+		return this;
+	}
+	
+	/**
 	 * @param {CustomType<aggrid-groupingtable.column>} column
 	 * @protected
 	 * @return {Boolean}
@@ -1197,6 +1215,10 @@ function initAbstractToolbarFilterUX() {
 			element.addStyleClass('has-active-filter');
 		} else {
 			element.removeStyleClass('has-active-filter');
+		}
+	
+		if (thisIntance.onFilterApplyEvent) {
+			thisIntance.onFilterApplyEvent.call(this, values, operator, filter);
 		}
 	}
 }
