@@ -773,17 +773,19 @@ function initSvyGridFilters() {
 		for (var i = 0; i < jsonState.length; i++) {
 			var obj = jsonState[i];
 			
-			// FIXME check filter type
-			var filter = new scopes.svyPopupFilter.SvyTokenFilter();
+			var column = this.getColumn(obj.dataprovider);
+			if (column) {
+				
+				// FIXME check filter type
+				var filter = new scopes.svyPopupFilter.SvyTokenFilter();
+				
+				filter.setDataProvider(obj.dataprovider);
+				filter.setOperator(obj.operator);
+				filter.setText(obj.text);
+				filter.setValues(obj.values);
 			
-			filter.setDataProvider(obj.dataprovider);
-			filter.setOperator(obj.operator);
-			filter.setText(obj.text);
-			filter.setValues(obj.values);
-
-			// TODO set the UI form Renderer 
-			
-			this.addGridFilter(this.getColumn(obj.dataprovider),filter);
+				this.addGridFilter(column,filter);
+			}
 		}
 		return this;
 	}
