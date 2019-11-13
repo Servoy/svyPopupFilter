@@ -736,15 +736,14 @@ function initSvyGridFilters() {
 		var jsonState = [];
 		for (var dp in this.toolbarFilters) {
 			var filter = this.toolbarFilters[dp];
-			application.output(filter.constructor)
+			
 			jsonState.push({
 				id: filter.getID(),
 				dataprovider: filter.getDataProvider(),
 				operator: filter.getOperator(),
-				params: filter.getParams(),
 				text: filter.getText(),
 				values: filter.getValues(),
-				constructor: filter.constructor.name})
+				constructor: filter.constructor})
 		}
 		
 		return jsonState;
@@ -761,10 +760,16 @@ function initSvyGridFilters() {
 				values: Array}>} jsonState
 	 *
 	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * 
+	 * @return {SvyGridFilters}
 	 * @this {SvyGridFilters}
 	 */
 	SvyGridFilters.prototype.restoreGridFiltersState = function(jsonState) {
+		
+		// clear previous filters
+		this.clearGridFilters();
 
+		// restore new filters
 		for (var i = 0; i < jsonState.length; i++) {
 			var obj = jsonState[i];
 			
@@ -776,13 +781,11 @@ function initSvyGridFilters() {
 			filter.setText(obj.text);
 			filter.setValues(obj.values);
 
-			// TODO set the UI form Renderer
+			// TODO set the UI form Renderer 
 			
-			var params = obj.params;
-			for (var j = 0; params && j < array.length; j++) {
-				filter.addParam(params[j]);
-			}	
+			this.addGridFilter(this.getColumn(obj.dataprovider),filter);
 		}
+		return this;
 	}
 	
 	/**
@@ -1070,7 +1073,42 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.restoreToolbarFiltersState = function(jsonState) {
-		this.svyGridFilters.restoreGridFiltersState(jsonState);
+
+		// clear previous filters
+		this.clearGridFilters();
+
+		// restore new filters
+		for (var i = 0; i < jsonState.length; i++) {
+			var obj = jsonState[i];
+			var column = this.getColumn(obj.dataprovider);
+
+			var values;
+			if (!column) continue; // TODO throw a warning ?
+
+			switch (column.filterType) {
+
+			case 'NUMBER':
+				values = obj.values.map(function(value) {
+					return utils.stringToNumber(value);
+				});
+
+				break;
+			case 'DATE':
+				values = obj.values.map(function(value) {
+					return new Date(value);
+				});
+
+				break;
+			case 'TEXT':
+
+			default:
+				values = obj.values;
+				break;
+			}
+
+			// set the filter again
+			this.setFilterValue(column, values, obj.operator)
+		}
 	}
 	
 	/**
