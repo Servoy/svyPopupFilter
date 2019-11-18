@@ -85,7 +85,6 @@ function showPopUp(callback, target, width, height) {
 }
 
 /**
- * @private 
  * Creates a form popup for this form and returns it
  * 
  * @param {function(Array<String|Date|Number>,String,scopes.svyPopupFilter.AbstractPopupFilter)} callback The function that is called when selection happens

@@ -50,8 +50,8 @@ function createTokenFilter() {
 * @return {SvySelectFilter}
 * @properties={typeid:24,uuid:"AEA44CD1-08A4-4FD9-8713-42918377A11C"}
 */
-function createSelectFilter(dataProvider,lookup) {
-	return new SvySelectFilter(dataProvider,lookup);
+function createSelectFilter(dataProvider, lookup) {
+	return new SvySelectFilter(dataProvider, lookup);
 }
 
 /**
@@ -207,7 +207,7 @@ function AbstractPopupFilter(){
 	 * @type {String} 
 	 * @protected 
 	 * */
-	this.UIFormRenderer = null;
+	this.rendererForm = null;
 	
 	/** 
 	 * @type {String}
@@ -229,7 +229,7 @@ function SvyDateFilter(){
 	AbstractPopupFilter.call(this);
 	
 	// TODO set the default date filter
-	this.setUIFormRendered(forms.svyDatePopupFilter);
+	this.setRendererForm(forms.svyDatePopupFilter);
 }
 
 /**
@@ -244,7 +244,7 @@ function SvyNumberFilter(){
 	
 	AbstractPopupFilter.call(this);
 	
-	this.setUIFormRendered(forms.svyNumberPopupFilter);
+	this.setRendererForm(forms.svyNumberPopupFilter);
 }
 
 /**
@@ -259,7 +259,7 @@ function SvyTokenFilter(){
 	
 	AbstractPopupFilter.call(this);
 	
-	this.setUIFormRendered(forms.svyTokenPopupFilter);
+	this.setRendererForm(forms.svyTokenPopupFilter);
 }
 
 /**
@@ -281,6 +281,7 @@ function SvySelectFilter(dataProvider, lookup){
 	}
 	
 	this.lookup = lookup;
+	
 	AbstractPopupFilter.call(this);
 }
 
@@ -295,7 +296,8 @@ function initAbstractPopupFilter() {
 	 * @public
 	 * @param {RuntimeForm<AbstractPopupFilter>} popupFilterForm
 	 * @this {AbstractPopupFilter}
-	 *  */
+	 * @deprecated
+	 */
 	AbstractPopupFilter.prototype.setUIFormRendered = function(popupFilterForm) {
 		if (!popupFilterForm) {
 			throw new scopes.svyExceptions.IllegalArgumentException("Illegal argument popupFilterForm. popupFilterForm must be an instance of AbstractPopupFilter form")
@@ -303,7 +305,22 @@ function initAbstractPopupFilter() {
 		if (!scopes.svyUI.isJSFormInstanceOf(popupFilterForm, "AbstractPopupFilter")) {
 			throw new scopes.svyExceptions.IllegalArgumentException("The given popupFilterForm must be an instance of AbstractPopupFilter form.");
 		}
-		this.UIFormRenderer = popupFilterForm['controller'].getName();
+		this.rendererForm = popupFilterForm['controller'].getName();
+	}
+	
+	/**
+	 * @public
+	 * @param {RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>} popupFilterForm
+	 * @this {AbstractPopupFilter}
+	 */
+	AbstractPopupFilter.prototype.setRendererForm = function(popupFilterForm) {
+		if (!popupFilterForm) {
+			throw new scopes.svyExceptions.IllegalArgumentException("Illegal argument popupFilterForm. popupFilterForm must be an instance of AbstractPopupFilter form")
+		}
+		if (!scopes.svyUI.isJSFormInstanceOf(popupFilterForm, "AbstractPopupFilter")) {
+			throw new scopes.svyExceptions.IllegalArgumentException("The given popupFilterForm must be an instance of AbstractPopupFilter form.");
+		}
+		this.rendererForm = popupFilterForm['controller'].getName();
 	}
 	
 	/**
@@ -407,6 +424,7 @@ function initAbstractPopupFilter() {
 	 * @param {String} filterOperator
 	 * @param {String} filterValue
 	 * @param {String} filterParamName
+	 * @SuppressWarnings(deprecated)
 	 * @this {AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.addFilterParam = function(filterOperator, filterValue, filterParamName) {
@@ -420,6 +438,7 @@ function initAbstractPopupFilter() {
 	/**
 	 * Gets the filter filterName
 	 * @deprecated
+	 * @SuppressWarnings(deprecated)
 	 * @protected 
 	 * @return {Array<FilterParam>}
 	 * @this {AbstractPopupFilter}
@@ -433,6 +452,7 @@ function initAbstractPopupFilter() {
 	 * 
 	 * @param {String} filterParamName
 	 * @deprecated
+	 * @SuppressWarnings(deprecated)
 	 * @protected 
 	 * @return {FilterParam}
 	 * @this {AbstractPopupFilter}
@@ -446,6 +466,7 @@ function initAbstractPopupFilter() {
 	 * 
 	 * @param {String} filterParamName
 	 * @deprecated
+	 * @SuppressWarnings(deprecated)
 	 * @protected 
 	 * @this {AbstractPopupFilter}
 	 */
@@ -532,8 +553,8 @@ function initAbstractPopupFilter() {
 
 			/** @type {RuntimeForm<AbstractPopupFilter>} */
 			var popupFilterForm;
-			if (this.UIFormRenderer) {
-				popupFilterForm = forms[this.UIFormRenderer];
+			if (this.rendererForm) {
+				popupFilterForm = forms[this.rendererForm];
 			} else {
 				throw new scopes.svyExceptions.IllegalStateException("No form template defined for AbstractPopupFilter");
 			}
@@ -579,17 +600,16 @@ function initAbstractPopupFilter() {
 	 * Shows the popupFilter in a modal Window
 	 *
 	 * @public
-	 * @param {function(Array<JSRecord>,Array<String|Date|Number>,AbstractPopupFilter)} [callback] The function that will be called when a selection is made; the callback returns the following arguments: {Array<JSRecord>} record, {Array<String|Date|Number>} popupFilterValue , {AbstractPopupFilter} popupFilter
+	 * @param {function(Array<String|Date|Number>,String,scopes.svyPopupFilter.AbstractPopupFilter)} [callback] The function that will be called when a selection is made; the callback returns the following arguments: {Array<JSRecord>} record, {Array<String|Date|Number>} popupFilterValue , {AbstractPopupFilter} popupFilter
 	 * @param {Number} [x]
 	 * @param {Number} [y]
 	 * @param {Number} [width] The width of the popupFilter. Optional. Default is same as target component
 	 * @param {Number} [height] The height of the popupFilter. Optional. Default is implementation-specifc.
 	 *
-	 * @return {Array<String|Date|Number>} returns the selected records; if the popupFilterDataprovider has been set instead it returns the popupFilterDataprovider values on the selected records. Returns null if the window is closed without a selection or an empty selection
+	 * @return {Array<JSRecord>|Array<String|Date|Number>} returns the selected records; if the popupFilterDataprovider has been set instead it returns the popupFilterDataprovider values on the selected records. Returns null if the window is closed without a selection or an empty selection
 	 * @this {AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.showModalWindow = function(callback, x, y, width, height) {
-		/** @type {RuntimeForm<AbstractPopupFilter>} */
 		var runtimeForm = this.getFormInstance();
 
 		// TODO return the actual values, no need of params
@@ -696,14 +716,14 @@ function initSvySelectFilter() {
 	 * @this {SvySelectFilter}
 	 */
 	SvySelectFilter.prototype.showPopUp = function(callback, target, width, height) {
-		this.lookup.showPopUp(svySelectCallback,target,width,height);
-		
 		var thisInstance = this;
 		function svySelectCallback(records, values, lookup) {
 			if (callback) {
 				callback.call(this, values, OPERATOR.IS_IN, thisInstance);
 			}
 		}
+		
+		this.lookup.showPopUp(svySelectCallback, target, width, height);
 	}
 	
 	/**
@@ -735,7 +755,7 @@ function initSvySelectFilter() {
 	 * @param {Number} [width] The width of the popupFilter. Optional. Default is same as target component
 	 * @param {Number} [height] The height of the popupFilter. Optional. Default is implementation-specifc.
 	 *
-	 * @return {Array<String|Date|Number>} returns the selected records; if the popupFilterDataprovider has been set instead it returns the popupFilterDataprovider values on the selected records. Returns null if the window is closed without a selection or an empty selection
+	 * @return {Array<JSRecord>|Array<String|Date|Number>} returns the selected records; if the popupFilterDataprovider has been set instead it returns the popupFilterDataprovider values on the selected records. Returns null if the window is closed without a selection or an empty selection
 	 * @this {SvySelectFilter}
 	 */
 	SvySelectFilter.prototype.showModalWindow = function(callback, x, y, width, height) {
@@ -746,7 +766,7 @@ function initSvySelectFilter() {
 			}
 		}
 		
-		return this.lookup.showModalWindow(svySelectCallback,x,y,width,height);
+		return this.lookup.showModalWindow(svySelectCallback, x, y, width, height);
 	}	
 	
 	
@@ -757,7 +777,7 @@ function initSvySelectFilter() {
 	 * @param {JSWindow} win the JSWindow object to show
 	 * @param {function(Array<String|Date|Number>,String,AbstractPopupFilter)} [callback] The function that will be called when a selection is made; the callback returns the following arguments: {Array<String|Date|Number>} popupFilterValues, {String} operator , {AbstractPopupFilter} popupFilter
 	 *
-	 * @return {Array<String|Date|Number>} returns the selected records; if the popupFilterDataprovider has been set instead it returns the popupFilterDataprovider values on the selected records. Returns null if the window is closed without a selection or an empty selection
+	 * @return {Array<JSRecord>|Array<String|Date|Number>} returns the selected records; if the popupFilterDataprovider has been set instead it returns the popupFilterDataprovider values on the selected records. Returns null if the window is closed without a selection or an empty selection
 	 * @this {SvySelectFilter}
 	 */
 	SvySelectFilter.prototype.showWindow = function(win, callback) {
@@ -767,6 +787,7 @@ function initSvySelectFilter() {
 				callback.call(this, values, OPERATOR.IS_IN, thisInstance);
 			}
 		}
+		
 		return this.lookup.showWindow(win,svySelectCallback);
 	}
 	
