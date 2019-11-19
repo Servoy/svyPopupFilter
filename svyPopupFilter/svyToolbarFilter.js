@@ -253,6 +253,12 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 	this.svyGridFilters = new SvyGridFilters(tableComponent);
 
 	/**
+	 * @protected 
+	 * @type {String}
+	 */
+	this.onFilterCreate = null;
+	
+	/**
 	 * @protected
 	 * @type {Function}
 	 */
@@ -1027,6 +1033,21 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * Allows to provide a method that will be called when the filter for a specific column is created<br>
+	 * That method then can create and return any filter that will then be used for this column
+	 * 
+	 * @public
+	 * @param {function(CustomType<aggrid-groupingtable.column>): scopes.svyPopupFilter.AbstractPopupFilter} callback function that receives an aggrid-groupingtable Column as argument and must return a scopes.svyPopupFilter.AbstractPopupFilter
+	 * @return {AbstractToolbarFilterUX}
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.setOnFilterCreate = function(callback) {
+		this.onFilterCreate = scopes.svySystem.convertServoyMethodToQualifiedName(callback);
+		return this;
+	}	
+	
+	/**
 	 * @public
 	 * @return {AbstractToolbarFilterUX}
 	 *
@@ -1071,11 +1092,13 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
-	 * @public 
+	 * Clears all grid filters
+	 * 
+	 * @public
 	 * @return {Boolean}
 	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.clearGridFilters = function() {
 		throw scopes.svyExceptions.AbstractMethodInvocationException("clearGridFilters not implemented")
 	}
@@ -1274,8 +1297,20 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype.getOrCreateToolbarFilter = function(column) {
 		/** @type {scopes.svyPopupFilter.AbstractPopupFilter}  */
 		var filter = this.svyGridFilters.getGridFilter(column);
+		
+		if (!filter && this.onFilterCreate) {
+			filter = scopes.svySystem.callMethod(this.onFilterCreate, [column]);
+			if (filter) {
+				// include this as param
+				filter.addParam(this);
+				// set filter's dataprovider
+				filter.setDataProvider(column.dataprovider);
+				// persist the filter in memory
+				this.svyGridFilters.addGridFilter(column, filter);
+			}
+		}
+		
 		if (!filter) {
-			
 			var popupTemplates = getPopupRendererForms();
 			
 			if (column.valuelist) {
