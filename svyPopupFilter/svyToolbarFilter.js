@@ -324,6 +324,12 @@ function SvyGridFilters(table) {
 	 * @this {SvyGridFilters}
 	 */
 	this.simpleSearch = this.getDefaultSearch();
+	
+	/**
+	 * @protected
+	 * @type {function}
+	 */
+	this.onSearchCommand = null;
 }
 
 /**
@@ -559,6 +565,18 @@ function initSvyGridFilters() {
 	 *  */
 	SvyGridFilters.prototype.setSearchText = function(searchText) {
 		this.searchText = searchText;
+		return this;
+	}
+	
+	/**
+	 * @public
+	 * @param {function(QBSelect, JSFoundSet)} callback
+	 * @return {SvyGridFilters}
+	 *
+	 * @this {SvyGridFilters}
+	 *  */
+	SvyGridFilters.prototype.setOnSearchCommand = function(callback) {
+		this.onSearchCommand = callback;
 		return this;
 	}
 	
@@ -894,7 +912,8 @@ function initSvyGridFilters() {
 					var provider = simpleSearch.addSearchProvider(column.dataprovider);
 					
 					// set the provider alias
-					provider.setAlias(column.headerTitle ? column.headerTitle : column.dataprovider);
+					var alias = column.headerTitle ? column.headerTitle : column.dataprovider;
+					provider.setAlias(alias);
 					
 					// if is a date use explicit search
 					if (col.getType() === JSColumn.DATETIME) {
@@ -919,16 +938,21 @@ function initSvyGridFilters() {
 	 * @this {SvyGridFilters}
 	 *  */
 	SvyGridFilters.prototype.search = function() {
+		
 		var foundset = this.getFoundSet();
 
 		// quick search
-
 		var searchQuery = this.getQuery();
-		foundset.loadRecords(searchQuery);
-
-		// TODO remove output
-		application.output(databaseManager.getSQL(foundset));
-		application.output(databaseManager.getSQLParameters(foundset));
+		
+		// if on search command
+		if (this.onSearchCommand) {
+			this.onSearchCommand.call(this, searchQuery, foundset);
+		} else {
+			foundset.loadRecords(searchQuery);
+			// TODO remove output
+			application.output(databaseManager.getSQL(foundset));
+			application.output(databaseManager.getSQLParameters(foundset));
+		}
 	}
 }
 
@@ -957,12 +981,38 @@ function initAbstractToolbarFilterUX() {
 	
 	/**
 	 * @public
+	 * @param {function(Array, String, scopes.svyPopupFilter.AbstractPopupFilter)} callback
+	 * 
 	 * @return {AbstractToolbarFilterUX}
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
 	AbstractToolbarFilterUX.prototype.setOnFilterApplyEvent = function(callback) {
 		this.onFilterApplyEvent = callback;
+		return this;
+	}
+	
+	/**
+	 * Set the onSearchCommand function to override the search behavior.
+	 * You can add custom conditions to the filter query object;
+	 * 
+	 * @public
+	 * @param {function(QBSelect, JSFoundSet)} callback
+	 * @return {AbstractToolbarFilterUX}
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 * @example <pre>function onSearch(query, fs) {
+	 *   // add custom conditions to the query
+	 *   query.where.add(query.columns.orderdate.not.isNull);
+	 *   
+	 *   // apply the query to the foundset
+	 *   fs.loadRecords(query);
+	 * }
+	 * </pre>
+	 * 
+	 *  */
+	AbstractToolbarFilterUX.prototype.setOnSearchCommand = function(callback) {
+		this.svyGridFilters.setOnSearchCommand(callback);
 		return this;
 	}
 	
