@@ -357,7 +357,7 @@ function ListComponentFilterRender(listComponent, table) {
 	}
 	listComponent.entryRendererFunc = this.getRenderTemplate();
 	listComponent.addStyleClass("svy-toolbar-filter")
-	
+	listComponent.clear();
 }
 
 /**
