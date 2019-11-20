@@ -1,4 +1,15 @@
 /**
+ * Enum of all renderer form types available
+ * @properties={typeid:35,uuid:"E4F70004-F7BE-4806-AC3C-F727EC06AF8F",variableType:-4}
+ */
+var RENDERER_FORMS = {
+	DATE: 'datePopupFilterTemplate',
+	NUMBER: 'numberPopupFilterTemplate',
+	TOKEN: 'tokenPopupFilterTemplate',
+	SELECT: 'selectFilterTemplate'
+}
+
+/**
  * @type {String}
  * @private
  *
@@ -16,18 +27,18 @@ var latestToolbarFilter = null;
 
 /**
  * This is a Singleton
- * @type {PopupUIFormRendered}
+ * @type {PopupRendererForms}
  * @private  
  * @properties={typeid:35,uuid:"85FB53C2-C19C-419B-9F03-642998E3B1F4",variableType:-4}
  */
-var popupUIFormRendered;
+var popupRendererForms;
 
 /**
  * @constructor 
  * @protected  
  * @properties={typeid:24,uuid:"EA19BC69-1CA7-4C3A-B6F3-BB972688F4BD"}
  */
-function PopupUIFormRendered() {
+function PopupRendererForms() {
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
@@ -52,13 +63,35 @@ function PopupUIFormRendered() {
 
 
 /**
- * @return {PopupUIFormRendered}
+ * @return {PopupRendererForms}
  * @public 
+ * @deprecated 
  * @properties={typeid:24,uuid:"BBACCB75-672F-4067-BE33-A14A7150496C"}
  */
 function getPopupUIFormRendered() {
-	return popupUIFormRendered;
+	return popupRendererForms;
 }
+
+/**
+ * @return {PopupRendererForms}
+ * @private  
+ * @properties={typeid:24,uuid:"76C600A8-C6E6-4CDA-8CE1-7959A936BB36"}
+ */
+function getPopupRendererForms() {
+	return popupRendererForms;
+}
+
+/**
+ * Sets the renderer form for the given formType
+ * @param {String} formType any of the RENDERER_FORMS
+ * @param {RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>} form the form to set
+ *
+ * @properties={typeid:24,uuid:"D64D95B4-75A2-43D7-8D2E-1DFDEBBD64E1"}
+ */
+function setPopupRendererForm(formType, form) {
+	popupRendererForms.setRendererForm(formType, form);
+}
+
 
 /**
  * @constructor
@@ -66,89 +99,126 @@ function getPopupUIFormRendered() {
  * @properties={typeid:24,uuid:"37935D63-8170-4771-AB8E-B448458A08E5"}
  * @AllowToRunInFind
  */
-function initPopupUIFormRendered() {
-	PopupUIFormRendered.prototype = Object.create(PopupUIFormRendered.prototype);
-	PopupUIFormRendered.prototype.constructor = PopupUIFormRendered;
+function initPopupRendererForms() {
+	PopupRendererForms.prototype = Object.create(PopupRendererForms.prototype);
+	PopupRendererForms.prototype.constructor = PopupRendererForms;
+	
+	/** 
+	 * Returns the renderer form for the given formType
+	 * @param {String} formType any of the RENDERER_FORMS
+	 * @return {RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>}
+	 * @public
+	 * @this {PopupRendererForms} 
+	 * */
+	PopupRendererForms.prototype.getRendererForm = function(formType) {
+		var result = this[formType];
+		return result;
+	}
+	
+	/** 
+	 * Sets the renderer form for the given formType
+	 * @param {String} formType any of the RENDERER_FORMS
+	 * @param {RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>} form the form to set
+	 * @return {PopupRendererForms}
+	 * @public
+	 * @this {PopupRendererForms} 
+	 * */
+	PopupRendererForms.prototype.setRendererForm = function(formType, form) {
+		this[formType] = form;
+		return this;
+	}	
 	
 	/** 
 	 * @return {RuntimeForm<AbstractPopupFilter>}
 	 * @public
-	 * @this {PopupUIFormRendered} 
+	 * @deprecated use getRendererForm(RENDERER_FORMS.DATE) instead
+	 * @this {PopupRendererForms} 
 	 * */
-	PopupUIFormRendered.prototype.getDateUIFormRendered = function() {
-		return this.datePopupFilterTemplate;
+	PopupRendererForms.prototype.getDateUIFormRendered = function() {
+		/** @type {RuntimeForm<AbstractPopupFilter>} */
+		var result = this.getRendererForm(RENDERER_FORMS.DATE);
+		return result;
 	}
 	
 	/** 
 	 * @param {RuntimeForm<AbstractPopupFilter>} form
 	 * @public
-	 * @return {PopupUIFormRendered}
-	 * @this {PopupUIFormRendered} 
+	 * @deprecated use setRendererForm(RENDERER_FORMS.DATE, form) instead
+	 * @return {PopupRendererForms}
+	 * @this {PopupRendererForms} 
 	 * */
-	PopupUIFormRendered.prototype.setDateUIFormRendered = function(form) {
-		this.datePopupFilterTemplate = form;
-		return this;
+	PopupRendererForms.prototype.setDateUIFormRendered = function(form) {
+		return this.setRendererForm(RENDERER_FORMS.DATE, form);
 	}
 	
 	/** 
 	 * @return {RuntimeForm<AbstractPopupFilter>}
 	 * @public
-	 * @this {PopupUIFormRendered} 
+	 * @deprecated use getRendererForm(RENDERER_FORMS.NUMBER) instead
+	 * @this {PopupRendererForms} 
 	 * */
-	PopupUIFormRendered.prototype.getNumberUIFormRendered = function() {
-		return this.numberPopupFilterTemplate;
+	PopupRendererForms.prototype.getNumberUIFormRendered = function() {
+		/** @type {RuntimeForm<AbstractPopupFilter>} */
+		var result = this.getRendererForm(RENDERER_FORMS.NUMBER);
+		return result;
 	}
 	
 	/** 
 	 * 
 	 * @param {RuntimeForm<AbstractPopupFilter>} form
 	 * @public
-	 * @return {PopupUIFormRendered}
-	 * @this {PopupUIFormRendered} 
+	 * @deprecated use setRendererForm(RENDERER_FORMS.DATE, form) instead
+	 * @return {PopupRendererForms}
+	 * @this {PopupRendererForms} 
 	 * */
-	PopupUIFormRendered.prototype.setNumberUIFormRendered = function(form) {
-		this.numberPopupFilterTemplate = form;
-		return this;
+	PopupRendererForms.prototype.setNumberUIFormRendered = function(form) {
+		return this.setRendererForm(RENDERER_FORMS.NUMBER, form);
 	}
 	
 	/** 
 	 * @return {RuntimeForm<AbstractPopupFilter>}
 	 * @public
-	 * @this {PopupUIFormRendered} 
+	 * @deprecated use getRendererForm(RENDERER_FORMS.TOKEN) instead
+	 * @this {PopupRendererForms} 
 	 * */
-	PopupUIFormRendered.prototype.getTokenUIFormRendered = function() {
-		return this.tokenPopupFilterTemplate;
+	PopupRendererForms.prototype.getTokenUIFormRendered = function() {
+		/** @type {RuntimeForm<AbstractPopupFilter>} */
+		var result = this.getRendererForm(RENDERER_FORMS.TOKEN);
+		return result;
 	}
 	
 	/** 
 	 * @param {RuntimeForm<AbstractPopupFilter>} form
 	 * @public
-	 * @return {PopupUIFormRendered}
-	 * @this {PopupUIFormRendered} 
+	 * @deprecated use setRendererForm(RENDERER_FORMS.TOKEN, form) instead
+	 * @return {PopupRendererForms}
+	 * @this {PopupRendererForms} 
 	 * */
-	PopupUIFormRendered.prototype.setTokenUIFormRendered = function(form) {
-		this.tokenPopupFilterTemplate = form;
-		return this;
+	PopupRendererForms.prototype.setTokenUIFormRendered = function(form) {
+		return this.setRendererForm(RENDERER_FORMS.TOKEN, form);
 	}
 	
 	/** 
 	 * @return {RuntimeForm<AbstractLookup>}
 	 * @public
-	 * @this {PopupUIFormRendered} 
+	 * @deprecated use getRendererForm(RENDERER_FORMS.SELECT) instead
+	 * @this {PopupRendererForms} 
 	 * */
-	PopupUIFormRendered.prototype.getSelectUIFormRendered = function() {
-		return this.selectFilterTemplate;
+	PopupRendererForms.prototype.getSelectUIFormRendered = function() {
+		/** @type {RuntimeForm<AbstractLookup>} */
+		var result = this.getRendererForm(RENDERER_FORMS.SELECT);
+		return result;
 	}
 	
 	/** 
 	 * @param {RuntimeForm<AbstractLookup>} form
 	 * @public
-	 * @return {PopupUIFormRendered}
-	 * @this {PopupUIFormRendered} 
+	 * @deprecated use setRendererForm(RENDERER_FORMS.TOKEN, form) instead
+	 * @return {PopupRendererForms}
+	 * @this {PopupRendererForms} 
 	 * */
-	PopupUIFormRendered.prototype.setSelectUIFormRendered = function(form) {
-		this.selectFilterTemplate = form;
-		return this;
+	PopupRendererForms.prototype.setSelectUIFormRendered = function(form) {
+		return this.setRendererForm(RENDERER_FORMS.SELECT, form);
 	}
 }
 
@@ -183,6 +253,12 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 	this.svyGridFilters = new SvyGridFilters(tableComponent);
 
 	/**
+	 * @protected 
+	 * @type {String}
+	 */
+	this.onFilterCreate = null;
+	
+	/**
 	 * @protected
 	 * @type {Function}
 	 */
@@ -198,6 +274,8 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 	// create filter
 }
 
+
+
 /**
  * Filter Toolbar implementation using the listcomponent from the custom-rendered-components package.
  * This implementation requires a "List Component" element and an "Data-Grid" element.
@@ -209,6 +287,8 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
  * @constructor
  * @param {RuntimeWebComponent<customrenderedcomponents-listcomponent>} listComponent
  * @param {RuntimeWebComponent<aggrid-groupingtable>} table
+ * 
+ * @deprecated use ListComponentFilterRenderer instead
  *
  * @extends {AbstractToolbarFilterUX}
  * @this {ListComponentFilterRender}
@@ -237,6 +317,48 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
  * @properties={typeid:24,uuid:"3DA99E05-2496-479B-BAEC-761249725BA3"}
  */
 function ListComponentFilterRender(listComponent, table) {
+	return new ListComponentFilterRenderer(listComponent, table);
+}
+
+/**
+ * Filter Toolbar implementation using the listcomponent from the custom-rendered-components package.
+ * This implementation requires a "List Component" element and an "Data-Grid" element.
+ * You should create a toolbar filter instance at the onLoad of your form and assign it to a form variable.
+ * The "List Component" must have it's 'foundset' property set to '-none-'.
+ * Make sure to re-direct the onClick event of the "List Component" to the toolbar.onClick(entry, index, dataTarget, event);
+ * 
+ * 
+ * @constructor
+ * @param {RuntimeWebComponent<customrenderedcomponents-listcomponent>} listComponent
+ * @param {RuntimeWebComponent<aggrid-groupingtable>} table
+ *
+ * @extends {AbstractToolbarFilterUX}
+ * @this {ListComponentFilterRenderer}
+ * @public
+ * @example <pre>
+ * //keep track of toolbarFilter object in a form variable
+ * var toolbarFilter;
+ * 
+ * //init the toolbarFilter at the onLoad.
+ * function onLoad(event) {
+ *  toolbarFilter = new scopes.svyToolbarFilter.ListComponentFilterRenderer(elements.filterToolbar, elements.table)
+ * }
+ * 
+ * //propagate the onClick event of the "List Component" to the toolbar filter.
+ * function onClick(entry, index, dataTarget, event) {
+ *  toolbarFilter.onClick(entry,index,dataTarget,event);
+ * }
+ * 
+ * //optionally set a searchText for a cross-field search to further filter the result set
+ * function search() {
+ *  toolbarFilter.setSearchText(searchText);
+ *  toolbarFilter.search();
+ * }
+ * </pre>
+ * 
+ * @properties={typeid:24,uuid:"16037133-4377-4EB0-887F-D35F697B9ABA"}
+ */
+function ListComponentFilterRenderer(listComponent, table) {
 	if (!listComponent) {
 		throw 'listComponent element is required';
 	}
@@ -276,12 +398,11 @@ function ListComponentFilterRender(listComponent, table) {
 	// set default template
 	if (listComponent.foundset) {
 		// TODO use logger
-		application.output('ListComponentFilterRender "List Compoenent" should have the foundset property set to "-none-"; Setting the foundset for the "List Component" {' + listComponent.getName() +'} to "-none-"', LOGGINGLEVEL.WARNING)
 		listComponent.foundset = null;
 	}
 	listComponent.entryRendererFunc = this.getRenderTemplate();
 	listComponent.addStyleClass("svy-toolbar-filter")
-	
+	listComponent.clear();
 }
 
 /**
@@ -320,8 +441,6 @@ function SvyGridFilters(table) {
 	/**
 	 * @protected
 	 * @type {scopes.svySearch.SimpleSearch}
-	 * 
-	 * @this {SvyGridFilters}
 	 */
 	this.simpleSearch = this.getDefaultSearch();
 	
@@ -463,7 +582,9 @@ function getFilterQuery(filters, foundset) {
 		if (useIgnoreCase != false) {
 			whereClause = whereClause["lower"];
 			if (value instanceof String) {
-				value = value.toLowerCase();
+				/** @type {String} */
+				var valueString = value;
+				value = valueString.toLowerCase();
 			} else if (value instanceof Array) {
 				// Clean up values from empty values
 				value = value.map(function(v) {
@@ -594,7 +715,7 @@ function initSvyGridFilters() {
 	/** 
 	 * @param {CustomType<aggrid-groupingtable.column>} column
 	 * @public
-	 * @return {SearchProvider}
+	 * @return {scopes.svySearch.SearchProvider}
 	 *
 	 * @this {SvyGridFilters}
 	 *  */
@@ -761,7 +882,8 @@ function initSvyGridFilters() {
 				operator: filter.getOperator(),
 				text: filter.getText(),
 				values: filter.getValues(),
-				constructor: filter.constructor})
+				constructor: filter.constructor
+			})
 		}
 		
 		return jsonState;
@@ -980,6 +1102,21 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * Allows to provide a method that will be called when the filter for a specific column is created<br>
+	 * That method then can create and return any filter that will then be used for this column
+	 * 
+	 * @public
+	 * @param {function(CustomType<aggrid-groupingtable.column>): scopes.svyPopupFilter.AbstractPopupFilter} callback function that receives an aggrid-groupingtable Column as argument and must return a scopes.svyPopupFilter.AbstractPopupFilter
+	 * @return {AbstractToolbarFilterUX}
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.setOnFilterCreate = function(callback) {
+		this.onFilterCreate = scopes.svySystem.convertServoyMethodToQualifiedName(callback);
+		return this;
+	}	
+	
+	/**
 	 * @public
 	 * @param {function(Array, String, scopes.svyPopupFilter.AbstractPopupFilter)} callback
 	 * 
@@ -1050,11 +1187,13 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
-	 * @public 
+	 * Clears all grid filters
+	 * 
+	 * @public
 	 * @return {Boolean}
 	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.clearGridFilters = function() {
 		throw scopes.svyExceptions.AbstractMethodInvocationException("clearGridFilters not implemented")
 	}
@@ -1197,7 +1336,7 @@ function initAbstractToolbarFilterUX() {
 	/** 
 	 * @param {CustomType<aggrid-groupingtable.column>} column
 	 * @public
-	 * @return {SearchProvider}
+	 * @return {scopes.svySearch.SearchProvider}
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
@@ -1253,16 +1392,30 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype.getOrCreateToolbarFilter = function(column) {
 		/** @type {scopes.svyPopupFilter.AbstractPopupFilter}  */
 		var filter = this.svyGridFilters.getGridFilter(column);
+		
+		if (!filter && this.onFilterCreate) {
+			filter = scopes.svySystem.callMethod(this.onFilterCreate, [column]);
+			if (filter) {
+				// include this as param
+				filter.addParam(this);
+				// set filter's dataprovider
+				filter.setDataProvider(column.dataprovider);
+				// persist the filter in memory
+				this.svyGridFilters.addGridFilter(column, filter);
+			}
+		}
+		
 		if (!filter) {
-			
-			var popupTemplates = getPopupUIFormRendered();
+			var popupTemplates = getPopupRendererForms();
 			
 			if (column.valuelist) {
 				// will be a lookup form
 				// number picker
 				// calendar picker
 				var lookup = scopes.svyLookup.createValuelistLookup(column.valuelist);
-				lookup.setLookupFormProvider(popupTemplates.getSelectUIFormRendered());
+				/** @type {RuntimeForm<AbstractLookup>} */
+				var lookupForm = popupTemplates.getRendererForm(RENDERER_FORMS.SELECT)
+				lookup.setLookupFormProvider(lookupForm);
 				lookup.setHeader("");
 				filter = scopes.svyPopupFilter.createSelectFilter(column.dataprovider, lookup);
 			} else {
@@ -1270,18 +1423,18 @@ function initAbstractToolbarFilterUX() {
 				switch (column.filterType) {
 				case 'TEXT':
 					filter = scopes.svyPopupFilter.createTokenFilter();
-					filter.setUIFormRendered(popupTemplates.getTokenUIFormRendered());
+					filter.setRendererForm(popupTemplates.getRendererForm(RENDERER_FORMS.TOKEN));
 					break;
 				case 'NUMBER':
 					// number picker
 					// calendar picker
 					filter = scopes.svyPopupFilter.createNumberFilter();
-					filter.setUIFormRendered(popupTemplates.getNumberUIFormRendered());
+					filter.setRendererForm(popupTemplates.getRendererForm(RENDERER_FORMS.NUMBER));
 					break;
 				case 'DATE':
 					// calendar picker
 					filter = scopes.svyPopupFilter.createDateFilter();
-					filter.setUIFormRendered(popupTemplates.getDateUIFormRendered());
+					filter.setRendererForm(popupTemplates.getRendererForm(RENDERER_FORMS.DATE));
 					break;
 				default:
 					break;
@@ -1448,17 +1601,17 @@ function onFilterPopupMenuClicked(itemIndex, parentIndex, isSelected, parentText
  * @private
  * @properties={typeid:24,uuid:"C7D04E91-D3C9-42D0-8837-7F1AFE0FF731"}
  */
-function initListComponentFilterRender() {
-	ListComponentFilterRender.prototype = Object.create(AbstractToolbarFilterUX.prototype);
-	ListComponentFilterRender.prototype.constructor = ListComponentFilterRender;
+function initListComponentFilterRenderer() {
+	ListComponentFilterRenderer.prototype = Object.create(AbstractToolbarFilterUX.prototype);
+	ListComponentFilterRenderer.prototype.constructor = ListComponentFilterRenderer;
 
 	/**
 	 * @public
 	 * @return {RuntimeWebComponent<customrenderedcomponents-listcomponent>}
 	 *
-	 * @this {ListComponentFilterRender}
+	 * @this {ListComponentFilterRenderer}
 	 *  */
-	ListComponentFilterRender.prototype.getElement = function() {
+	ListComponentFilterRenderer.prototype.getElement = function() {
 		var form = forms[this.formName];
 		/** @type {RuntimeWebComponent<customrenderedcomponents-listcomponent>} */
 		var listComponent = form.elements[this.elementName];
@@ -1469,19 +1622,22 @@ function initListComponentFilterRender() {
 	 * @protected
 	 * @return {String}
 	 *
-	 * @this {ListComponentFilterRender}
+	 * @this {ListComponentFilterRenderer}
 	 *  */
-	ListComponentFilterRender.prototype.getRenderTemplate = function() {
-		return "(function renderFilterEntry(entry) {  var template = '';\
-		var strDivider = ' : ';\
-		template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \
-		'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + strDivider + entry.value\">' + \
-		'<span class=\"\">' + entry.text + '</span>' + \
-		'<span class=\"font-weight-bold\"> ' + entry.value + ' </span>' + \
-		'<span class=\"fas fa-angle-down\">' + '</span>' + '</button>' + \
-		'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"close\">' + \
-		'<span class=\"fas fa-times text-danger h6\">' + '</span>' + '</button>' + '</div>'; \
-		return template; })";
+	ListComponentFilterRenderer.prototype.getRenderTemplate = function() {
+		return "(function renderFilterEntry(entry) {  \n\
+			var template = '';\n\
+			var strDivider = ' : ';\n\
+			template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \n\
+			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + strDivider + entry.value\">' + \n\
+				'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
+				'<span class=\"toolbar-filter-tag-value\"> ' + entry.value.split(',').join(', ') + ' </span>' + \n\
+				'<span class=\"toolbar-filter-tag-icon fas fa-angle-down\">' + '</span>' + \n\
+			'</button>' + \n\
+			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"close\">' + \n\
+			'<span class=\"fas fa-times text-danger h6\">' + '</span>' + '</button>' + '</div>'; \n\
+			return template; \n\
+		})";
 	}
 	
 	
@@ -1491,9 +1647,9 @@ function initListComponentFilterRender() {
 	 * @param {object} entry
 	 * @return {String}
 	 * @protected
-	 * @this {ListComponentFilterRender}
+	 * @this {ListComponentFilterRenderer}
 	 *  */
-	ListComponentFilterRender.prototype.getDataProvider = function(entry) {
+	ListComponentFilterRenderer.prototype.getDataProvider = function(entry) {
 		return entry['dataprovider'];
 	}
 	
@@ -1506,9 +1662,9 @@ function initListComponentFilterRender() {
 	 * @param {JSEvent} event
 	 *  
 	 * @public
-	 * @this {ListComponentFilterRender}
+	 * @this {ListComponentFilterRenderer}
 	 *  */
-	ListComponentFilterRender.prototype.onClick = function(entry, index, dataTarget, event) {
+	ListComponentFilterRenderer.prototype.onClick = function(entry, index, dataTarget, event) {
 		var column = this.svyGridFilters.getColumn(this.getDataProvider(entry));
 
 		if (!dataTarget || dataTarget == "open") {
@@ -1530,9 +1686,9 @@ function initListComponentFilterRender() {
 	 * @param {CustomType<aggrid-groupingtable.column>} column
 	 *
 	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
-	 * @this {ListComponentFilterRender}
+	 * @this {ListComponentFilterRenderer}
 	 */
-	ListComponentFilterRender.prototype.addGridFilter = function(column) {
+	ListComponentFilterRenderer.prototype.addGridFilter = function(column) {
 		var newFilter = this.getElement().newEntry();
 		newFilter.text = column.headerTitle;
 		newFilter.dataprovider = column.dataprovider;
@@ -1561,9 +1717,9 @@ function initListComponentFilterRender() {
 	 * @param {CustomType<aggrid-groupingtable.column>} column
 	 *
 	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
-	 * @this {ListComponentFilterRender}
+	 * @this {ListComponentFilterRenderer}
 	 */
-	ListComponentFilterRender.prototype.removeGridFilter = function(column) {
+	ListComponentFilterRenderer.prototype.removeGridFilter = function(column) {
 		var index = this.getFilterTagIndex(column);
 		if (index > -1) {
 			this.getElement().removeEntry(index);
@@ -1594,9 +1750,9 @@ function initListComponentFilterRender() {
 	 * @param {Array} displayValues
 	 *
 	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
-	 * @this {ListComponentFilterRender}
+	 * @this {ListComponentFilterRenderer}
 	 */
-	ListComponentFilterRender.prototype.updateGridFilter = function(dataprovider, displayValues) {
+	ListComponentFilterRenderer.prototype.updateGridFilter = function(dataprovider, displayValues) {
 		var index;
 		var element = this.getElement();
 		var count = element.getEntriesCount();
@@ -1636,9 +1792,9 @@ function initListComponentFilterRender() {
 	 * @public
 	 *
 	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
-	 * @this {ListComponentFilterRender}
+	 * @this {ListComponentFilterRenderer}
 	 */
-	ListComponentFilterRender.prototype.clearGridFilters = function() {
+	ListComponentFilterRenderer.prototype.clearGridFilters = function() {
 		this.getElement().clear();
 		this.svyGridFilters.clearGridFilters();
 		
@@ -1652,9 +1808,9 @@ function initListComponentFilterRender() {
 	 * @protected
 	 * @return {Boolean}
 	 *
-	 * @this {ListComponentFilterRender}
+	 * @this {ListComponentFilterRenderer}
 	 *  */
-	ListComponentFilterRender.prototype.hasActiveFilter = function(column) {
+	ListComponentFilterRenderer.prototype.hasActiveFilter = function(column) {
 		return this.getFilterTagIndex(column) > -1 ? true : false;
 	}
 
@@ -1665,9 +1821,9 @@ function initListComponentFilterRender() {
 	 * @return {Number}
 	 *
 	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
-	 * @this {ListComponentFilterRender}
+	 * @this {ListComponentFilterRenderer}
 	 */
-	ListComponentFilterRender.prototype.getFilterTagIndex = function(column) {
+	ListComponentFilterRenderer.prototype.getFilterTagIndex = function(column) {
 		var count = this.getElement().getEntriesCount();
 		for (var i = 0; i < count; i++) {
 			var filterTag = this.getElement().getEntry(i);
@@ -1687,9 +1843,9 @@ function initListComponentFilterRender() {
  * @properties={typeid:35,uuid:"FE4768E2-C48C-4BBE-B6B1-30CCC1194975",variableType:-4}
  */
 var init = (function() {
-	initPopupUIFormRendered();
-	popupUIFormRendered = new PopupUIFormRendered();
+	initPopupRendererForms();
+	popupRendererForms = new PopupRendererForms();
 	initSvyGridFilters();
 	initAbstractToolbarFilterUX();
-	initListComponentFilterRender();
+	initListComponentFilterRenderer();
 }());

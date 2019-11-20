@@ -206,3 +206,14 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 .svy-toolbar-filter .toolbar-filter-tag {
 	display: inline-flex;
 }
+
+.svy-toolbar-filter .toolbar-filter-tag-text {
+}
+
+.svy-toolbar-filter .toolbar-filter-tag-text {
+	font-weight: bold;
+}
+
+.svy-toolbar-filter .toolbar-filter-tag-icon {
+	margin-left: 5px;
+}
