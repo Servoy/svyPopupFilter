@@ -876,20 +876,14 @@ function initSvyGridFilters() {
 		for (var dp in this.toolbarFilters) {
 			var filter = this.toolbarFilters[dp];
 			
-			jsonState.push({
-				id: filter.getID(),
-				dataprovider: filter.getDataProvider(),
-				operator: filter.getOperator(),
-				text: filter.getText(),
-				values: filter.getValues(),
-				constructor: filter.constructor
-			})
+			jsonState.push(filter.getState())
 		}
 		
 		return jsonState;
 	}
 
 	/**
+	 * @deprecated this function doesnt't work and is not used
 	 * @public 
 	 * @param {Array<{
 				id: String,
@@ -918,11 +912,7 @@ function initSvyGridFilters() {
 				
 				// FIXME check filter type
 				var filter = new scopes.svyPopupFilter.SvyTokenFilter();
-				
-				filter.setDataProvider(obj.dataprovider);
-				filter.setOperator(obj.operator);
-				filter.setText(obj.text);
-				filter.setValues(obj.values);
+				filter.restoreState(obj);
 			
 				this.addGridFilter(column,filter);
 			}
@@ -1298,7 +1288,9 @@ function initAbstractToolbarFilterUX() {
 			}
 
 			// set the filter again
-			this.setFilterValue(column, values, obj.operator)
+			this.setFilterValue(column, values, obj.operator);
+			var filter = this.getOrCreateToolbarFilter(column);
+			filter.restoreState(obj);
 		}
 	}
 	

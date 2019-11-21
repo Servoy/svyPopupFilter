@@ -539,6 +539,58 @@ function initAbstractPopupFilter() {
 	}
 	
 	/**
+	 * @public 
+	 * @return {{
+				id: String,
+				dataprovider: String,
+				operator: String,
+				params: Object,
+				text: String,
+				values: Array}}
+	 *
+	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * @this {AbstractPopupFilter}
+	 */
+	AbstractPopupFilter.prototype.getState = function() {
+
+		var filter = this
+
+		var jsonState = {
+			id: filter.getID(),
+			dataprovider: filter.getDataProvider(),
+			operator: filter.getOperator(),
+			text: filter.getText(),
+			values: filter.getValues(),
+			constructor: filter.constructor
+		}
+		return jsonState;
+	}
+	
+	/**
+	 * @public 
+	 * @param {{
+				id: String,
+				dataprovider: String,
+				operator: String,
+				params: Object,
+				text: String,
+				values: Array}} jsonState
+	 * @return {AbstractPopupFilter}
+	 *
+	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * @this {AbstractPopupFilter}
+	 */
+	AbstractPopupFilter.prototype.restoreState = function(jsonState) {
+
+		var filter = this;
+		filter.setDataProvider(jsonState.dataprovider);
+		filter.setOperator(jsonState.operator);
+		filter.setText(jsonState.text);
+		filter.setValues(jsonState.values);
+		return this;
+	}
+	
+	/**
 	 * @return {RuntimeForm<AbstractPopupFilter>}
 	 * @this {AbstractPopupFilter}
 	 * @protected 
@@ -695,6 +747,55 @@ function initSvyTokenFilter() {
 function initSvySelectFilter() {
 	SvySelectFilter.prototype = Object.create(AbstractPopupFilter.prototype);
 	SvySelectFilter.prototype.constructor = SvySelectFilter;
+	
+	
+	/**
+	 * @public 
+	 * @return {{
+				id: String,
+				dataprovider: String,
+				operator: String,
+				params: Object,
+				text: String,
+				values: Array}}
+	 *
+	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * @this {SvySelectFilter}
+	 */
+	SvySelectFilter.prototype.getState = function() {
+
+		// TODO Fixme: return pks
+		var jsonState = AbstractPopupFilter.prototype.getState();
+		var lookup = this.lookup;
+		jsonState.lookupSelectedRecords = lookup.getSelectedRecords();
+		
+		
+		return jsonState;
+	}
+	
+	/**
+	 * @public 
+	 * @param {{
+				id: String,
+				dataprovider: String,
+				operator: String,
+				params: Object,
+				text: String,
+				values: Array}} jsonState
+	 * @return {AbstractPopupFilter}
+	 *
+	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * @this {SvySelectFilter}
+	 */
+	SvySelectFilter.prototype.restoreState = function(jsonState) {
+
+		AbstractPopupFilter.prototype.restoreState(jsonState);
+		if (jsonState.lookupSelectedRecords) {
+			// FIXME restore the state for a valuelist
+			// this.lookup.setSelectedRecords(jsonState.lookupSelectedRecords);
+		}
+		return this;
+	}
 	
 	/**
 	 * @public
