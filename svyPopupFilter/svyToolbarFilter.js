@@ -2,7 +2,7 @@
  * Enum of all renderer form types available
  * @properties={typeid:35,uuid:"E4F70004-F7BE-4806-AC3C-F727EC06AF8F",variableType:-4}
  */
-var RENDERER_FORMS = {
+var FILTER_TYPES = {
 	DATE: 'datePopupFilterTemplate',
 	NUMBER: 'numberPopupFilterTemplate',
 	TOKEN: 'tokenPopupFilterTemplate',
@@ -82,8 +82,9 @@ function getPopupRendererForms() {
 }
 
 /**
+ * @public 
  * Sets the renderer form for the given formType
- * @param {String} formType any of the RENDERER_FORMS
+ * @param {String} formType any of the FILTER_TYPES
  * @param {RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>} form the form to set
  *
  * @properties={typeid:24,uuid:"D64D95B4-75A2-43D7-8D2E-1DFDEBBD64E1"}
@@ -105,7 +106,7 @@ function initPopupRendererForms() {
 	
 	/** 
 	 * Returns the renderer form for the given formType
-	 * @param {String} formType any of the RENDERER_FORMS
+	 * @param {String} formType any of the FILTER_TYPES
 	 * @return {RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>}
 	 * @public
 	 * @this {PopupRendererForms} 
@@ -117,7 +118,7 @@ function initPopupRendererForms() {
 	
 	/** 
 	 * Sets the renderer form for the given formType
-	 * @param {String} formType any of the RENDERER_FORMS
+	 * @param {String} formType any of the FILTER_TYPES
 	 * @param {RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>} form the form to set
 	 * @return {PopupRendererForms}
 	 * @public
@@ -131,35 +132,35 @@ function initPopupRendererForms() {
 	/** 
 	 * @return {RuntimeForm<AbstractPopupFilter>}
 	 * @public
-	 * @deprecated use getRendererForm(RENDERER_FORMS.DATE) instead
+	 * @deprecated use getRendererForm(FILTER_TYPES.DATE) instead
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.getDateUIFormRendered = function() {
 		/** @type {RuntimeForm<AbstractPopupFilter>} */
-		var result = this.getRendererForm(RENDERER_FORMS.DATE);
+		var result = this.getRendererForm(FILTER_TYPES.DATE);
 		return result;
 	}
 	
 	/** 
 	 * @param {RuntimeForm<AbstractPopupFilter>} form
 	 * @public
-	 * @deprecated use setRendererForm(RENDERER_FORMS.DATE, form) instead
+	 * @deprecated use setRendererForm(FILTER_TYPES.DATE, form) instead
 	 * @return {PopupRendererForms}
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.setDateUIFormRendered = function(form) {
-		return this.setRendererForm(RENDERER_FORMS.DATE, form);
+		return this.setRendererForm(FILTER_TYPES.DATE, form);
 	}
 	
 	/** 
 	 * @return {RuntimeForm<AbstractPopupFilter>}
 	 * @public
-	 * @deprecated use getRendererForm(RENDERER_FORMS.NUMBER) instead
+	 * @deprecated use getRendererForm(FILTER_TYPES.NUMBER) instead
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.getNumberUIFormRendered = function() {
 		/** @type {RuntimeForm<AbstractPopupFilter>} */
-		var result = this.getRendererForm(RENDERER_FORMS.NUMBER);
+		var result = this.getRendererForm(FILTER_TYPES.NUMBER);
 		return result;
 	}
 	
@@ -167,58 +168,58 @@ function initPopupRendererForms() {
 	 * 
 	 * @param {RuntimeForm<AbstractPopupFilter>} form
 	 * @public
-	 * @deprecated use setRendererForm(RENDERER_FORMS.DATE, form) instead
+	 * @deprecated use setRendererForm(FILTER_TYPES.DATE, form) instead
 	 * @return {PopupRendererForms}
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.setNumberUIFormRendered = function(form) {
-		return this.setRendererForm(RENDERER_FORMS.NUMBER, form);
+		return this.setRendererForm(FILTER_TYPES.NUMBER, form);
 	}
 	
 	/** 
 	 * @return {RuntimeForm<AbstractPopupFilter>}
 	 * @public
-	 * @deprecated use getRendererForm(RENDERER_FORMS.TOKEN) instead
+	 * @deprecated use getRendererForm(FILTER_TYPES.TOKEN) instead
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.getTokenUIFormRendered = function() {
 		/** @type {RuntimeForm<AbstractPopupFilter>} */
-		var result = this.getRendererForm(RENDERER_FORMS.TOKEN);
+		var result = this.getRendererForm(FILTER_TYPES.TOKEN);
 		return result;
 	}
 	
 	/** 
 	 * @param {RuntimeForm<AbstractPopupFilter>} form
 	 * @public
-	 * @deprecated use setRendererForm(RENDERER_FORMS.TOKEN, form) instead
+	 * @deprecated use setRendererForm(FILTER_TYPES.TOKEN, form) instead
 	 * @return {PopupRendererForms}
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.setTokenUIFormRendered = function(form) {
-		return this.setRendererForm(RENDERER_FORMS.TOKEN, form);
+		return this.setRendererForm(FILTER_TYPES.TOKEN, form);
 	}
 	
 	/** 
 	 * @return {RuntimeForm<AbstractLookup>}
 	 * @public
-	 * @deprecated use getRendererForm(RENDERER_FORMS.SELECT) instead
+	 * @deprecated use getRendererForm(FILTER_TYPES.SELECT) instead
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.getSelectUIFormRendered = function() {
 		/** @type {RuntimeForm<AbstractLookup>} */
-		var result = this.getRendererForm(RENDERER_FORMS.SELECT);
+		var result = this.getRendererForm(FILTER_TYPES.SELECT);
 		return result;
 	}
 	
 	/** 
 	 * @param {RuntimeForm<AbstractLookup>} form
 	 * @public
-	 * @deprecated use setRendererForm(RENDERER_FORMS.TOKEN, form) instead
+	 * @deprecated use setRendererForm(FILTER_TYPES.TOKEN, form) instead
 	 * @return {PopupRendererForms}
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.setSelectUIFormRendered = function(form) {
-		return this.setRendererForm(RENDERER_FORMS.SELECT, form);
+		return this.setRendererForm(FILTER_TYPES.SELECT, form);
 	}
 }
 
@@ -260,9 +261,15 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 	
 	/**
 	 * @protected
-	 * @type {Function}
+	 * @type {function(Array, String, scopes.svyPopupFilter.AbstractPopupFilter)}
 	 */
 	this.onFilterApplyEvent = null;
+	
+	/**
+	 * @protected
+	 * @type {function()}
+	 */
+	this.onFilterRemovedEvent = null;
 	// TODO allow the form to implement such funcitonalities
 
 	// update grid filter
@@ -1120,6 +1127,19 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * @public
+	 * @param {function()} callback
+	 * 
+	 * @return {AbstractToolbarFilterUX}
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.setOnFilterRemovedEvent = function(callback) {
+		this.onFilterRemovedEvent = callback;
+		return this;
+	}
+	
+	/**
 	 * Set the onSearchCommand function to override the search behavior.
 	 * You can add custom conditions to the filter query object;
 	 * 
@@ -1381,9 +1401,21 @@ function initAbstractToolbarFilterUX() {
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
-	AbstractToolbarFilterUX.prototype.getOrCreateToolbarFilter = function(column) {
+	AbstractToolbarFilterUX.prototype.getFilter = function(column) {
 		/** @type {scopes.svyPopupFilter.AbstractPopupFilter}  */
 		var filter = this.svyGridFilters.getGridFilter(column);
+		return filter;
+	}
+	
+	/**
+	 * @protected 
+	 * @param {CustomType<aggrid-groupingtable.column>} column
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.getOrCreateToolbarFilter = function(column) {
+		/** @type {scopes.svyPopupFilter.AbstractPopupFilter}  */
+		var filter = this.getFilter(column);
 		
 		if (!filter && this.onFilterCreate) {
 			filter = scopes.svySystem.callMethod(this.onFilterCreate, [column]);
@@ -1406,7 +1438,7 @@ function initAbstractToolbarFilterUX() {
 				// calendar picker
 				var lookup = scopes.svyLookup.createValuelistLookup(column.valuelist);
 				/** @type {RuntimeForm<AbstractLookup>} */
-				var lookupForm = popupTemplates.getRendererForm(RENDERER_FORMS.SELECT)
+				var lookupForm = popupTemplates.getRendererForm(FILTER_TYPES.SELECT)
 				lookup.setLookupFormProvider(lookupForm);
 				lookup.setHeader("");
 				filter = scopes.svyPopupFilter.createSelectFilter(column.dataprovider, lookup);
@@ -1415,18 +1447,18 @@ function initAbstractToolbarFilterUX() {
 				switch (column.filterType) {
 				case 'TEXT':
 					filter = scopes.svyPopupFilter.createTokenFilter();
-					filter.setRendererForm(popupTemplates.getRendererForm(RENDERER_FORMS.TOKEN));
+					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.TOKEN));
 					break;
 				case 'NUMBER':
 					// number picker
 					// calendar picker
 					filter = scopes.svyPopupFilter.createNumberFilter();
-					filter.setRendererForm(popupTemplates.getRendererForm(RENDERER_FORMS.NUMBER));
+					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.NUMBER));
 					break;
 				case 'DATE':
 					// calendar picker
 					filter = scopes.svyPopupFilter.createDateFilter();
-					filter.setRendererForm(popupTemplates.getRendererForm(RENDERER_FORMS.DATE));
+					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.DATE));
 					break;
 				default:
 					break;
@@ -1733,6 +1765,11 @@ function initListComponentFilterRenderer() {
 			}
 			
 		}
+	
+		// on filter removed event
+		if (this.onFilterRemovedEvent) {
+			this.onFilterRemovedEvent.call();
+		}
 			
 	}
 
@@ -1793,6 +1830,11 @@ function initListComponentFilterRenderer() {
 		// if has no filters
 		var element = this.getElement();
 		element.removeStyleClass('has-filter');
+		
+		// on filter removed event
+		if (this.onFilterRemovedEvent) {
+			this.onFilterRemovedEvent.call();
+		}
 	}
 
 	/**
