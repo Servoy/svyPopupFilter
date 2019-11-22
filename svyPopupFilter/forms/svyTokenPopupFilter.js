@@ -15,7 +15,7 @@ var searchText = null;
 function onLoad(event) {
 	var renderFunction = "(" + scopes.svySystem.printMethodCode(renderFilterEntry).join("") + ")";
 
-	elements.listTags.entryRendererFunc = renderFunction;
+	elements.listTags.entryRendererFunction = renderFunction;
 	
 	_super.onLoad(event);
 }
