@@ -61,7 +61,6 @@ function PopupRendererForms() {
 	this.selectFilterTemplate = forms.svySelectPopupFilter;
 }
 
-
 /**
  * @return {PopupRendererForms}
  * @public 
@@ -92,7 +91,6 @@ function getPopupRendererForms() {
 function setPopupRendererForm(formType, form) {
 	popupRendererForms.setRendererForm(formType, form);
 }
-
 
 /**
  * @constructor
@@ -336,7 +334,7 @@ function ListComponentFilterRender(listComponent, table) {
  * 
  * 
  * @constructor
- * @param {RuntimeWebComponent<customrenderedcomponents-listcomponent>} listComponent
+ * @param {RuntimeWebComponent<customrenderedcomponents-customlist>} listComponent
  * @param {RuntimeWebComponent<aggrid-groupingtable>} table
  *
  * @extends {AbstractToolbarFilterUX}
@@ -374,8 +372,8 @@ function ListComponentFilterRenderer(listComponent, table) {
 		throw 'table element is required';
 	}
 	
-	if (listComponent.getElementType() != "customrenderedcomponents-listcomponent") {
-		throw "The given listComponent element should be an element of type customrenderedcomponents-listcomponent; check the 'List Component' from the custom-rendered-components package";
+	if (listComponent.getElementType() != "customrenderedcomponents-listcomponent" && listComponent.getElementType() != "customrenderedcomponents-customlist") {
+		throw "The given listComponent element should be an element of type customrenderedcomponents-customlist; check the 'Custom List' from the Custom Rendered Components package";
 	}
 	
 	if (table.getElementType() != "aggrid-groupingtable") {
@@ -401,13 +399,9 @@ function ListComponentFilterRenderer(listComponent, table) {
 	 * @type {SvyGridFilters}
 	 */
 	this.svyGridFilters = new SvyGridFilters(table);
-
-	// set default template
-	if (listComponent.foundset) {
-		// TODO use logger
-		listComponent.foundset = null;
-	}
-	listComponent.entryRendererFunc = this.getRenderTemplate();
+	//TODO: remove when old list component has finally disappeared
+	listComponent['entryRendererFunc'] = this.getRenderTemplate();
+	listComponent.entryRendererFunction = this.getRenderTemplate();
 	listComponent.addStyleClass("svy-toolbar-filter")
 	listComponent.clear();
 }
@@ -1062,17 +1056,17 @@ function initSvyGridFilters() {
 
 		// quick search
 		var searchQuery = this.getQuery();
-		
+
 		// if on search command
 		if (this.onSearchCommand) {
 			this.onSearchCommand.call(this, searchQuery, foundset);
 		} else {
-			foundset.loadRecords(searchQuery);
-			// TODO remove output
-			application.output(databaseManager.getSQL(foundset));
-			application.output(databaseManager.getSQLParameters(foundset));
-		}
+		foundset.loadRecords(searchQuery);
+		// TODO remove output
+		application.output(databaseManager.getSQL(foundset));
+		application.output(databaseManager.getSQLParameters(foundset));
 	}
+}
 }
 
 /**
@@ -1765,7 +1759,7 @@ function initListComponentFilterRenderer() {
 			}
 			
 		}
-	
+			
 		// on filter removed event
 		if (this.onFilterRemovedEvent) {
 			this.onFilterRemovedEvent.call();
