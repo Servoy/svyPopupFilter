@@ -582,7 +582,7 @@ function getFilterQuery(filters, foundset) {
 			break;
 		}
 
-		// /** @type {QBCondition} */
+		/** @type {QBSelect|QBWhereCondition} */
 		var whereClause = null;
 		var aDP = dp.split('.');
 		for (var j = 0; j < aDP.length - 1; j++) {
