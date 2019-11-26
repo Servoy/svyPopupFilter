@@ -267,7 +267,14 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 	 * @protected
 	 * @type {String}
 	 */
+	this.onFilterAddedEvent = null;	
+	
+	/**
+	 * @protected
+	 * @type {String}
+	 */
 	this.onFilterRemovedEvent = null;
+	
 	// TODO allow the form to implement such funcitonalities
 
 	// update grid filter
@@ -320,20 +327,21 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
  * </pre>
  * 
  * @properties={typeid:24,uuid:"3DA99E05-2496-479B-BAEC-761249725BA3"}
+ * @SuppressWarnings(wrongparameters)
  */
 function ListComponentFilterRender(listComponent, table) {
 	return new ListComponentFilterRenderer(listComponent, table);
 }
 
 /**
- * Filter Toolbar implementation using the listcomponent from the custom-rendered-components package.
+ * Filter Toolbar implementation using the custom list from the custom-rendered-components package.
  * This implementation requires a "List Component" element and an "Data-Grid" element.
  * You should create a toolbar filter instance at the onLoad of your form and assign it to a form variable.
  * The "List Component" must have it's 'foundset' property set to '-none-'.
  * Make sure to re-direct the onClick event of the "List Component" to the toolbar.onClick(entry, index, dataTarget, event);
  * 
- * 
  * @constructor
+ * 
  * @param {RuntimeWebComponent<customrenderedcomponents-customlist>|RuntimeWebComponent<customrenderedcomponents-customlist_abs>} listComponent
  * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} table
  *
@@ -399,24 +407,29 @@ function ListComponentFilterRenderer(listComponent, table) {
 	 * @type {SvyGridFilters}
 	 */
 	this.svyGridFilters = new SvyGridFilters(table);
+	
 	//TODO: remove when old list component has finally disappeared
 	if (listComponent.getElementType() == "customrenderedcomponents-listcomponent") {
 		listComponent['entryRendererFunc'] = this.getRenderTemplate();
 	} else {
 		listComponent.entryRendererFunction = this.getRenderTemplate();
 	}
+	
 	listComponent.addStyleClass("svy-toolbar-filter")
 	listComponent.clear();
 }
 
 /**
  * @protected  
- * @param {RuntimeWebComponent<aggrid-groupingtable>} table
+ * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} table
  * @constructor
  * @properties={typeid:24,uuid:"A6E91332-3686-48ED-9D89-5B07B0925132"}
  * @AllowToRunInFind
  */
 function SvyGridFilters(table) {
+	
+	/** @type {SvyGridFilters} */
+	var thisInstance = this;
 
 	/**
 	 * @protected
@@ -446,7 +459,7 @@ function SvyGridFilters(table) {
 	 * @protected
 	 * @type {scopes.svySearch.SimpleSearch}
 	 */
-	this.simpleSearch = this.getDefaultSearch();
+	this.simpleSearch = thisInstance.getDefaultSearch();
 	
 	/**
 	 * @protected
@@ -929,7 +942,7 @@ function initSvyGridFilters() {
 	 *
 	 * @this {SvyGridFilters}
 	 *  */
-	SvyGridFilters.prototype.getColumn = function (dataprovider) {
+	SvyGridFilters.prototype.getColumn = function(dataprovider) {
 		var columns = this.getTable().columns;
 		for (var i = 0; i < columns.length; i++) {
 			var column = columns[i];
@@ -952,11 +965,11 @@ function initSvyGridFilters() {
 		var activeFilters = this.getActiveFilters();
 		var foundset = this.getFoundSet();
 		
-		// var hasFilterApplied = foundset.getFoundSetFilterParams(TOOLBAR_FILTER_NAME).length ? true : false;
+		//apply foundset filters
 		applyFilters(activeFilters, foundset);
 
 		var query;
-		// quick search
+		//quick search?
 		if (this.searchText) {
 			var simpleSearch = this.simpleSearch;
 			simpleSearch.setSearchText(this.searchText);
@@ -1050,21 +1063,18 @@ function initSvyGridFilters() {
 	 * @this {SvyGridFilters}
 	 *  */
 	SvyGridFilters.prototype.search = function() {
-		
 		var foundset = this.getFoundSet();
 
 		// quick search
 		var searchQuery = this.getQuery();
 
-		// if on search command
 		if (this.onSearchCommand) {
+			//fire onSearchCommand
 			this.onSearchCommand.call(this, searchQuery, foundset);
 		} else if (this.searchText) {
+			//apply search if relevant
 			foundset.loadRecords(searchQuery);
 		}
-		// TODO remove output
-		application.output(databaseManager.getSQL(foundset));
-		application.output(databaseManager.getSQLParameters(foundset));
 	}
 }
 
@@ -1079,6 +1089,7 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype.constructor = AbstractToolbarFilterUX;
 
 	/**
+	 * Returns the element used to display the filters
 	 * @public
 	 * @return {RuntimeComponent}
 	 *
@@ -1108,9 +1119,11 @@ function initAbstractToolbarFilterUX() {
 	
 	/**
 	 * @public
-	 * @param {function(Array, String, scopes.svyPopupFilter.AbstractPopupFilter)} callback
+	 * @param {function({values:Array, operator:String, filter:scopes.svyPopupFilter.AbstractPopupFilter})} callback
 	 * 
 	 * @return {AbstractToolbarFilterUX}
+	 * 
+	 * @deprecated use setOnFilterApplyCallback
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
@@ -1120,14 +1133,66 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * Sets a callback method that is fired whenever the filter is applied<br>
+	 * The callback method receives an array of values, the operator and the filter as arguments
+	 * 
+	 * @param {function(Array, String, scopes.svyPopupFilter.AbstractPopupFilter)} callback
+	 * 
+	 * @return {AbstractToolbarFilterUX}
+	 *
 	 * @public
+	 * 
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.setOnFilterApplyCallback = function(callback) {
+		this.onFilterApplyEvent = scopes.svySystem.convertServoyMethodToQualifiedName(callback);
+		return this;
+	}	
+	
+	/**
+	 * Sets a callback method that is fired whenever a filter has been added
+	 * 
 	 * @param {function()} callback
 	 * 
 	 * @return {AbstractToolbarFilterUX}
+	 * 
+	 * @public
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.setOnFilterAddedCallback = function(callback) {
+		this.onFilterAddedEvent = scopes.svySystem.convertServoyMethodToQualifiedName(callback);
+		return this;
+	}	
+	
+	/**
+	 * @param {function()} callback
+	 * 
+	 * @return {AbstractToolbarFilterUX}
+	 * 
+	 * @deprecated use setOnFilterRemovedCallback
+	 * 
+	 * @public
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
 	AbstractToolbarFilterUX.prototype.setOnFilterRemovedEvent = function(callback) {
+		this.onFilterRemovedEvent = scopes.svySystem.convertServoyMethodToQualifiedName(callback);
+		return this;
+	}	
+	
+	/**
+	 * Sets a callback method that is fired whenever a filter is removed
+	 * 
+	 * @param {function()} callback
+	 * 
+	 * @return {AbstractToolbarFilterUX}
+	 *
+	 * @public
+	 * 
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.setOnFilterRemovedCallback = function(callback) {
 		this.onFilterRemovedEvent = scopes.svySystem.convertServoyMethodToQualifiedName(callback);
 		return this;
 	}
@@ -1157,9 +1222,13 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * Adds a filter for the given column
+	 * 
 	 * @param {CustomType<aggrid-groupingtable.column>} column
-	 * @protected
+	 * 
 	 * @return {Boolean}
+	 * 
+	 * @public 
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
@@ -1168,9 +1237,13 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * Removes the filter for the given column
+	 * 
 	 * @param {CustomType<aggrid-groupingtable.column>} column
-	 * @protected
+	 * 
 	 * @return {Boolean}
+	 * 
+	 * @public 
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
@@ -1180,8 +1253,10 @@ function initAbstractToolbarFilterUX() {
 	
 	/**
 	 * @param {CustomType<aggrid-groupingtable.column>} column
-	 * @protected
+	 * 
 	 * @return {Boolean}
+	 * 
+	 * @protected
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
@@ -1192,8 +1267,9 @@ function initAbstractToolbarFilterUX() {
 	/**
 	 * Clears all grid filters
 	 * 
-	 * @public
 	 * @return {Boolean}
+	 * 
+	 * @public
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 */
@@ -1202,10 +1278,11 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * Override this method in a subclass to adjust the UI to the updated values for the given dataprovider
+	 * 
 	 * @param {String} dataprovider
 	 * @param {Array} values
 	 * 
-	 * @protected
 	 * @return {Boolean}
 	 *
 	 * @this {AbstractToolbarFilterUX}
@@ -1216,8 +1293,10 @@ function initAbstractToolbarFilterUX() {
 	
 	/**
 	 * @param {CustomType<aggrid-groupingtable.column>} column
-	 * @protected
+	 * 
 	 * @return {Boolean}
+	 * 
+	 * @protected
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
@@ -1227,17 +1306,20 @@ function initAbstractToolbarFilterUX() {
 	
 	/**
 	 * Returns true if the table has any column it can filter on
-	 * @public 
+	 *
 	 * @return {Boolean}
 	 *
+	 * @public
+	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.hasFilters = function() {
 		return this.svyGridFilters.getFilters().length > 0 ? true : false;
 	}
 	
 	/**
-	 * @public 
+	 * Returns the filters' state of the toolbar
+	 * 
 	 * @return {Array<{
 				id: String,
 				dataprovider: String,
@@ -1245,8 +1327,9 @@ function initAbstractToolbarFilterUX() {
 				params: Object,
 				text: String,
 				values: Array}>} jsonState
+				
+	 * @public 
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.getToolbarFiltersState = function() {
@@ -1254,7 +1337,8 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
-	 * @public 
+	 * Restores the filters' state 
+	 * 
 	 * @param {Array<{
 				id: String,
 				dataprovider: String,
@@ -1263,7 +1347,8 @@ function initAbstractToolbarFilterUX() {
 				text: String,
 				values: Array}>} jsonState
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * @public 
+	 * 
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.restoreToolbarFiltersState = function(jsonState) {
@@ -1308,51 +1393,68 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
-	 * @public
+	 * Applies all filters and returns the query for this toolbar
+	 *
 	 * @return {QBSelect}
 	 *
+	 * @public
+	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.getQuery = function() {
 		return this.svyGridFilters.getQuery();
 	}
 
 	/**
-	 * @public
+	 * Sets the search text for the simple search
+	 * 
 	 * @return {AbstractToolbarFilterUX}
+	 * 
+	 * @public
 	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.setSearchText = function(searchText) {
 		this.svyGridFilters.setSearchText(searchText);
 		return this;
 	}
 	
 	/**
-	 * @public
+	 * Returns the SimpleSearch
+	 *
 	 * @return {scopes.svySearch.SimpleSearch}
 	 *
+	 * @public
+	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.getSimpleSearch = function() {
 		return this.svyGridFilters.getSimpleSearch();
 	}
 	
-	/** 
+	/**
+	 * Returns the SearchProvider for the given column
+	 *
 	 * @param {CustomType<aggrid-groupingtable.column>} column
-	 * @public
+	 *
 	 * @return {scopes.svySearch.SearchProvider}
 	 *
+	 * @public
+	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.getSearchProvider = function(column) {
 		return this.svyGridFilters.getSearchProvider(column);
 	}
 	
 	/**
-	 * @protected  
+	 * Returns the table column for the given dataprovider
+	 * 
 	 * @param {String} dataprovider
+	 * 
 	 * @return {CustomType<aggrid-groupingtable.column>}
+	 * 
+	 * @protected  
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
@@ -1361,19 +1463,23 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * Applies all filters and executes the search
+	 * 
 	 * @public  
 	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.search = function() {
 		return this.svyGridFilters.search();
 	}
 	
 	/**
-	 * @protected 
 	 * @param {CustomType<aggrid-groupingtable.column>} column
 	 * @param {JSEvent} event
+	 * 
 	 * @this {AbstractToolbarFilterUX}
+	 * 
+	 * @protected 
 	 *
 	 * @properties={typeid:24,uuid:"06EB08B6-AA6C-4DC8-A0A7-B7CF3C140D77"}
 	 */
@@ -1389,11 +1495,12 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
-	 * @protected 
 	 * @param {CustomType<aggrid-groupingtable.column>} column
+	 * 
+	 * @protected 
 	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.getFilter = function(column) {
 		/** @type {scopes.svyPopupFilter.AbstractPopupFilter}  */
 		var filter = this.svyGridFilters.getGridFilter(column);
@@ -1401,11 +1508,12 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
-	 * @protected 
 	 * @param {CustomType<aggrid-groupingtable.column>} column
+	 * 
+	 * @protected 
 	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.getOrCreateToolbarFilter = function(column) {
 		/** @type {scopes.svyPopupFilter.AbstractPopupFilter}  */
 		var filter = this.getFilter(column);
@@ -1473,13 +1581,15 @@ function initAbstractToolbarFilterUX() {
 		return filter;
 	}
 	
-	
 	/**
-	 * @public
+	 * Shows the filter picker popup
+	 * 
 	 * @param {RuntimeComponent} target
+	 * 
+	 * @public
 	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.showPopupFilterPicker = function(target) {
 
 		var filterPopupMenu = plugins.window.createPopupMenu();
@@ -1506,32 +1616,35 @@ function initAbstractToolbarFilterUX() {
 	}
 
 	/**
-     * @public  
+	 * Sets a filter value for the given column
+	 * 
      * @param {CustomType<aggrid-groupingtable.column>} column
      * @param {Array} values
      * @param {String} operator
+     * 
+     * @public  
      *
      * @this {AbstractToolbarFilterUX}
-     *  */
-    AbstractToolbarFilterUX.prototype.setFilterValue = function (column, values, operator) {
-        if (!this.hasActiveFilter(column)) {
-            this.addGridFilter(column);
-        }
-        var filter = this.getOrCreateToolbarFilter(column);
-        filter.setValues(values);
-        filter.setOperator(operator);
-        this.onFilterApply(values,operator,filter)
-        
-    }
+     */
+	AbstractToolbarFilterUX.prototype.setFilterValue = function(column, values, operator) {
+		if (!this.hasActiveFilter(column)) {
+			this.addGridFilter(column);
+		}
+		var filter = this.getOrCreateToolbarFilter(column);
+		filter.setValues(values);
+		filter.setOperator(operator);
+		this.onFilterApply(values, operator, filter);
+	}
     
 	/**
-	 * @protected 
 	 * @param {Array} values
 	 * @param {String} operator
 	 * @param {scopes.svyPopupFilter.AbstractPopupFilter} filter
+	 * 
+	 * @protected 
 	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.onFilterApply = function (values, operator, filter) {
 
 		/** @type {AbstractToolbarFilterUX} */
@@ -1582,7 +1695,7 @@ function initAbstractToolbarFilterUX() {
 		if (thisIntance['onFilterApplyEvent']) {
 			/** @type {String} */
 			var onFilterApplyEvent = thisIntance['onFilterApplyEvent'];
-			scopes.svySystem.callMethod(onFilterApplyEvent ,[values, operator, filter])
+			scopes.svySystem.callMethod(onFilterApplyEvent, [values, operator, filter])
 		}
 	}
 }
@@ -1617,6 +1730,7 @@ function onFilterPopupMenuClicked(itemIndex, parentIndex, isSelected, parentText
 
 /**
  * @constructor
+ * @extends {AbstractToolbarFilterUX}
  * @private
  * @properties={typeid:24,uuid:"C7D04E91-D3C9-42D0-8837-7F1AFE0FF731"}
  */
@@ -1625,24 +1739,30 @@ function initListComponentFilterRenderer() {
 	ListComponentFilterRenderer.prototype.constructor = ListComponentFilterRenderer;
 
 	/**
+	 * Returns the Custom List element this renderer is using to display the filters
+	 * 
+	 * @return {RuntimeWebComponent<customrenderedcomponents-customlist>}
+	 * 
 	 * @public
-	 * @return {RuntimeWebComponent<customrenderedcomponents-listcomponent>}
+	 * 
+	 * @override
 	 *
 	 * @this {ListComponentFilterRenderer}
-	 *  */
+	 */
 	ListComponentFilterRenderer.prototype.getElement = function() {
 		var form = forms[this.formName];
-		/** @type {RuntimeWebComponent<customrenderedcomponents-listcomponent>} */
+		/** @type {RuntimeWebComponent<customrenderedcomponents-customlist>} */
 		var listComponent = form.elements[this.elementName];
 		return listComponent;
 	}
 
 	/**
-	 * @protected
 	 * @return {String}
+	 * 
+	 * @protected
 	 *
 	 * @this {ListComponentFilterRenderer}
-	 *  */
+	 */
 	ListComponentFilterRenderer.prototype.getRenderTemplate = function() {
 		return "(function renderFilterEntry(entry) {  \n\
 			var template = '';\n\
@@ -1687,6 +1807,7 @@ function initListComponentFilterRenderer() {
 		var column = this.svyGridFilters.getColumn(this.getDataProvider(entry));
 
 		if (!dataTarget || dataTarget == "open") {
+			//open the filter
 			if (column) {
 				this.showPopupFilter(column, event);
 			}
@@ -1701,10 +1822,10 @@ function initListComponentFilterRenderer() {
 	}
 
 	/**
-	 * @protected
 	 * @param {CustomType<aggrid-groupingtable.column>} column
+	 * 
+	 * @protected
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
 	 * @this {ListComponentFilterRenderer}
 	 */
 	ListComponentFilterRenderer.prototype.addGridFilter = function(column) {
@@ -1717,25 +1838,16 @@ function initListComponentFilterRenderer() {
 		var element = this.getElement();
 		element.addStyleClass('has-filter');
 		
-		// TODO Expose this as an event to be handled within the form
-		if (this.svyGridFilters['tableName']){
-			if (this.svyGridFilters['tableName'].endsWith('Sub')){
-				//if (!scopes.ngUtils.hasStyleClass(plugins.ngclientutils.getFormStyleClass(this.formName), "has-filter-row-sub")) {
-					plugins.ngclientutils.addFormStyleClass(this.formName, 'has-filter-row-sub');
-				//}
-			} else {
-				//if (!scopes.ngUtils.hasStyleClass(plugins.ngclientutils.getFormStyleClass(this.formName), "has-filter-row")) {
-					plugins.ngclientutils.addFormStyleClass(this.formName, 'has-filter-row');
-				//}
-			}		
+		if (this.onFilterAddedEvent) {
+			scopes.svySystem.callMethod(this.onFilterAddedEvent)
 		}
 	}
 
 	/**
-	 * @protected
 	 * @param {CustomType<aggrid-groupingtable.column>} column
+	 * 
+	 * @protected
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
 	 * @this {ListComponentFilterRenderer}
 	 */
 	ListComponentFilterRenderer.prototype.removeGridFilter = function(column) {
@@ -1744,22 +1856,6 @@ function initListComponentFilterRenderer() {
 			this.getElement().removeEntry(index);
 		}
 		this.svyGridFilters.removeGridFilter(column);
-		
-		// if has no filters
-		var element = this.getElement();
-		if (!element.getEntriesCount()) {
-			element.removeStyleClass('has-filter');
-			
-			// TODO Expose this as an event to be handled within the form
-			if (this.svyGridFilters['tableName']){
-				if (this.svyGridFilters['tableName'].endsWith('Sub')){
-					plugins.ngclientutils.removeFormStyleClass(this.formName, 'has-filter-row-sub');
-				}else{
-					plugins.ngclientutils.removeFormStyleClass(this.formName, 'has-filter-row');
-				}		
-			}
-			
-		}
 			
 		// on filter removed event
 		if (this.onFilterRemovedEvent) {
@@ -1769,11 +1865,11 @@ function initListComponentFilterRenderer() {
 	}
 
 	/**
-	 * @protected
 	 * @param {String} dataprovider
 	 * @param {Array} displayValues
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
+	 * @protected
+	 * 
 	 * @this {ListComponentFilterRenderer}
 	 */
 	ListComponentFilterRenderer.prototype.updateGridFilter = function(dataprovider, displayValues) {
@@ -1813,9 +1909,12 @@ function initListComponentFilterRenderer() {
 	}
 
 	/**
+	 * Clears all grid filters
+	 * 
 	 * @public
+	 * 
+	 * @override 
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
 	 * @this {ListComponentFilterRenderer}
 	 */
 	ListComponentFilterRenderer.prototype.clearGridFilters = function() {
@@ -1834,22 +1933,24 @@ function initListComponentFilterRenderer() {
 
 	/**
 	 * @param {CustomType<aggrid-groupingtable.column>} column
-	 * @protected
+	 * 
 	 * @return {Boolean}
+	 * 
+	 * @protected
 	 *
 	 * @this {ListComponentFilterRenderer}
-	 *  */
+	 */
 	ListComponentFilterRenderer.prototype.hasActiveFilter = function(column) {
 		return this.getFilterTagIndex(column) > -1 ? true : false;
 	}
 
 	/**
-	 * @protected 
 	 * @param {CustomType<aggrid-groupingtable.column>} column
 	 *
 	 * @return {Number}
+	 * 
+	 * @protected 
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
 	 * @this {ListComponentFilterRenderer}
 	 */
 	ListComponentFilterRenderer.prototype.getFilterTagIndex = function(column) {

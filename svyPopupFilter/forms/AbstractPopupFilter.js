@@ -214,7 +214,7 @@ function createWindow(x, y, width, height, jsWindowType) {
 }
 
 /**
- * Hook for sub form(s) to implement specific sol model additions
+ * Hook for sub form(s) to implement specific solution model additions
  *
  * @protected
  * @param {JSForm} jsForm

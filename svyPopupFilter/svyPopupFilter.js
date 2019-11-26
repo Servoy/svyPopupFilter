@@ -546,24 +546,21 @@ function initAbstractPopupFilter() {
 				operator: String,
 				params: Object,
 				text: String,
-				values: Array}}
+				values: Array,
+				constructor: Object}}
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
 	 * @this {AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.getState = function() {
-
-		var filter = this
-
-		var jsonState = {
-			id: filter.getID(),
-			dataprovider: filter.getDataProvider(),
-			operator: filter.getOperator(),
-			text: filter.getText(),
-			values: filter.getValues(),
-			constructor: filter.constructor
+		return {
+			id: this.getID(),
+			dataprovider: this.getDataProvider(),
+			operator: this.getOperator(),
+			params: this.getParams(),
+			text: this.getText(),
+			values: this.getValues(),
+			constructor: this.constructor
 		}
-		return jsonState;
 	}
 	
 	/**
@@ -577,11 +574,9 @@ function initAbstractPopupFilter() {
 				values: Array}} jsonState
 	 * @return {AbstractPopupFilter}
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
 	 * @this {AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.restoreState = function(jsonState) {
-
 		var filter = this;
 		filter.setDataProvider(jsonState.dataprovider);
 		filter.setOperator(jsonState.operator);
@@ -759,7 +754,6 @@ function initSvySelectFilter() {
 				text: String,
 				values: Array}}
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
 	 * @this {SvySelectFilter}
 	 */
 	SvySelectFilter.prototype.getState = function() {
@@ -784,7 +778,6 @@ function initSvySelectFilter() {
 				values: Array}} jsonState
 	 * @return {AbstractPopupFilter}
 	 *
-	 * @properties={typeid:24,uuid:"7097146A-EDA1-4C7A-9A9F-58FAEC3D883B"}
 	 * @this {SvySelectFilter}
 	 */
 	SvySelectFilter.prototype.restoreState = function(jsonState) {
