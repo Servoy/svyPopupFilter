@@ -334,8 +334,8 @@ function ListComponentFilterRender(listComponent, table) {
  * 
  * 
  * @constructor
- * @param {RuntimeWebComponent<customrenderedcomponents-customlist>} listComponent
- * @param {RuntimeWebComponent<aggrid-groupingtable>} table
+ * @param {RuntimeWebComponent<customrenderedcomponents-customlist>|RuntimeWebComponent<customrenderedcomponents-customlist_abs>} listComponent
+ * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} table
  *
  * @extends {AbstractToolbarFilterUX}
  * @this {ListComponentFilterRenderer}
@@ -492,7 +492,7 @@ function getFilterQuery(filters, foundset) {
 		});
 		
 		//Dont use lower on date
-		if(qValues.length && qValues[0] instanceof Date || qValues[0] instanceof Number) {
+		if(qValues.length && (qValues[0] instanceof Date || qValues[0] instanceof Number)) {
 			useIgnoreCase = false;
 		}
 		
@@ -507,7 +507,7 @@ function getFilterQuery(filters, foundset) {
 			});
 		}
 
-		// remove filter if no values
+		// skip filter if no values
 		if (!qValues || !qValues.length) {
 			continue;
 		}
@@ -637,9 +637,7 @@ function applyFilters(filters, foundset) {
 		if (success) {
 			success = foundset.loadRecords();
 		}
-		
 	} else {
-		
 		// refresh foundset since filters have been removed
 		foundset.loadRecords();
 	}
@@ -964,7 +962,6 @@ function initSvyGridFilters() {
 			simpleSearch.setSearchText(this.searchText);
 			query = simpleSearch.getQuery();
 		} else {
-			foundset.loadAllRecords();
 			query = foundset.getQuery();
 		}
 		
@@ -988,7 +985,7 @@ function initSvyGridFilters() {
 			var form = forms[this.formName];
 			tableDataSource = form ? form.foundset.getDataSource() : null;
 		}
-		
+
 		if (!tableDataSource) {
 			return null;
 		}
@@ -1001,7 +998,6 @@ function initSvyGridFilters() {
 		for (var i = 0; tableDataSource && columns && i < columns.length; i++) {
 			var column = columns[i];
 
-
 			// TODO should search only on visible columns ?
 			if (column.dataprovider && column.visible) {
 
@@ -1013,7 +1009,7 @@ function initSvyGridFilters() {
 				var col = table.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(column.dataprovider));
 				if (col) {
 					var vlItems = null;
-					
+
 					// check if valuelist substitions can be applied
 					if (column.valuelist) {
 						vlItems = application.getValueListItems(column.valuelist);
@@ -1022,15 +1018,15 @@ function initSvyGridFilters() {
 							continue;
 						}
 					}
-					
+
 					// create the search provider
 					// TODO shall i remove all white spaces !?
 					var provider = simpleSearch.addSearchProvider(column.dataprovider);
-					
+
 					// set the provider alias
 					var alias = column.headerTitle ? column.headerTitle : column.dataprovider;
 					provider.setAlias(alias);
-					
+
 					// if is a date use explicit search
 					if (col.getType() === JSColumn.DATETIME) {
 						provider.setImpliedSearch(false);
@@ -1039,8 +1035,8 @@ function initSvyGridFilters() {
 					// add valuelist substitutions
 					for (var index = 1; vlItems && index <= vlItems.getMaxRowIndex(); index++) {
 						var vlItem = vlItems.getRowAsArray(index);
-						provider.addSubstitution(vlItem[0],vlItem[1])
-							
+						provider.addSubstitution(vlItem[0], vlItem[1])
+
 					}
 				}
 			}
@@ -1063,13 +1059,13 @@ function initSvyGridFilters() {
 		// if on search command
 		if (this.onSearchCommand) {
 			this.onSearchCommand.call(this, searchQuery, foundset);
-		} else {
-		foundset.loadRecords(searchQuery);
+		} else if (this.searchText) {
+			foundset.loadRecords(searchQuery);
+		}
 		// TODO remove output
 		application.output(databaseManager.getSQL(foundset));
 		application.output(databaseManager.getSQLParameters(foundset));
 	}
-}
 }
 
 /**
