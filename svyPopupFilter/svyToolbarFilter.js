@@ -1472,11 +1472,16 @@ function initAbstractToolbarFilterUX() {
 	/**
 	 * Applies all filters and executes the search
 	 * 
+	 * @param {String} [searchText] optional searchText to search for; if not provided here, call setSearchText() to set the search criteria before performing the search
+	 * 
 	 * @public  
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 */
-	AbstractToolbarFilterUX.prototype.search = function() {
+	AbstractToolbarFilterUX.prototype.search = function(searchText) {
+		if (arguments.length === 1) {
+			this.svyGridFilters.setSearchText(searchText);
+		}
 		return this.svyGridFilters.search();
 	}
 	
