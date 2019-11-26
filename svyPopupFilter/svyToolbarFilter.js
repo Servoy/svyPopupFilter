@@ -1024,6 +1024,11 @@ function initSvyGridFilters() {
 				var col = table.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(column.dataprovider));
 				if (col) {
 					var vlItems = null;
+					
+					// skip media fields
+					if (col.getType() === JSColumn.MEDIA) {
+						continue;
+					}
 
 					// check if valuelist substitions can be applied
 					if (column.valuelist) {
