@@ -259,13 +259,13 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 	
 	/**
 	 * @protected
-	 * @type {function(Array, String, scopes.svyPopupFilter.AbstractPopupFilter)}
+	 * @type {String}
 	 */
 	this.onFilterApplyEvent = null;
 	
 	/**
 	 * @protected
-	 * @type {function()}
+	 * @type {String}
 	 */
 	this.onFilterRemovedEvent = null;
 	// TODO allow the form to implement such funcitonalities
@@ -400,8 +400,11 @@ function ListComponentFilterRenderer(listComponent, table) {
 	 */
 	this.svyGridFilters = new SvyGridFilters(table);
 	//TODO: remove when old list component has finally disappeared
-	listComponent['entryRendererFunc'] = this.getRenderTemplate();
-	listComponent.entryRendererFunction = this.getRenderTemplate();
+	if (listComponent.getElementType() == "customrenderedcomponents-listcomponent") {
+		listComponent['entryRendererFunc'] = this.getRenderTemplate();
+	} else {
+		listComponent.entryRendererFunction = this.getRenderTemplate();
+	}
 	listComponent.addStyleClass("svy-toolbar-filter")
 	listComponent.clear();
 }
@@ -1116,7 +1119,7 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
 	AbstractToolbarFilterUX.prototype.setOnFilterApplyEvent = function(callback) {
-		this.onFilterApplyEvent = callback;
+		this.onFilterApplyEvent = scopes.svySystem.convertServoyMethodToQualifiedName(callback);
 		return this;
 	}
 	
@@ -1129,7 +1132,7 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
 	AbstractToolbarFilterUX.prototype.setOnFilterRemovedEvent = function(callback) {
-		this.onFilterRemovedEvent = callback;
+		this.onFilterRemovedEvent = scopes.svySystem.convertServoyMethodToQualifiedName(callback);
 		return this;
 	}
 	
@@ -1580,8 +1583,10 @@ function initAbstractToolbarFilterUX() {
 			element.removeStyleClass('has-active-filter');
 		}
 	
-		if (thisIntance.onFilterApplyEvent) {
-			thisIntance.onFilterApplyEvent.call(this, values, operator, filter);
+		if (thisIntance['onFilterApplyEvent']) {
+			/** @type {String} */
+			var onFilterApplyEvent = thisIntance['onFilterApplyEvent'];
+			scopes.svySystem.callMethod(onFilterApplyEvent ,[values, operator, filter])
 		}
 	}
 }
@@ -1762,7 +1767,7 @@ function initListComponentFilterRenderer() {
 			
 		// on filter removed event
 		if (this.onFilterRemovedEvent) {
-			this.onFilterRemovedEvent.call();
+			scopes.svySystem.callMethod(this.onFilterRemovedEvent);
 		}
 			
 	}
@@ -1827,7 +1832,7 @@ function initListComponentFilterRenderer() {
 		
 		// on filter removed event
 		if (this.onFilterRemovedEvent) {
-			this.onFilterRemovedEvent.call();
+			scopes.svySystem.callMethod(this.onFilterRemovedEvent);
 		}
 	}
 
