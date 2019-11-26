@@ -1658,6 +1658,12 @@ function initAbstractToolbarFilterUX() {
 		//	TODO to be moved somewhere else ~?
 		// persist the values & operator:
 		filter.setOperator(operator);
+		
+		var currentValues = filter.getValues();
+		if (scopes.svyJSUtils.areObjectsEqual(currentValues, values)) {
+			return;
+		}
+		
 		filter.setValues(values);
 		
 		var displayValues = values ? values : [];

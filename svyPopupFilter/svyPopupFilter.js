@@ -358,7 +358,7 @@ function initAbstractPopupFilter() {
 	 * @this {AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.setValues = function(values){
-		this.filterValues = values;
+		this.filterValues = values.concat([]);
 	}
 	
 	/**
@@ -368,7 +368,7 @@ function initAbstractPopupFilter() {
 	 * @this {AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.getValues = function(){
-		return this.filterValues;
+		return this.filterValues.concat([]);
 	}
 	
 	/**
