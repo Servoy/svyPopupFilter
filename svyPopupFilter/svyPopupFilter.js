@@ -775,7 +775,8 @@ function initSvySelectFilter() {
 				operator: String,
 				params: Object,
 				text: String,
-				values: Array}} jsonState
+				values: Array,
+				lookupSelectedRecords: Array}} jsonState
 	 * @return {AbstractPopupFilter}
 	 *
 	 * @this {SvySelectFilter}
