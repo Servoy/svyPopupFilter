@@ -346,7 +346,7 @@ function getOperator() {
 
 /**
  * @protected 
- * @param {Array} defaultOperator
+ * @param {String} defaultOperator
  *
  * @properties={typeid:24,uuid:"922E1870-6AEE-46EC-91F6-BEB8F36657B9"}
  */

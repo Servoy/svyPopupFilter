@@ -91,7 +91,7 @@ function onDataChange(oldValue, newValue, event) {
 /**
  * Called when the mouse is clicked on a list entry.
  *
- * @param {object} entry
+ * @param {{text: String}} entry
  * @param {Number} index
  * @param {string} dataTarget
  * @param {JSEvent} event
