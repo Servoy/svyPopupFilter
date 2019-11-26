@@ -587,7 +587,7 @@ function initAbstractPopupFilter() {
 	
 	/**
 	 * @return {RuntimeForm<AbstractPopupFilter>}
-	 * @this {AbstractPopupFilter}
+	 * @this {scopes.svyPopupFilter.AbstractPopupFilter}
 	 * @protected 
 	 *  */
 	AbstractPopupFilter.prototype.getFormInstance = function() {
@@ -620,7 +620,7 @@ function initAbstractPopupFilter() {
 	 * @param {RuntimeComponent} target The component to show relative to
 	 * @param {Number} [width] The width of the popupFilter. Optional. Default is same as target component
 	 * @param {Number} [height] The height of the popupFilter. Optional. Default is implementation-specifc.
-	 * @this {AbstractPopupFilter}
+	 * @this {scopes.svyPopupFilter.AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.showPopUp = function(callback, target, width, height) {
 		
@@ -672,7 +672,7 @@ function initAbstractPopupFilter() {
 	 * @param {function(Array<JSRecord>,Array<String|Date|Number>,AbstractPopupFilter)} [callback] The function that will be called when a selection is made; the callback returns the following arguments: {Array<JSRecord>} record, {Array<String|Date|Number>} popupFilterValue , {AbstractPopupFilter} popupFilter
 	 *
 	 * @return {Array<String|Date|Number>} returns the selected records; if the popupFilterDataprovider has been set instead it returns the popupFilterDataprovider values on the selected records. Returns null if the window is closed without a selection or an empty selection
-	 * @this {AbstractPopupFilter}
+	 * @this {scopes.svyPopupFilter.AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.showWindow = function(win, callback) {
 		/** @type {RuntimeForm<AbstractPopupFilter>} */
