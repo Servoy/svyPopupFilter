@@ -582,7 +582,7 @@ function getFilterQuery(filters, foundset) {
 			break;
 		}
 
-		/** @type {QBSelect|QBWhereCondition} */
+		/** @type {QBSelect} */
 		var whereClause = null;
 		var aDP = dp.split('.');
 		for (var j = 0; j < aDP.length - 1; j++) {
@@ -619,7 +619,9 @@ function getFilterQuery(filters, foundset) {
 		}
 		whereClause = op == "between" ? whereClause[op](value[0], value[1]) : whereClause[op](value);
 		if (!isFilterSet) isFilterSet = true;
-		query.where.add(whereClause);
+		/** @type {QBCondition} */
+		var where = whereClause;
+		query.where.add(where);
 
 	}
 
