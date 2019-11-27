@@ -848,16 +848,15 @@ function initSvyGridFilters() {
 	 * @this {SvyGridFilters}
 	 */
 	SvyGridFilters.prototype.removeGridFilter = function(column) {
-
-		// update the UI render
-		// this.uirender.removeGridFilter(column);
-
+		var toolbarFilter = this.toolbarFilters[column.dataprovider];
+		var hasValues = toolbarFilter && toolbarFilter.getValues().length > 0 ? true : false;
 		// remove the filter from cache
 		delete this.toolbarFilters[column.dataprovider];	
 		
-		this.search()
+		if (hasValues) {
+			this.search()
+		}
 	}
-
 	
 	/**
 	 * @public 
