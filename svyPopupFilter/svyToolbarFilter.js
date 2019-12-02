@@ -954,7 +954,9 @@ function initSvyGridFilters() {
 		for (var dp in this.toolbarFilters) {
 			var filter = this.toolbarFilters[dp];
 			
-			jsonState.push(filter.getState())
+			var filterState = filter.getState();
+			delete filterState.params;
+			jsonState.push(filterState)
 		}
 		
 		return jsonState;
