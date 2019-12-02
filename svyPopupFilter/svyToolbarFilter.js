@@ -1001,7 +1001,9 @@ function initSvyGridFilters() {
 		for (var dp in this.toolbarFilters) {
 			var filter = this.toolbarFilters[dp];
 			
-			jsonState.push(filter.getState())
+			var filterState = filter.getState();
+			delete filterState.params;
+			jsonState.push(filterState)
 		}
 		
 		return jsonState;
@@ -1406,7 +1408,30 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.clearGridFilters = function() {
-		throw scopes.svyExceptions.AbstractMethodInvocationException("clearGridFilters not implemented")
+
+		// this.svyGridFilters.clearGridFilters();
+		this._clearGridFilters()
+			
+		// on filter removed event
+		if (this.onFilterRemovedEvent) {
+			scopes.svySystem.callMethod(this.onFilterRemovedEvent);
+		}
+		return true;
+	}
+	
+	/**
+	 * Clears all grid filters
+	 * Internal implementation, will take care to clear the filters and update the UI
+	 * Will not trigger the event onFilterRemovedEvent
+	 * 
+	 * @return {Boolean}
+	 * 
+	 * @protected 
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype._clearGridFilters = function() {
+		throw scopes.svyExceptions.AbstractMethodInvocationException("_clearGridFilters not implemented")
 	}
 	
 	/**
@@ -1486,7 +1511,7 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype.restoreToolbarFiltersState = function(jsonState) {
 
 		// clear previous filters
-		this.clearGridFilters();
+		this._clearGridFilters();
 
 		// restore new filters
 		for (var i = 0; i < jsonState.length; i++) {
@@ -1521,6 +1546,14 @@ function initAbstractToolbarFilterUX() {
 			this.setFilterValue(column, values, obj.operator);
 			var filter = this.getOrCreateToolbarFilter(column);
 			filter.restoreState(obj);
+		}
+		
+		// update filter UI
+		var element = this.getElement();
+		if (this.hasFilters()) {
+			element.addStyleClass('has-filter');
+		} else {
+			element.removeStyleClass('has-filter');
 		}
 	}
 	
@@ -1784,19 +1817,20 @@ function initAbstractToolbarFilterUX() {
 		var filter = this.getOrCreateToolbarFilter(column);
 		filter.setValues(values);
 		filter.setOperator(operator);
-		this.onFilterApply(values, operator, filter);
+		this.onFilterApply(values, operator, filter, true);
 	}
     
 	/**
 	 * @param {Array} values
 	 * @param {String} operator
 	 * @param {scopes.svyPopupFilter.AbstractPopupFilter} filter
+	 * @param {Boolean} [forceApply] Default false.
 	 * 
 	 * @protected 
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 */
-	AbstractToolbarFilterUX.prototype.onFilterApply = function (values, operator, filter) {
+	AbstractToolbarFilterUX.prototype.onFilterApply = function (values, operator, filter, forceApply) {
 
 		/** @type {AbstractToolbarFilterUX} */
 		var thisIntance = filter.getParams()[0];
@@ -1804,15 +1838,18 @@ function initAbstractToolbarFilterUX() {
 		/** @type {SvyGridFilters} */
 		var gridFilters = thisIntance['svyGridFilters'];
 		
-		//	TODO to be moved somewhere else ~?
-		// persist the values & operator:
-		filter.setOperator(operator);
-		
+
+		// check if values or operator have changed
 		var currentValues = filter.getValues();
-		if (scopes.svyJSUtils.areObjectsEqual(currentValues, values)) {
+		var currentOperator = filter.getOperator();
+		if (!forceApply && scopes.svyJSUtils.areObjectsEqual(currentValues, values) && operator == currentOperator) {
+			// nothing has changed, do nothing
 			return;
 		}
 		
+		//	TODO to be moved somewhere else ~?
+		// persist the values & operator:
+		filter.setOperator(operator);
 		filter.setValues(values);
 		
 		var displayValues = values ? values : [];
@@ -2071,18 +2108,13 @@ function initListComponentFilterRenderer() {
 	 *
 	 * @this {ListComponentFilterRenderer}
 	 */
-	ListComponentFilterRenderer.prototype.clearGridFilters = function() {
+	ListComponentFilterRenderer.prototype._clearGridFilters = function() {
 		this.getElement().clear();
 		this.svyGridFilters.clearGridFilters();
 		
 		// if has no filters
 		var element = this.getElement();
 		element.removeStyleClass('has-filter');
-		
-		// on filter removed event
-		if (this.onFilterRemovedEvent) {
-			scopes.svySystem.callMethod(this.onFilterRemovedEvent);
-		}
 	}
 
 	/**
