@@ -1737,19 +1737,20 @@ function initAbstractToolbarFilterUX() {
 		var filter = this.getOrCreateToolbarFilter(column);
 		filter.setValues(values);
 		filter.setOperator(operator);
-		this.onFilterApply(values, operator, filter);
+		this.onFilterApply(values, operator, filter, true);
 	}
     
 	/**
 	 * @param {Array} values
 	 * @param {String} operator
 	 * @param {scopes.svyPopupFilter.AbstractPopupFilter} filter
+	 * @param {Boolean} [forceApply] Default false.
 	 * 
 	 * @protected 
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 */
-	AbstractToolbarFilterUX.prototype.onFilterApply = function (values, operator, filter) {
+	AbstractToolbarFilterUX.prototype.onFilterApply = function (values, operator, filter, forceApply) {
 
 		/** @type {AbstractToolbarFilterUX} */
 		var thisIntance = filter.getParams()[0];
@@ -1761,7 +1762,8 @@ function initAbstractToolbarFilterUX() {
 		// check if values or operator have changed
 		var currentValues = filter.getValues();
 		var currentOperator = filter.getOperator();
-		if (scopes.svyJSUtils.areObjectsEqual(currentValues, values) && operator == currentOperator) {
+		if (!forceApply && scopes.svyJSUtils.areObjectsEqual(currentValues, values) && operator == currentOperator) {
+			// nothing has changed, do nothing
 			return;
 		}
 		
