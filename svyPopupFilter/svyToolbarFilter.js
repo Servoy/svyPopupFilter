@@ -1757,15 +1757,17 @@ function initAbstractToolbarFilterUX() {
 		/** @type {SvyGridFilters} */
 		var gridFilters = thisIntance['svyGridFilters'];
 		
-		//	TODO to be moved somewhere else ~?
-		// persist the values & operator:
-		filter.setOperator(operator);
-		
+
+		// check if values or operator have changed
 		var currentValues = filter.getValues();
-		if (scopes.svyJSUtils.areObjectsEqual(currentValues, values)) {
+		var currentOperator = filter.getOperator();
+		if (scopes.svyJSUtils.areObjectsEqual(currentValues, values) && operator == currentOperator) {
 			return;
 		}
 		
+		//	TODO to be moved somewhere else ~?
+		// persist the values & operator:
+		filter.setOperator(operator);
 		filter.setValues(values);
 		
 		var displayValues = values ? values : [];
