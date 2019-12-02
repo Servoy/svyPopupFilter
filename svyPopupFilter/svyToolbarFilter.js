@@ -35,7 +35,7 @@ var popupRendererForms;
 
 /**
  * @constructor 
- * @protected  
+ * @private   
  * @properties={typeid:24,uuid:"EA19BC69-1CA7-4C3A-B6F3-BB972688F4BD"}
  */
 function PopupRendererForms() {
@@ -310,7 +310,7 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
  *
  * @extends {AbstractToolbarFilterUX}
  * @this {ListComponentFilterRender}
- * @public
+ * @private
  * @example <pre>
  * //keep track of toolbarFilter object in a form variable
  * var toolbarFilter;
@@ -343,7 +343,6 @@ function ListComponentFilterRender(listComponent, table) {
  * Filter Toolbar implementation using the custom list from the custom-rendered-components package.
  * This implementation requires a "List Component" element and an "Data-Grid" element.
  * You should create a toolbar filter instance at the onLoad of your form and assign it to a form variable.
- * The "List Component" must have it's 'foundset' property set to '-none-'.
  * Make sure to re-direct the onClick event of the "List Component" to the toolbar.onClick(entry, index, dataTarget, event);
  * 
  * @constructor
@@ -353,7 +352,7 @@ function ListComponentFilterRender(listComponent, table) {
  *
  * @extends {AbstractToolbarFilterUX}
  * @this {ListComponentFilterRenderer}
- * @public
+ * @protected 
  * @example <pre>
  * //keep track of toolbarFilter object in a form variable
  * var toolbarFilter;
@@ -375,7 +374,7 @@ function ListComponentFilterRender(listComponent, table) {
  * }
  * </pre>
  * 
- * @properties={typeid:24,uuid:"16037133-4377-4EB0-887F-D35F697B9ABA"}
+ * @properties={typeid:24,uuid:"8E1C5902-993A-4F97-98D1-676643FE105B"}
  */
 function ListComponentFilterRenderer(listComponent, table) {
 	if (!listComponent) {
@@ -432,7 +431,7 @@ function ListComponentFilterRenderer(listComponent, table) {
 }
 
 /**
- * @protected  
+ * @private   
  * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} table
  * @constructor
  * @properties={typeid:24,uuid:"A6E91332-3686-48ED-9D89-5B07B0925132"}
@@ -701,6 +700,54 @@ function clearFilters(foundset) {
 		return foundset.loadRecords();
 	}
 	return false;
+}
+
+/**
+ * Creates a filter toolbar implementation using the custom list from the custom-rendered-components package.<br><br>
+ * 
+ * This implementation expects an NG "Data Grid" table component and a "Custom List" component.<br><br>
+ * 
+ * The filters offered from this implementation are generated from the table provided as follows:
+ * 
+ * <ul><li>any column with its <code>filterType</code> property set to TEXT will be offered as a token popup, allowing the user to enter any number of Strings to match</li>
+ * <li>any column with its <code>filterType</code> property set to TEXT and the <code>valuelist</code> will be offered as a lookup where the user can search for and select any number of values</li>
+ * <li>any column with its <code>filterType</code> property set to NUMBER will be offered as a number filter with a number of operators</li>
+ * <li>any column with its <code>filterType</code> property set to DATE will be offered as a date filter with a number of operators</li></ul>
+ * 
+ * You should create a toolbar filter instance at the onLoad of your form and assign it to a form variable.
+ * 
+ * Make sure to re-direct the onClick event of the "List Component" to the toolbar.onClick(entry, index, dataTarget, event);
+ * 
+ * @param {RuntimeWebComponent<customrenderedcomponents-customlist>|RuntimeWebComponent<customrenderedcomponents-customlist_abs>} listComponent
+ * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} table
+ *
+ * @extends {AbstractToolbarFilterUX}
+ * @this {ListComponentFilterRenderer}
+ * @public
+ * @example <pre>
+ * //keep track of toolbarFilter object in a form variable
+ * var toolbarFilter;
+ * 
+ * //init the toolbarFilter at the onLoad.
+ * function onLoad(event) {
+ *  toolbarFilter = scopes.svyToolbarFilter.createFilterToolbar(elements.filterToolbar, elements.table)
+ * }
+ * 
+ * //propagate the onClick event of the "Custom List" component to the toolbar filter.
+ * function onClick(entry, index, dataTarget, event) {
+ *  toolbarFilter.onClick(entry, index, dataTarget, event);
+ * }
+ * 
+ * //optionally set a searchText for a cross-field search to further filter the result set
+ * function search() {
+ *  toolbarFilter.search(searchText);
+ * }
+ * </pre>
+ * 
+ * @properties={typeid:24,uuid:"4BB94EC8-F877-445D-93E1-541F0A58D664"}
+ */
+function createFilterToolbar(listComponent, table) {
+	return new ListComponentFilterRenderer(listComponent, table);
 }
 
 /**
