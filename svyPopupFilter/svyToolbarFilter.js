@@ -1361,7 +1361,30 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.clearGridFilters = function() {
-		throw scopes.svyExceptions.AbstractMethodInvocationException("clearGridFilters not implemented")
+
+		// this.svyGridFilters.clearGridFilters();
+		this._clearGridFilters()
+			
+		// on filter removed event
+		if (this.onFilterRemovedEvent) {
+			scopes.svySystem.callMethod(this.onFilterRemovedEvent);
+		}
+		return true;
+	}
+	
+	/**
+	 * Clears all grid filters
+	 * Internal implementation, will take care to clear the filters and update the UI
+	 * Will not trigger the event onFilterRemovedEvent
+	 * 
+	 * @return {Boolean}
+	 * 
+	 * @protected 
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype._clearGridFilters = function() {
+		throw scopes.svyExceptions.AbstractMethodInvocationException("_clearGridFilters not implemented")
 	}
 	
 	/**
@@ -1441,7 +1464,7 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype.restoreToolbarFiltersState = function(jsonState) {
 
 		// clear previous filters
-		this.clearGridFilters();
+		this._clearGridFilters();
 
 		// restore new filters
 		for (var i = 0; i < jsonState.length; i++) {
@@ -1476,6 +1499,14 @@ function initAbstractToolbarFilterUX() {
 			this.setFilterValue(column, values, obj.operator);
 			var filter = this.getOrCreateToolbarFilter(column);
 			filter.restoreState(obj);
+		}
+		
+		// update filter UI
+		var element = this.getElement();
+		if (this.hasFilters()) {
+			element.addStyleClass('has-filter');
+		} else {
+			element.removeStyleClass('has-filter');
 		}
 	}
 	
@@ -2030,18 +2061,13 @@ function initListComponentFilterRenderer() {
 	 *
 	 * @this {ListComponentFilterRenderer}
 	 */
-	ListComponentFilterRenderer.prototype.clearGridFilters = function() {
+	ListComponentFilterRenderer.prototype._clearGridFilters = function() {
 		this.getElement().clear();
 		this.svyGridFilters.clearGridFilters();
 		
 		// if has no filters
 		var element = this.getElement();
 		element.removeStyleClass('has-filter');
-		
-		// on filter removed event
-		if (this.onFilterRemovedEvent) {
-			scopes.svySystem.callMethod(this.onFilterRemovedEvent);
-		}
 	}
 
 	/**
