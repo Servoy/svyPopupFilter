@@ -35,7 +35,7 @@ var popupRendererForms;
 
 /**
  * @constructor 
- * @protected  
+ * @private   
  * @properties={typeid:24,uuid:"EA19BC69-1CA7-4C3A-B6F3-BB972688F4BD"}
  */
 function PopupRendererForms() {
@@ -234,6 +234,12 @@ function initPopupRendererForms() {
 function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 	
 	/**
+	 * @protected 
+	 * @type {RuntimeComponent}
+	 */
+	this.element = uiComponent;
+	
+	/**
 	 * @protected
 	 * @type {String}
 	 */
@@ -304,7 +310,7 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
  *
  * @extends {AbstractToolbarFilterUX}
  * @this {ListComponentFilterRender}
- * @public
+ * @private
  * @example <pre>
  * //keep track of toolbarFilter object in a form variable
  * var toolbarFilter;
@@ -337,7 +343,6 @@ function ListComponentFilterRender(listComponent, table) {
  * Filter Toolbar implementation using the custom list from the custom-rendered-components package.
  * This implementation requires a "List Component" element and an "Data-Grid" element.
  * You should create a toolbar filter instance at the onLoad of your form and assign it to a form variable.
- * The "List Component" must have it's 'foundset' property set to '-none-'.
  * Make sure to re-direct the onClick event of the "List Component" to the toolbar.onClick(entry, index, dataTarget, event);
  * 
  * @constructor
@@ -347,7 +352,7 @@ function ListComponentFilterRender(listComponent, table) {
  *
  * @extends {AbstractToolbarFilterUX}
  * @this {ListComponentFilterRenderer}
- * @public
+ * @protected 
  * @example <pre>
  * //keep track of toolbarFilter object in a form variable
  * var toolbarFilter;
@@ -369,7 +374,7 @@ function ListComponentFilterRender(listComponent, table) {
  * }
  * </pre>
  * 
- * @properties={typeid:24,uuid:"16037133-4377-4EB0-887F-D35F697B9ABA"}
+ * @properties={typeid:24,uuid:"8E1C5902-993A-4F97-98D1-676643FE105B"}
  */
 function ListComponentFilterRenderer(listComponent, table) {
 	if (!listComponent) {
@@ -389,6 +394,12 @@ function ListComponentFilterRenderer(listComponent, table) {
 	}
 	
 	AbstractToolbarFilterUX.call(this, listComponent, table);
+	
+	/**
+	 * @protected 
+	 * @type {RuntimeWebComponent<customrenderedcomponents-customlist>|RuntimeWebComponent<customrenderedcomponents-customlist_abs>}
+	 */
+	this.element = listComponent;
 	
 	/**
 	 * @protected
@@ -420,7 +431,7 @@ function ListComponentFilterRenderer(listComponent, table) {
 }
 
 /**
- * @protected  
+ * @private   
  * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} table
  * @constructor
  * @properties={typeid:24,uuid:"A6E91332-3686-48ED-9D89-5B07B0925132"}
@@ -430,6 +441,21 @@ function SvyGridFilters(table) {
 	
 	/** @type {SvyGridFilters} */
 	var thisInstance = this;
+	
+	/**
+	 * @public
+	 * @return {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>}
+	 *
+	 * @this {SvyGridFilters}
+	 */
+	this.getTable = function() {
+		return table;
+	}	
+	
+	/**
+	 * @type {Boolean}
+	 */
+	this.autoApply = true;
 
 	/**
 	 * @protected
@@ -604,7 +630,9 @@ function getFilterQuery(filters, foundset) {
 				value = valueString.toLowerCase();
 			} else if (value instanceof Array) {
 				// Clean up values from empty values
-				value = value.map(function(v) {
+				/** @type {Array} */
+				var valueArray = value;
+				value = valueArray.map(function(v) {
 					if (v instanceof String) {
 						return v.toLowerCase();
 					} else {
@@ -633,7 +661,9 @@ function getFilterQuery(filters, foundset) {
  * @param {Array<scopes.svyPopupFilter.AbstractPopupFilter>} filters
  * @param {JSFoundSet} foundset
  * 
- * @return {Boolean}
+ * @return {QBSelect}
+ * 
+ * @deprecated use AbstractToolbarFilterUX.applyFilters() instead
  *
  * @properties={typeid:24,uuid:"DE3A02D8-BD4A-42B7-9870-6E5BC70D9D2A"}
  */
@@ -642,26 +672,26 @@ function applyFilters(filters, foundset) {
 	// remove previous filter
 	foundset.removeFoundSetFilterParam(TOOLBAR_FILTER_NAME);
 
-	var success = true;
 	// get the filter query
+	var filterQuery;
 	if (filters.length) {
-		var query = getFilterQuery(filters,foundset);
+		filterQuery = getFilterQuery(filters,foundset);
 	
 		// apply the query as filter
-		success = foundset.addFoundSetFilterParam(query, TOOLBAR_FILTER_NAME);
-		if (success) {
-			success = foundset.loadRecords();
-		}
+		foundset.addFoundSetFilterParam(filterQuery, TOOLBAR_FILTER_NAME);
 	} else {
 		// refresh foundset since filters have been removed
 		foundset.loadRecords();
+		filterQuery = foundset.getQuery();
 	}
-	return success;
+	return filterQuery;
 }
 
 /**
  * @public
  * @param {JSFoundSet} foundset
+ * 
+ * @deprecated 
  *
  * @properties={typeid:24,uuid:"9078E2C7-E065-4E71-B4AB-D0D6F9F896E8"}
  */
@@ -673,6 +703,54 @@ function clearFilters(foundset) {
 }
 
 /**
+ * Creates a filter toolbar implementation using the custom list from the custom-rendered-components package.<br><br>
+ * 
+ * This implementation expects an NG "Data Grid" table component and a "Custom List" component.<br><br>
+ * 
+ * The filters offered from this implementation are generated from the table provided as follows:
+ * 
+ * <ul><li>any column with its <code>filterType</code> property set to TEXT will be offered as a token popup, allowing the user to enter any number of Strings to match</li>
+ * <li>any column with its <code>filterType</code> property set to TEXT and the <code>valuelist</code> will be offered as a lookup where the user can search for and select any number of values</li>
+ * <li>any column with its <code>filterType</code> property set to NUMBER will be offered as a number filter with a number of operators</li>
+ * <li>any column with its <code>filterType</code> property set to DATE will be offered as a date filter with a number of operators</li></ul>
+ * 
+ * You should create a toolbar filter instance at the onLoad of your form and assign it to a form variable.
+ * 
+ * Make sure to re-direct the onClick event of the "List Component" to the toolbar.onClick(entry, index, dataTarget, event);
+ * 
+ * @param {RuntimeWebComponent<customrenderedcomponents-customlist>|RuntimeWebComponent<customrenderedcomponents-customlist_abs>} listComponent
+ * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} table
+ *
+ * @extends {AbstractToolbarFilterUX}
+ * @this {ListComponentFilterRenderer}
+ * @public
+ * @example <pre>
+ * //keep track of toolbarFilter object in a form variable
+ * var toolbarFilter;
+ * 
+ * //init the toolbarFilter at the onLoad.
+ * function onLoad(event) {
+ *  toolbarFilter = scopes.svyToolbarFilter.createFilterToolbar(elements.filterToolbar, elements.table)
+ * }
+ * 
+ * //propagate the onClick event of the "Custom List" component to the toolbar filter.
+ * function onClick(entry, index, dataTarget, event) {
+ *  toolbarFilter.onClick(entry, index, dataTarget, event);
+ * }
+ * 
+ * //optionally set a searchText for a cross-field search to further filter the result set
+ * function search() {
+ *  toolbarFilter.search(searchText);
+ * }
+ * </pre>
+ * 
+ * @properties={typeid:24,uuid:"4BB94EC8-F877-445D-93E1-541F0A58D664"}
+ */
+function createFilterToolbar(listComponent, table) {
+	return new ListComponentFilterRenderer(listComponent, table);
+}
+
+/**
  * @constructor
  * @private
  * @properties={typeid:24,uuid:"924B1AFF-94F1-4808-ADDC-BB1F10516E5C"}
@@ -681,18 +759,41 @@ function clearFilters(foundset) {
 function initSvyGridFilters() {
 	SvyGridFilters.prototype = Object.create(SvyGridFilters.prototype);
 	SvyGridFilters.prototype.constructor = SvyGridFilters;
-
+	
 	/**
-	 * @public
-	 * @return {RuntimeWebComponent<aggrid-groupingtable>}
-	 *
+	 * @param {Boolean} forceApply
+	 * @return {QBSelect}
+	 * 
 	 * @this {SvyGridFilters}
-	 *  */
-	SvyGridFilters.prototype.getTable = function() {
-		var form = forms[this.formName];
-		/** @type {RuntimeWebComponent<aggrid-groupingtable>} */
-		var table = form.elements[this.tableName];
-		return table;
+	 */
+	SvyGridFilters.prototype.applyFilters = function(forceApply) {
+		var foundset = this.getFoundSet();
+		var filters = this.getActiveFilters();
+		
+		// remove previous filter
+		if (this.autoApply === true || forceApply === true) {
+			foundset.removeFoundSetFilterParam(TOOLBAR_FILTER_NAME);
+		}
+		
+		// get the filter query
+		var filterQuery;
+		if (filters.length) {
+			filterQuery = getFilterQuery(filters, foundset);
+		
+			// apply the query as filter
+			if (this.autoApply === true || forceApply === true) {
+				foundset.addFoundSetFilterParam(filterQuery, TOOLBAR_FILTER_NAME);
+			}
+		} else {
+			// refresh foundset since filters have been removed
+			filterQuery = foundset.getQuery();
+		}
+		
+		if (forceApply && !this.onSearchCommand && !this.searchText) {
+			foundset.loadRecords();
+		}
+		
+		return filterQuery;
 	}
 
 	/**
@@ -700,7 +801,7 @@ function initSvyGridFilters() {
 	 * @return {SvyGridFilters}
 	 *
 	 * @this {SvyGridFilters}
-	 *  */
+	 */
 	SvyGridFilters.prototype.setSearchText = function(searchText) {
 		this.searchText = searchText;
 		return this;
@@ -712,7 +813,7 @@ function initSvyGridFilters() {
 	 * @return {SvyGridFilters}
 	 *
 	 * @this {SvyGridFilters}
-	 *  */
+	 */
 	SvyGridFilters.prototype.setOnSearchCommand = function(callback) {
 		this.onSearchCommand = callback;
 		return this;
@@ -720,10 +821,20 @@ function initSvyGridFilters() {
 	
 	/**
 	 * @public
+	 * @return {String}
+	 *
+	 * @this {SvyGridFilters}
+	 */
+	SvyGridFilters.prototype.getSearchText = function() {
+		return this.searchText;
+	}	
+	
+	/**
+	 * @public
 	 * @return {scopes.svySearch.SimpleSearch}
 	 *
 	 * @this {SvyGridFilters}
-	 *  */
+	 */
 	SvyGridFilters.prototype.getSimpleSearch = function() {
 		return this.simpleSearch;
 	}
@@ -735,7 +846,7 @@ function initSvyGridFilters() {
 	 * @return {scopes.svySearch.SearchProvider}
 	 *
 	 * @this {SvyGridFilters}
-	 *  */
+	 */
 	SvyGridFilters.prototype.getSearchProvider = function(column) {
 		return this.simpleSearch.getSearchProvider(column.dataprovider);
 	}
@@ -745,10 +856,8 @@ function initSvyGridFilters() {
 	 * @return {JSFoundSet}
 	 *
 	 * @this {SvyGridFilters}
-	 *  */
+	 */
 	SvyGridFilters.prototype.getFoundSet = function() {
-//		var form = forms[this.formName];
-//		return form.foundset
 		return this.getTable().myFoundset.foundset;
 	}
 	
@@ -761,7 +870,7 @@ function initSvyGridFilters() {
 	 * }>}
 	 *
 	 * @this {SvyGridFilters}
-	 *  */
+	 */
 	SvyGridFilters.prototype.getFilters = function() {
 
 		var filters = [];
@@ -787,7 +896,7 @@ function initSvyGridFilters() {
 	 * @return {Array<scopes.svyPopupFilter.AbstractPopupFilter>}
 	 *
 	 * @this {SvyGridFilters}
-	 *  */
+	 */
 	SvyGridFilters.prototype.getActiveFilters = function() {
 		/** @type {Array<scopes.svyPopupFilter.AbstractPopupFilter>} */
 		var activeFilters = [];
@@ -852,11 +961,11 @@ function initSvyGridFilters() {
 		var hasValues = toolbarFilter && toolbarFilter.getValues().length > 0 ? true : false;
 		// remove the filter from cache
 		delete this.toolbarFilters[column.dataprovider];	
-		
 		if (hasValues) {
 			this.search()
 		}
 	}
+
 	
 	/**
 	 * @public 
@@ -892,7 +1001,9 @@ function initSvyGridFilters() {
 		for (var dp in this.toolbarFilters) {
 			var filter = this.toolbarFilters[dp];
 			
-			jsonState.push(filter.getState())
+			var filterState = filter.getState();
+			delete filterState.params;
+			jsonState.push(filterState)
 		}
 		
 		return jsonState;
@@ -963,20 +1074,19 @@ function initSvyGridFilters() {
 	 * @this {SvyGridFilters}
 	 *  */
 	SvyGridFilters.prototype.getQuery = function() {
-		var activeFilters = this.getActiveFilters();
-		var foundset = this.getFoundSet();
-		
-		//apply foundset filters
-		applyFilters(activeFilters, foundset);
+		//apply foundset filters and force when the search text has been changed
+		var filterQuery = this.applyFilters(this.searchText !== this.simpleSearch.getSearchText() ? true : false);
 
 		var query;
 		//quick search?
+		if (this.searchText !== this.simpleSearch.getSearchText()) {
+			this.simpleSearch.setSearchText(this.searchText);			
+		}
 		if (this.searchText) {
 			var simpleSearch = this.simpleSearch;
-			simpleSearch.setSearchText(this.searchText);
 			query = simpleSearch.getQuery();
 		} else {
-			query = foundset.getQuery();
+			query = filterQuery;
 		}
 		
 		return query;
@@ -1069,6 +1179,7 @@ function initSvyGridFilters() {
 	 * @this {SvyGridFilters}
 	 *  */
 	SvyGridFilters.prototype.search = function() {
+		var searchTextChanged = this.searchText !== this.simpleSearch.getSearchText() ? true : false;
 		var foundset = this.getFoundSet();
 
 		// quick search
@@ -1077,7 +1188,7 @@ function initSvyGridFilters() {
 		if (this.onSearchCommand) {
 			//fire onSearchCommand
 			this.onSearchCommand.call(this, searchQuery, foundset);
-		} else if (this.searchText) {
+		} else if (searchTextChanged || this.searchText) {
 			//apply search if relevant
 			foundset.loadRecords(searchQuery);
 		}
@@ -1093,6 +1204,26 @@ function initSvyGridFilters() {
 function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype = Object.create(AbstractToolbarFilterUX.prototype);
 	AbstractToolbarFilterUX.prototype.constructor = AbstractToolbarFilterUX;
+	
+	/**
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.applyFilters = function() {
+		this.svyGridFilters.applyFilters(true);
+		this.svyGridFilters.getFoundSet().loadAllRecords();
+	}
+	
+	/**
+	 * Sets whether filters are automatically applied each time they were changed (defaults to true)
+	 * When set to false, filters can be applied via applyFilters() of this ToolbarFilter
+	 * @param {Boolean} autoApply
+	 * @return {AbstractToolbarFilterUX}
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.setAutoApplyFilters = function(autoApply) {
+		this.svyGridFilters.autoApply = autoApply;
+		return this;
+	}
 
 	/**
 	 * Returns the element used to display the filters
@@ -1100,12 +1231,9 @@ function initAbstractToolbarFilterUX() {
 	 * @return {RuntimeComponent}
 	 *
 	 * @this {AbstractToolbarFilterUX}
-	 *  */
+	 */
 	AbstractToolbarFilterUX.prototype.getElement = function() {
-		var form = forms[this.formName];
-		/** @type {RuntimeComponent} */
-		var element = form.elements[this.elementName];
-		return element;
+		return this.element;
 	}
 	
 	/**
@@ -1280,7 +1408,30 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.clearGridFilters = function() {
-		throw scopes.svyExceptions.AbstractMethodInvocationException("clearGridFilters not implemented")
+
+		// this.svyGridFilters.clearGridFilters();
+		this._clearGridFilters()
+			
+		// on filter removed event
+		if (this.onFilterRemovedEvent) {
+			scopes.svySystem.callMethod(this.onFilterRemovedEvent);
+		}
+		return true;
+	}
+	
+	/**
+	 * Clears all grid filters
+	 * Internal implementation, will take care to clear the filters and update the UI
+	 * Will not trigger the event onFilterRemovedEvent
+	 * 
+	 * @return {Boolean}
+	 * 
+	 * @protected 
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype._clearGridFilters = function() {
+		throw scopes.svyExceptions.AbstractMethodInvocationException("_clearGridFilters not implemented")
 	}
 	
 	/**
@@ -1360,26 +1511,25 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype.restoreToolbarFiltersState = function(jsonState) {
 
 		// clear previous filters
-		this.clearGridFilters();
+		this._clearGridFilters();
 
 		// restore new filters
 		for (var i = 0; i < jsonState.length; i++) {
 			var obj = jsonState[i];
 			var column = this.getColumn(obj.dataprovider);
 
-			var values;
 			if (!column) continue; // TODO throw a warning ?
 
 			switch (column.filterType) {
 
 			case 'NUMBER':
-				values = obj.values.map(function(value) {
+				obj.values = obj.values.map(function(value) {
 					return utils.stringToNumber(value);
 				});
 
 				break;
 			case 'DATE':
-				values = obj.values.map(function(value) {
+				obj.values = obj.values.map(function(value) {
 					return new Date(value);
 				});
 
@@ -1387,14 +1537,23 @@ function initAbstractToolbarFilterUX() {
 			case 'TEXT':
 
 			default:
-				values = obj.values;
 				break;
 			}
 
+			var values = obj.values;
+			
 			// set the filter again
 			this.setFilterValue(column, values, obj.operator);
 			var filter = this.getOrCreateToolbarFilter(column);
 			filter.restoreState(obj);
+		}
+		
+		// update filter UI
+		var element = this.getElement();
+		if (this.hasFilters()) {
+			element.addStyleClass('has-filter');
+		} else {
+			element.removeStyleClass('has-filter');
 		}
 	}
 	
@@ -1424,6 +1583,19 @@ function initAbstractToolbarFilterUX() {
 		this.svyGridFilters.setSearchText(searchText);
 		return this;
 	}
+	
+	/**
+	 * Returns the search text for the simple search
+	 *
+	 * @return {String}
+	 *
+	 * @public
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.getSearchText = function() {
+		return this.svyGridFilters.getSearchText();
+	}	
 	
 	/**
 	 * Returns the SimpleSearch
@@ -1481,6 +1653,7 @@ function initAbstractToolbarFilterUX() {
 		if (arguments.length === 1) {
 			this.svyGridFilters.setSearchText(searchText);
 		}
+		this.svyGridFilters.applyFilters(true);
 		return this.svyGridFilters.search();
 	}
 	
@@ -1644,19 +1817,20 @@ function initAbstractToolbarFilterUX() {
 		var filter = this.getOrCreateToolbarFilter(column);
 		filter.setValues(values);
 		filter.setOperator(operator);
-		this.onFilterApply(values, operator, filter);
+		this.onFilterApply(values, operator, filter, true);
 	}
     
 	/**
 	 * @param {Array} values
 	 * @param {String} operator
 	 * @param {scopes.svyPopupFilter.AbstractPopupFilter} filter
+	 * @param {Boolean} [forceApply] Default false.
 	 * 
 	 * @protected 
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 */
-	AbstractToolbarFilterUX.prototype.onFilterApply = function (values, operator, filter) {
+	AbstractToolbarFilterUX.prototype.onFilterApply = function (values, operator, filter, forceApply) {
 
 		/** @type {AbstractToolbarFilterUX} */
 		var thisIntance = filter.getParams()[0];
@@ -1664,15 +1838,18 @@ function initAbstractToolbarFilterUX() {
 		/** @type {SvyGridFilters} */
 		var gridFilters = thisIntance['svyGridFilters'];
 		
-		//	TODO to be moved somewhere else ~?
-		// persist the values & operator:
-		filter.setOperator(operator);
-		
+
+		// check if values or operator have changed
 		var currentValues = filter.getValues();
-		if (scopes.svyJSUtils.areObjectsEqual(currentValues, values)) {
+		var currentOperator = filter.getOperator();
+		if (!forceApply && scopes.svyJSUtils.areObjectsEqual(currentValues, values) && operator == currentOperator) {
+			// nothing has changed, do nothing
 			return;
 		}
 		
+		//	TODO to be moved somewhere else ~?
+		// persist the values & operator:
+		filter.setOperator(operator);
 		filter.setValues(values);
 		
 		var displayValues = values ? values : [];
@@ -1758,7 +1935,7 @@ function initListComponentFilterRenderer() {
 	/**
 	 * Returns the Custom List element this renderer is using to display the filters
 	 * 
-	 * @return {RuntimeWebComponent<customrenderedcomponents-customlist>}
+	 * @return {RuntimeWebComponent<customrenderedcomponents-customlist>|RuntimeWebComponent<customrenderedcomponents-customlist_abs>}
 	 * 
 	 * @public
 	 * 
@@ -1767,10 +1944,7 @@ function initListComponentFilterRenderer() {
 	 * @this {ListComponentFilterRenderer}
 	 */
 	ListComponentFilterRenderer.prototype.getElement = function() {
-		var form = forms[this.formName];
-		/** @type {RuntimeWebComponent<customrenderedcomponents-customlist>} */
-		var listComponent = form.elements[this.elementName];
-		return listComponent;
+		return this.element;
 	}
 
 	/**
@@ -1934,18 +2108,13 @@ function initListComponentFilterRenderer() {
 	 *
 	 * @this {ListComponentFilterRenderer}
 	 */
-	ListComponentFilterRenderer.prototype.clearGridFilters = function() {
+	ListComponentFilterRenderer.prototype._clearGridFilters = function() {
 		this.getElement().clear();
 		this.svyGridFilters.clearGridFilters();
 		
 		// if has no filters
 		var element = this.getElement();
 		element.removeStyleClass('has-filter');
-		
-		// on filter removed event
-		if (this.onFilterRemovedEvent) {
-			scopes.svySystem.callMethod(this.onFilterRemovedEvent);
-		}
 	}
 
 	/**
