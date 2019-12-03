@@ -789,7 +789,9 @@ function initSvyGridFilters() {
 			filterQuery = foundset.getQuery();
 		}
 		
-		if (forceApply && !this.onSearchCommand && !this.searchText) {
+		// TODO change this in Servoy 2019.12
+		//if ((forceApply === true || this.autoApply === true) && !this.onSearchCommand && !this.searchText) {
+		if ((forceApply === true || this.autoApply === true) && !this.searchText) {
 			foundset.loadRecords();
 		}
 		
