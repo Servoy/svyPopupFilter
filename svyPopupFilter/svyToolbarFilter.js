@@ -1551,7 +1551,7 @@ function initAbstractToolbarFilterUX() {
 				var lookup = scopes.svyLookup.createValuelistLookup(column.valuelist);
 				/** @type {RuntimeForm<AbstractLookup>} */
 				var lookupForm = popupTemplates.getRendererForm(FILTER_TYPES.SELECT)
-				lookup.setLookupFormProvider(lookupForm);
+				lookup.setLookupForm(lookupForm);
 				lookup.setHeader("");
 				filter = scopes.svyPopupFilter.createSelectFilter(column.dataprovider, lookup);
 			} else {
