@@ -1471,19 +1471,18 @@ function initAbstractToolbarFilterUX() {
 			var obj = jsonState[i];
 			var column = this.getColumn(obj.dataprovider);
 
-			var values;
 			if (!column) continue; // TODO throw a warning ?
 
 			switch (column.filterType) {
 
 			case 'NUMBER':
-				values = obj.values.map(function(value) {
+				obj.values = obj.values.map(function(value) {
 					return utils.stringToNumber(value);
 				});
 
 				break;
 			case 'DATE':
-				values = obj.values.map(function(value) {
+				obj.values = obj.values.map(function(value) {
 					return new Date(value);
 				});
 
@@ -1491,10 +1490,11 @@ function initAbstractToolbarFilterUX() {
 			case 'TEXT':
 
 			default:
-				values = obj.values;
 				break;
 			}
 
+			var values = obj.values;
+			
 			// set the filter again
 			this.setFilterValue(column, values, obj.operator);
 			var filter = this.getOrCreateToolbarFilter(column);
