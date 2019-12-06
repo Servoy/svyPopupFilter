@@ -207,6 +207,12 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 	display: inline-flex;
 }
 
+.svy-toolbar-filter .toolbar-filter-tag  > .btn:first-child {
+	max-width: 220px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .svy-toolbar-filter .toolbar-filter-tag-text {
 }
 
