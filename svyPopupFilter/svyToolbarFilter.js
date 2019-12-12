@@ -63,7 +63,7 @@ function PopupRendererForms() {
 
 /**
  * @return {PopupRendererForms}
- * @public 
+ * @protected 
  * @deprecated 
  * @properties={typeid:24,uuid:"BBACCB75-672F-4067-BE33-A14A7150496C"}
  */
@@ -129,7 +129,7 @@ function initPopupRendererForms() {
 	
 	/** 
 	 * @return {RuntimeForm<AbstractPopupFilter>}
-	 * @public
+	 * @protected
 	 * @deprecated use getRendererForm(FILTER_TYPES.DATE) instead
 	 * @this {PopupRendererForms} 
 	 * */
@@ -141,7 +141,7 @@ function initPopupRendererForms() {
 	
 	/** 
 	 * @param {RuntimeForm<AbstractPopupFilter>} form
-	 * @public
+	 * @protected
 	 * @deprecated use setRendererForm(FILTER_TYPES.DATE, form) instead
 	 * @return {PopupRendererForms}
 	 * @this {PopupRendererForms} 
@@ -152,7 +152,7 @@ function initPopupRendererForms() {
 	
 	/** 
 	 * @return {RuntimeForm<AbstractPopupFilter>}
-	 * @public
+	 * @protected
 	 * @deprecated use getRendererForm(FILTER_TYPES.NUMBER) instead
 	 * @this {PopupRendererForms} 
 	 * */
@@ -165,7 +165,7 @@ function initPopupRendererForms() {
 	/** 
 	 * 
 	 * @param {RuntimeForm<AbstractPopupFilter>} form
-	 * @public
+	 * @protected
 	 * @deprecated use setRendererForm(FILTER_TYPES.DATE, form) instead
 	 * @return {PopupRendererForms}
 	 * @this {PopupRendererForms} 
@@ -176,7 +176,7 @@ function initPopupRendererForms() {
 	
 	/** 
 	 * @return {RuntimeForm<AbstractPopupFilter>}
-	 * @public
+	 * @protected
 	 * @deprecated use getRendererForm(FILTER_TYPES.TOKEN) instead
 	 * @this {PopupRendererForms} 
 	 * */
@@ -188,7 +188,7 @@ function initPopupRendererForms() {
 	
 	/** 
 	 * @param {RuntimeForm<AbstractPopupFilter>} form
-	 * @public
+	 * @protected
 	 * @deprecated use setRendererForm(FILTER_TYPES.TOKEN, form) instead
 	 * @return {PopupRendererForms}
 	 * @this {PopupRendererForms} 
@@ -199,7 +199,7 @@ function initPopupRendererForms() {
 	
 	/** 
 	 * @return {RuntimeForm<AbstractLookup>}
-	 * @public
+	 * @protected
 	 * @deprecated use getRendererForm(FILTER_TYPES.SELECT) instead
 	 * @this {PopupRendererForms} 
 	 * */
@@ -211,7 +211,7 @@ function initPopupRendererForms() {
 	
 	/** 
 	 * @param {RuntimeForm<AbstractLookup>} form
-	 * @public
+	 * @protected
 	 * @deprecated use setRendererForm(FILTER_TYPES.TOKEN, form) instead
 	 * @return {PopupRendererForms}
 	 * @this {PopupRendererForms} 
@@ -761,6 +761,7 @@ function initSvyGridFilters() {
 	SvyGridFilters.prototype.constructor = SvyGridFilters;
 	
 	/**
+	 * @public 
 	 * @param {Boolean} forceApply
 	 * @return {QBSelect}
 	 * 
@@ -1013,7 +1014,7 @@ function initSvyGridFilters() {
 
 	/**
 	 * @deprecated this function doesnt't work and is not used
-	 * @public 
+	 * @protected  
 	 * @param {Array<{
 				id: String,
 				dataprovider: String,
@@ -1208,6 +1209,7 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype.constructor = AbstractToolbarFilterUX;
 	
 	/**
+	 * @protected 
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.applyFilters = function() {
@@ -1216,6 +1218,7 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * @public 
 	 * Sets whether filters are automatically applied each time they were changed (defaults to true)
 	 * When set to false, filters can be applied via applyFilters() of this ToolbarFilter
 	 * @param {Boolean} autoApply
@@ -1254,7 +1257,7 @@ function initAbstractToolbarFilterUX() {
 	}	
 	
 	/**
-	 * @public
+	 * @protected 
 	 * @param {function({values:Array, operator:String, filter:scopes.svyPopupFilter.AbstractPopupFilter})} callback
 	 * 
 	 * @return {AbstractToolbarFilterUX}
@@ -1302,13 +1305,14 @@ function initAbstractToolbarFilterUX() {
 	}	
 	
 	/**
+	 * 
 	 * @param {function()} callback
 	 * 
 	 * @return {AbstractToolbarFilterUX}
 	 * 
 	 * @deprecated use setOnFilterRemovedCallback
 	 * 
-	 * @public
+	 * @protected
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
@@ -1437,6 +1441,7 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * @protected 
 	 * Override this method in a subclass to adjust the UI to the updated values for the given dataprovider
 	 * 
 	 * @param {String} dataprovider

@@ -293,7 +293,7 @@ function SvySelectFilter(dataProvider, lookup){
 function initAbstractPopupFilter() {
 	
 	/**
-	 * @public
+	 * @protected 
 	 * @param {RuntimeForm<AbstractPopupFilter>} popupFilterForm
 	 * @this {AbstractPopupFilter}
 	 * @deprecated
