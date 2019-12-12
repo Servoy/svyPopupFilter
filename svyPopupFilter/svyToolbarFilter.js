@@ -1441,7 +1441,7 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
-	 * @protected 
+	 *  
 	 * Override this method in a subclass to adjust the UI to the updated values for the given dataprovider
 	 * 
 	 * @param {String} dataprovider

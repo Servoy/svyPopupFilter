@@ -368,7 +368,11 @@ function initAbstractPopupFilter() {
 	 * @this {AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.getValues = function(){
-		return this.filterValues.concat([]);
+		if (this.filterValues) {
+			return this.filterValues.concat([]);
+		} else {
+			return [];
+		}
 	}
 	
 	/**
@@ -759,10 +763,9 @@ function initSvySelectFilter() {
 	SvySelectFilter.prototype.getState = function() {
 
 		// TODO Fixme: return pks
-		var jsonState = AbstractPopupFilter.prototype.getState();
+		var jsonState = AbstractPopupFilter.prototype.getState.call(this);
 		var lookup = this.lookup;
-		jsonState.lookupSelectedRecords = lookup.getSelectedRecords();
-		
+		jsonState.values = lookup.getSelectedValues();
 		
 		return jsonState;
 	}
@@ -783,10 +786,10 @@ function initSvySelectFilter() {
 	 */
 	SvySelectFilter.prototype.restoreState = function(jsonState) {
 
-		AbstractPopupFilter.prototype.restoreState(jsonState);
-		if (jsonState.lookupSelectedRecords) {
-			// FIXME restore the state for a valuelist
-			// this.lookup.setSelectedRecords(jsonState.lookupSelectedRecords);
+		AbstractPopupFilter.prototype.restoreState.call(this, jsonState);
+		if (jsonState.values) {
+			// TODO this may not be enough if the in-memory datasource of the lookup is refreshed before show.
+			this.lookup.setSelectedValues(jsonState.values);
 		}
 		return this;
 	}
