@@ -8,7 +8,7 @@ var FILTER_TYPES = {
 	NUMBER: 'numberPopupFilterTemplate',
 	TOKEN: 'tokenPopupFilterTemplate',
 	SELECT: 'selectFilterTemplate'
-}
+};
 
 /**
  * @type {String}
@@ -292,8 +292,6 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 
 	// create filter
 }
-
-
 
 /**
  * Filter Toolbar implementation using the listcomponent from the custom-rendered-components package.
@@ -1104,11 +1102,39 @@ function initSvyGridFilters() {
 	 *  */
 	SvyGridFilters.prototype.getDefaultSearch = function() {
 
+		if (!this.getTable()) {
+			return null;
+		}
+		
+		
+		
 		var columns = this.getTable().columns;
 		var tableFoundset = this.getTable().myFoundset.foundset;
-		var tableDataSource;
-		if (tableFoundset) {
-			tableDataSource = tableFoundset.getDataSource()
+		var tableDataSource;		
+		
+		var jsForm = solutionModel.getForm(this.getTable().getFormName());
+		var jsTable = jsForm.findWebComponent(this.getTable().getName());
+		var foundsetSelector = jsTable.getJSONProperty("myFoundset").foundsetSelector;
+		
+		try {
+			if (foundsetSelector) {
+				if (databaseManager.getTable(foundsetSelector)) {
+					tableDataSource = foundsetSelector;
+				} else if (foundsetSelector.split('.').length > 1) {
+					tableDataSource = scopes.svyDataUtils.getRelationForeignDataSource(foundsetSelector)
+				} else if (solutionModel.getRelation(foundsetSelector)) {
+					var jsRel = solutionModel.getRelation(foundsetSelector);
+					tableDataSource = jsRel.foreignDataSource;
+				}
+			}
+		} catch (e) {
+			application.output(e, LOGGINGLEVEL.ERROR);
+		}
+		
+		if (tableDataSource) {
+			// do nothing
+		} else if (tableFoundset) {
+			tableDataSource = tableFoundset.getDataSource();
 		} else {
 			var form = forms[this.formName];
 			tableDataSource = form ? form.foundset.getDataSource() : null;
