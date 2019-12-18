@@ -1,4 +1,5 @@
 /**
+ * @public 
  * Enum of all renderer form types available
  * @properties={typeid:35,uuid:"E4F70004-F7BE-4806-AC3C-F727EC06AF8F",variableType:-4}
  */
@@ -1728,11 +1729,10 @@ function initAbstractToolbarFilterUX() {
 				// will be a lookup form
 				// number picker
 				// calendar picker
-				var lookup = scopes.svyLookup.createValuelistLookup(column.valuelist);
+				var lookup = scopes.svyLookup.createValueListLookup(column.valuelist);
 				/** @type {RuntimeForm<AbstractLookup>} */
 				var lookupForm = popupTemplates.getRendererForm(FILTER_TYPES.SELECT)
 				lookup.setLookupForm(lookupForm);
-				lookup.setHeader("");
 				filter = scopes.svyPopupFilter.createSelectFilter(column.dataprovider, lookup);
 			} else {
 				// will be a free text entry

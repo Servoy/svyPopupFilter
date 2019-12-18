@@ -2,7 +2,7 @@ customProperties:"formComponent:false,\
 layout:{\
 responsive:true\
 }",
-extendsID:"66D53FB8-362A-49BE-B67B-E4C1E53E6A2B",
+extendsID:"A4F31626-43DC-4159-AD5E-75EB04AF3BEB",
 name:"svySelectPopupFilter",
 styleClass:"svy-lookup svy-lookup-multi svy-popup-filter",
 typeid:3,

@@ -85,6 +85,7 @@ function showPopUp(callback, target, width, height) {
 }
 
 /**
+ * @public
  * Creates a form popup for this form and returns it
  * 
  * @param {function(Array<String|Date|Number>,String,scopes.svyPopupFilter.AbstractPopupFilter)} callback The function that is called when selection happens
@@ -326,7 +327,7 @@ function getSelectedFilterValues() {
 }
 
 /**
- * @protected 
+ * @public  
  * @param {Array} selectedValues
  *
  * @properties={typeid:24,uuid:"173ECAC9-9A4B-4070-B84A-9E8EE85962E8"}
@@ -337,7 +338,7 @@ function setSelectedFilterValues(selectedValues) {
 
 /**
  * @return {String}
- * @protected 
+ * @public  
  * @properties={typeid:24,uuid:"4DDB2E2B-74ED-4961-8542-E459CE465440"}
  */
 function getOperator() {
@@ -345,7 +346,7 @@ function getOperator() {
 }
 
 /**
- * @protected 
+ * @public  
  * @param {String} defaultOperator
  *
  * @properties={typeid:24,uuid:"922E1870-6AEE-46EC-91F6-BEB8F36657B9"}
