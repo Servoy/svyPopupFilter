@@ -1,4 +1,12 @@
 /**
+ * @private 
+ * @type {String}
+ *
+ * @properties={typeid:35,uuid:"988201FA-4992-4215-9C01-758AA36D2E01"}
+ */
+var SVY_POPUP_FILTER_VERSION = '1.0.1';
+
+/**
  * @public
  * @enum 
  * @properties={typeid:35,uuid:"39D1503E-471D-4DFC-A6EC-B8EF46289CF3",variableType:-4}
@@ -901,6 +909,16 @@ function initSvySelectFilter() {
 	SvySelectFilter.prototype.createWindow = function(x, y, width, height, jsWindowType) {
 		return this.lookup.createWindow(x,y,width,height,jsWindowType);
 	}
+}
+
+/**
+ * Gets the version of this module
+ * @public 
+ * @return {String} the version of the module using the format Major.Minor.Revision
+ * @properties={typeid:24,uuid:"41B693FE-B16A-475C-BB1C-E80485B711C0"}
+ */
+function getVersion() {
+    return SVY_POPUP_FILTER_VERSION;
 }
 
 /**
