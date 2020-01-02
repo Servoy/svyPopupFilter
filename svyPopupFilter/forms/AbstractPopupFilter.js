@@ -352,6 +352,7 @@ function getOperator() {
  * @properties={typeid:24,uuid:"922E1870-6AEE-46EC-91F6-BEB8F36657B9"}
  */
 function setOperator(defaultOperator) {
+	// FIXME restrict the operator types
 	if (defaultOperator) {
 		operator = defaultOperator;
 	}

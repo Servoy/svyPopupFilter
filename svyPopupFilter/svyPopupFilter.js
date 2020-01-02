@@ -343,7 +343,6 @@ function initAbstractPopupFilter() {
 	}
 	
 	/**
-	 * TODO should be public !? 
 	 * @public 
 	 * @return {String}
 	 * @this {AbstractPopupFilter}
@@ -362,7 +361,6 @@ function initAbstractPopupFilter() {
 	}
 	
 	/**
-	 * TODO should be public !? 
 	 * @public 
 	 * @return {Array}
 	 * @this {AbstractPopupFilter}
@@ -399,8 +397,7 @@ function initAbstractPopupFilter() {
 	
 	/**
 	 * Sets the popupFilter text
-	 *
-	 * @public
+	 * @public 
 	 * @param {String} text
 	 * @this {AbstractPopupFilter}
 	 */
@@ -411,7 +408,7 @@ function initAbstractPopupFilter() {
 
 	/**
 	 * Gets the popupFilter text
-	 * @public
+	 * @public 
 	 * @return {String}
 	 * @this {AbstractPopupFilter}
 	 */
@@ -570,7 +567,6 @@ function initAbstractPopupFilter() {
 	/**
 	 * @public 
 	 * @param {{
-				id: String,
 				dataprovider: String,
 				operator: String,
 				params: Object,

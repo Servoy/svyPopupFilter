@@ -4,9 +4,21 @@
  * @properties={typeid:35,uuid:"E4F70004-F7BE-4806-AC3C-F727EC06AF8F",variableType:-4}
  */
 var FILTER_TYPES = {
+	/**
+	 * Date filter
+	 * */
 	DATE: 'datePopupFilterTemplate',
+	/**
+	 * Number filter
+	 * */
 	NUMBER: 'numberPopupFilterTemplate',
+	/**
+	 * Tokens filter
+	 * */
 	TOKEN: 'tokenPopupFilterTemplate',
+	/**
+	 * Select filter
+	 * */
 	SELECT: 'selectFilterTemplate'
 };
 
@@ -2135,7 +2147,7 @@ function initListComponentFilterRenderer() {
 	/**
 	 * Clears all grid filters
 	 * 
-	 * @public
+	 * @protected 
 	 * 
 	 * @override 
 	 *
