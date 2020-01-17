@@ -2010,7 +2010,7 @@ function initListComponentFilterRenderer() {
 				'<span class=\"toolbar-filter-tag-icon fas fa-angle-down\">' + '</span>' + \n\
 			'</button>' + \n\
 			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"close\">' + \n\
-			'<span class=\"fas fa-times text-danger h6\">' + '</span>' + '</button>' + '</div>'; \n\
+			'<span class=\"fas fa-times text-danger\">' + '</span>' + '</button>' + '</div>'; \n\
 			return template; \n\
 		})";
 	}
