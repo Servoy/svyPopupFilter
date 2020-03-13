@@ -47,6 +47,45 @@ var latestToolbarFilter = null;
 var popupRendererForms;
 
 /**
+ * This is a Singleton
+ * @type {FilterConfig}
+ * @private 
+ * @properties={typeid:35,uuid:"9F30ABE1-06E5-4A81-BDAF-688EEE5A73F4",variableType:-4}
+ */
+var globalFilterConfig;
+
+/**
+ * @private 
+ * @properties={typeid:24,uuid:"51DB1DD3-1632-4667-82F9-C2EF07BF1A5B"}
+ */
+function FilterConfig() {
+	// TODO default auto-apply behavior
+	// this.autoApply = true;
+	
+	this.useNonVisibleColumns = true;
+}
+
+/**
+ * @return {Boolean}
+ * @private  
+ * @properties={typeid:24,uuid:"CE62E19D-27B9-49C7-BD74-5B47D8F2F3B2"}
+ */
+function getConfigUseNonVisibleColumns() {
+	return globalFilterConfig.useNonVisibleColumns;
+}
+
+/**
+ * @public 
+ * @param {Boolean} useNonVisibleColumns
+ *
+ * @properties={typeid:24,uuid:"11013635-12DE-4CDF-9A28-57E9AC8784EB"}
+ */
+function setConfigUseNonVisibleColumns(useNonVisibleColumns) {
+	 // TODO can i make it an UI property
+	 globalFilterConfig.useNonVisibleColumns = useNonVisibleColumns;
+}
+
+/**
  * @constructor 
  * @private   
  * @properties={typeid:24,uuid:"EA19BC69-1CA7-4C3A-B6F3-BB972688F4BD"}
@@ -915,22 +954,69 @@ function initSvyGridFilters() {
 	 * @this {SvyGridFilters}
 	 */
 	SvyGridFilters.prototype.getFilters = function() {
+		
 
+		var column;
+		var filter;
 		var filters = [];
 
 		var table = this.getTable();
 		var columns = table.columns;
-		for (var index = 0; index < columns.length; index++) {
-			var column = columns[index];
-			if (column.filterType && column.filterType != 'NONE') {
-				var filter = new Object();
-				filter.text = column.headerTitle;
-				filter.dataprovider = column.dataprovider;
-				filter.id = column.id;
-				filter.columnIndex = index;
-				filters.push(filter);
+		var useNonVisibleColumns = getConfigUseNonVisibleColumns();
+
+		if (useNonVisibleColumns) {
+			// scan all columns
+			for (var index = 0; index < columns.length; index++) {
+				column = columns[index];
+				if (column.filterType && column.filterType != 'NONE') {
+					filter = new Object();
+					filter.text = column.headerTitle;
+					filter.dataprovider = column.dataprovider;
+					filter.id = column.id;
+					filter.columnIndex = index;
+					filters.push(filter);
+				}
+			}
+		} else {
+		
+			// scan only visible columns. Access the column state
+			var state = table.getColumnState();
+			if (state) {
+				/** @type {Array} */
+				var colsState = JSON.parse(state).columnState;
+				for (var j = 0; j < colsState.length; j++) {
+					if (!colsState[j].hide) { // skip column if hidden
+					
+						// NEW API
+						var colIndex = table.getColumnIndex(colsState[j].colId);
+						column = columns[colIndex];
+						if (column && column.filterType && column.filterType != 'NONE') {
+							//visibleColumns.push(col.dataprovider);
+							filter = new Object();
+							filter.text = column.headerTitle;
+							filter.dataprovider = column.dataprovider;
+							filter.id = column.id;
+							filter.columnIndex = colIndex;
+							filters.push(filter);
+						}
+					}
+				}
+				
+			} else {
+				for (var index = 0; index < columns.length; index++) {
+					column = columns[index];
+					if (column.filterType && column.filterType != 'NONE' && column.visible) {
+						filter = new Object();
+						filter.text = column.headerTitle;
+						filter.dataprovider = column.dataprovider;
+						filter.id = column.id;
+						filter.columnIndex = index;
+						filters.push(filter);
+					}
+				}
 			}
 		}
+		
 		return filters;
 	}
 	
@@ -2234,6 +2320,7 @@ function initListComponentFilterRenderer() {
  */
 var init = (function() {
 	initPopupRendererForms();
+	globalFilterConfig = new FilterConfig();
 	popupRendererForms = new PopupRendererForms();
 	initSvyGridFilters();
 	initAbstractToolbarFilterUX();
