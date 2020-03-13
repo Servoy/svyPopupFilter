@@ -22,6 +22,27 @@ function onLoad(event) {
 
 /**
  * @protected 
+ * @param firstShow
+ * @param event
+ *
+ * @properties={typeid:24,uuid:"D9DA9D2A-F16E-469F-A19A-7625D3798EC5"}
+ * @override
+ */
+function onShow(firstShow,event) {
+	
+	_super.onShow(firstShow,event);
+	
+	if (firstShow) {
+		elements.listTags.clear();
+		for (var i = 0; i < values.length; i++) {
+			var tag = elements.listTags.newEntry();
+			tag.text = values[i];
+		}
+	}
+}
+
+/**
+ * @protected 
  * @param selectedValues
  *
  * @properties={typeid:24,uuid:"9F26FAEA-39F7-41B5-80D8-7C2117A36A2E"}
