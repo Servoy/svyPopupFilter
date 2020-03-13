@@ -615,18 +615,24 @@ function getFilterQuery(filters, foundset) {
 			op = "isin";
 			value = qValues;
 			break;
+		case OPERATOR.LIKE:
+			op = "like";
+			value = qValues;
+			break;
+			
 		default:
 			break;
 		}
 
 		/** @type {QBSelect} */
-		var whereClause = null;
+		var querySource = null;
 		var aDP = dp.split('.');
 		for (var j = 0; j < aDP.length - 1; j++) {
-			whereClause = whereClause == null ? query.joins[aDP[j]] : whereClause.joins[aDP[j]];
+			querySource = querySource == null ? query.joins[aDP[j]] : querySource.joins[aDP[j]];
 		}
 
-		whereClause = whereClause == null ? query.columns[aDP[aDP.length - 1]] : whereClause.columns[aDP[aDP.length - 1]];
+		/** @type {QBColumn} */
+		var whereClause = querySource == null ? query.columns[aDP[aDP.length - 1]] : querySource.columns[aDP[aDP.length - 1]];
 
 		// do not lower case Dates.
 		if (value instanceof Date) {
@@ -656,7 +662,30 @@ function getFilterQuery(filters, foundset) {
 		if (useNot) {
 			whereClause = whereClause["not"];
 		}
-		whereClause = op == "between" ? whereClause[op](value[0], value[1]) : whereClause[op](value);
+		
+		switch (op) {
+		case "between":
+			whereClause = whereClause[op](value[0], value[1]);
+			break;
+		case "like":
+			if (value instanceof Array) {
+				var or = query.or;
+				for (var v = 0; v < value.length; v++) {
+					or.add(whereClause[op](value[v]  + "%"));
+				}
+				whereClause = or;
+				break;
+			}
+			
+			whereClause = whereClause[op](value + "%");
+			break;
+		default:
+			whereClause = whereClause[op](value);
+			break;
+		}
+	
+		
+		//whereClause = op == "between" ? whereClause[op](value[0], value[1]) : whereClause[op](value);
 		if (!isFilterSet) isFilterSet = true;
 		/** @type {QBCondition} */
 		var where = whereClause;

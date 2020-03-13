@@ -13,13 +13,14 @@ var SVY_POPUP_FILTER_VERSION = '1.0.1';
  */
 var OPERATOR = {
 	EQUALS: "eq",
+	LIKE: "like",
 	GREATER_EQUAL: "ge",
 	GREATER_THEN: "gt",
 	SMALLER_EQUAL: "le",
 	SMALLER_THEN: "lt",
 	BETWEEN: "BETWEEN",
 	IS_IN: "IN"
-}
+};
 
 /**
  *
@@ -575,6 +576,7 @@ function initAbstractPopupFilter() {
 	/**
 	 * @public 
 	 * @param {{
+				id: String,
 				dataprovider: String,
 				operator: String,
 				params: Object,
