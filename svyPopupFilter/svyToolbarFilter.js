@@ -66,7 +66,7 @@ function FilterConfig() {
 }
 
 /**
- * @return {Boolean}
+ * @return {Boolean} Default true.
  * @private  
  * @properties={typeid:24,uuid:"CE62E19D-27B9-49C7-BD74-5B47D8F2F3B2"}
  */
@@ -76,7 +76,7 @@ function getConfigUseNonVisibleColumns() {
 
 /**
  * @public 
- * @param {Boolean} useNonVisibleColumns
+ * @param {Boolean} useNonVisibleColumns Default true.
  *
  * @properties={typeid:24,uuid:"11013635-12DE-4CDF-9A28-57E9AC8784EB"}
  */
@@ -95,22 +95,22 @@ function PopupRendererForms() {
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.datePopupFilterTemplate = forms.svyDatePopupFilter;
+	this.datePopupFilterTemplate = {template: forms.svyDatePopupFilter};
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.numberPopupFilterTemplate = forms.svyNumberPopupFilter;
+	this.numberPopupFilterTemplate = {template: forms.svyNumberPopupFilter};
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.tokenPopupFilterTemplate = forms.svyTokenPopupFilter;
+	this.tokenPopupFilterTemplate = {template: forms.svyTokenPopupFilter};
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractLookup>} 
 	 * */
-	this.selectFilterTemplate = forms.svySelectPopupFilter;
+	this.selectFilterTemplate = {template: forms.svySelectPopupFilter};
 }
 
 /**
@@ -145,6 +145,18 @@ function setPopupRendererForm(formType, form) {
 }
 
 /**
+ * @public 
+ * Sets the default operator for the given formType
+ * @param {String} formType any of the FILTER_TYPES
+ * @param {String} operator the default operator to be used. Use enum value from scopes.svyToolbarFilter.OPERATOR 
+ *
+ * @properties={typeid:24,uuid:"C1D86EEE-BC55-473B-A6E7-D963E3B9866E"}
+ */
+function setPopupDefaultOperator(formType, operator) {
+	popupRendererForms.setDefaultOperator(formType, operator);
+}
+
+/**
  * @constructor
  * @private
  * @properties={typeid:24,uuid:"37935D63-8170-4771-AB8E-B448458A08E5"}
@@ -162,8 +174,9 @@ function initPopupRendererForms() {
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.getRendererForm = function(formType) {
+		/** @type {{template:RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>}} */
 		var result = this[formType];
-		return result;
+		return result.template;
 	}
 	
 	/** 
@@ -175,9 +188,68 @@ function initPopupRendererForms() {
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.setRendererForm = function(formType, form) {
-		this[formType] = form;
+		this[formType].template = form;
 		return this;
 	}	
+	
+	/** 
+	 * Returns the default operator for the given formType
+	 * @param {String} formType any of the FILTER_TYPES
+	 * @return {String}
+	 * @public
+	 * @this {PopupRendererForms} 
+	 * */
+	PopupRendererForms.prototype.getDefaultOperator = function(formType) {
+		/** @type {{template:RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>, operator:String=}} */
+		var result = this[formType];
+		return result.operator;
+	}
+	
+	/** 
+	 * Sets the default operator for the given formType
+	 * @param {String} formType any of the FILTER_TYPES
+	 * @param {String} operator the operator to set
+	 * @return {PopupRendererForms}
+	 * @public
+	 * @this {PopupRendererForms} 
+	 * */
+	PopupRendererForms.prototype.setDefaultOperator = function(formType, operator) {
+		
+		// check if operator is allowed
+		var allowedOperators = [];
+		var OPERATOR = scopes.svyPopupFilter.OPERATOR;
+		switch (formType) {
+		case FILTER_TYPES.TOKEN:
+			allowedOperators = [OPERATOR.IS_IN, OPERATOR.LIKE, OPERATOR.LIKE_CONTAINS];
+			break;
+		case FILTER_TYPES.SELECT:
+			allowedOperators = [OPERATOR.IS_IN];
+			break;
+		case FILTER_TYPES.NUMBER:
+			allowedOperators = [OPERATOR.BETWEEN, OPERATOR.GREATER_EQUAL, OPERATOR.GREATER_THEN, OPERATOR.SMALLER_EQUAL, OPERATOR.SMALLER_THEN, OPERATOR.EQUALS];
+			break;
+		case FILTER_TYPES.DATE:
+			allowedOperators = [OPERATOR.BETWEEN, OPERATOR.GREATER_EQUAL, OPERATOR.SMALLER_EQUAL, OPERATOR.EQUALS];
+			break;
+		default:
+			break;
+		}
+		
+		if (allowedOperators.indexOf(operator) == -1) {
+			
+			var allowed = [];
+			for (var op in OPERATOR) {
+				if (allowedOperators.indexOf(OPERATOR[op]) > -1) {
+					allowed.push(op);
+				}
+			}
+			throw "The given operator is not allowed for the given form type. Allowed operators for such formType are: " + allowed.join(", ");
+		}
+		
+		this[formType].operator = operator;
+		return this;
+	}	
+	
 	
 	/** 
 	 * @return {RuntimeForm<AbstractPopupFilter>}
@@ -572,8 +644,8 @@ function getFilterQuery(filters, foundset) {
 		var useIgnoreCase = true; // default to case -insensitive
 
 		// Clean up values from empty values
-		var qValues = values.filter(function(v) {
-			if (v === undefined || v === null || v === '') {
+		var qValues = values.filter(function(qv) {
+			if (qv === undefined || qv === null || qv === '') {
 				return false;
 			} else {
 				return true;
@@ -587,11 +659,11 @@ function getFilterQuery(filters, foundset) {
 		
 		if (useIgnoreCase != false) {
 			// Clean up values from empty values
-			qValues = qValues.map(function(v) {
-				if (v instanceof String) {
-					return v.toLowerCase();
+			qValues = qValues.map(function(qv) {
+				if (qv instanceof String) {
+					return qv.toLowerCase();
 				} else {
-					return v;
+					return qv;
 				}
 			});
 		}
@@ -657,8 +729,37 @@ function getFilterQuery(filters, foundset) {
 		case OPERATOR.LIKE:
 			op = "like";
 			value = qValues;
-			break;
 			
+			// add wildcard
+			if (value instanceof Array) {
+				value = value.map(function(qv) {
+					if (qv instanceof String) {
+						return qv + "%";
+					} else {
+						return qv;
+					}
+				});
+			} else if (value instanceof String) {
+				value = value + "%"
+			}			
+			break;
+		case OPERATOR.LIKE_CONTAINS:
+			op = "like";
+			value = qValues;
+			
+			// add wildcard
+			if (value instanceof Array) {
+				value = value.map(function(qv) {
+					if (qv instanceof String) {
+						return "%" + qv + "%";
+					} else {
+						return qv;
+					}
+				});
+			} else if (value instanceof String) {
+				value =  "%"+ value + "%"
+			}			
+			break;
 		default:
 			break;
 		}
@@ -688,11 +789,11 @@ function getFilterQuery(filters, foundset) {
 				// Clean up values from empty values
 				/** @type {Array} */
 				var valueArray = value;
-				value = valueArray.map(function(v) {
-					if (v instanceof String) {
-						return v.toLowerCase();
+				value = valueArray.map(function(qv) {
+					if (qv instanceof String) {
+						return qv.toLowerCase();
 					} else {
-						return v;
+						return qv;
 					}
 				});
 			}
@@ -710,13 +811,13 @@ function getFilterQuery(filters, foundset) {
 			if (value instanceof Array) {
 				var or = query.or;
 				for (var v = 0; v < value.length; v++) {
-					or.add(whereClause[op](value[v]  + "%"));
+					or.add(whereClause[op](value[v]));
 				}
 				whereClause = or;
 				break;
 			}
 			
-			whereClause = whereClause[op](value + "%");
+			whereClause = whereClause[op](value);
 			break;
 		default:
 			whereClause = whereClause[op](value);
@@ -980,10 +1081,12 @@ function initSvyGridFilters() {
 		} else {
 		
 			// scan only visible columns. Access the column state
-			var state = table.getColumnState();
-			if (state) {
+			var jsonState = table.getColumnState();
+			if (jsonState) {
+				/** @type {{columnState:Array}} */
+				var state = JSON.parse(jsonState);
 				/** @type {Array} */
-				var colsState = JSON.parse(state).columnState;
+				var colsState = state.columnState ? state.columnState : [];
 				for (var j = 0; j < colsState.length; j++) {
 					if (!colsState[j].hide) { // skip column if hidden
 					
@@ -1003,14 +1106,14 @@ function initSvyGridFilters() {
 				}
 				
 			} else {
-				for (var index = 0; index < columns.length; index++) {
-					column = columns[index];
+				for (var i = 0; i < columns.length; i++) {
+					column = columns[i];
 					if (column.filterType && column.filterType != 'NONE' && column.visible) {
 						filter = new Object();
 						filter.text = column.headerTitle;
 						filter.dataprovider = column.dataprovider;
 						filter.id = column.id;
-						filter.columnIndex = index;
+						filter.columnIndex = i;
 						filters.push(filter);
 					}
 				}
@@ -1878,30 +1981,35 @@ function initAbstractToolbarFilterUX() {
 		if (!filter) {
 			var popupTemplates = getPopupRendererForms();
 			
+			var filterType;
 			if (column.valuelist) {
+				filterType = FILTER_TYPES.SELECT;
+				
 				// will be a lookup form
 				// number picker
 				// calendar picker
 				var lookup = scopes.svyLookup.createValueListLookup(column.valuelist);
 				/** @type {RuntimeForm<AbstractLookup>} */
-				var lookupForm = popupTemplates.getRendererForm(FILTER_TYPES.SELECT)
+				var lookupForm = popupTemplates.getRendererForm(FILTER_TYPES.SELECT);
 				lookup.setLookupForm(lookupForm);
 				filter = scopes.svyPopupFilter.createSelectFilter(column.dataprovider, lookup);
 			} else {
 				// will be a free text entry
 				switch (column.filterType) {
 				case 'TEXT':
+					filterType = FILTER_TYPES.TOKEN;
 					filter = scopes.svyPopupFilter.createTokenFilter();
 					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.TOKEN));
 					break;
 				case 'NUMBER':
 					// number picker
-					// calendar picker
+					filterType = FILTER_TYPES.NUMBER;
 					filter = scopes.svyPopupFilter.createNumberFilter();
 					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.NUMBER));
 					break;
 				case 'DATE':
 					// calendar picker
+					filterType = FILTER_TYPES.DATE;
 					filter = scopes.svyPopupFilter.createDateFilter();
 					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.DATE));
 					break;
@@ -1914,6 +2022,12 @@ function initAbstractToolbarFilterUX() {
 				// set filter's dataprovider
 				filter.setDataProvider(column.dataprovider);
 				filter.setText(column.headerTitle);
+				
+				// set default operator
+				var operator = popupTemplates.getDefaultOperator(filterType);
+				if (operator) {
+					filter.setOperator(operator);
+				}
 				
 				// include this as param
 				filter.addParam(this);

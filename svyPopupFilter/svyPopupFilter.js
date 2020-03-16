@@ -13,7 +13,10 @@ var SVY_POPUP_FILTER_VERSION = '1.0.1';
  */
 var OPERATOR = {
 	EQUALS: "eq",
+	/** All values starting with search input e.g. LIKE SEARCH_WORD% */ 
 	LIKE: "like",
+	/** All values containing search input e.g. LIKE %SEARCH_WORD% */ 
+	LIKE_CONTAINS: "like_contains",
 	GREATER_EQUAL: "ge",
 	GREATER_THEN: "gt",
 	SMALLER_EQUAL: "le",
