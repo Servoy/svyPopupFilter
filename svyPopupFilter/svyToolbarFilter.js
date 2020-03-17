@@ -931,6 +931,22 @@ function createFilterToolbar(listComponent, table) {
 }
 
 /**
+ * @private 
+ * @param headerTitle
+ * @return {String}
+ *
+ * @properties={typeid:24,uuid:"CACDDD32-E443-413B-8229-578929CD7F20"}
+ */
+function getI18nText(headerTitle) {
+	/** @type {String} */
+	var text = headerTitle;
+	if (text && text.indexOf("i18n:") == 0) {
+		text = i18n.getI18NMessage(text.replace("i18n:",""))
+	}
+	return text;
+}
+
+/**
  * @constructor
  * @private
  * @properties={typeid:24,uuid:"924B1AFF-94F1-4808-ADDC-BB1F10516E5C"}
@@ -1071,7 +1087,7 @@ function initSvyGridFilters() {
 				column = columns[index];
 				if (column.filterType && column.filterType != 'NONE') {
 					filter = new Object();
-					filter.text = column.headerTitle;
+					filter.text = getI18nText(column.headerTitle);
 					filter.dataprovider = column.dataprovider;
 					filter.id = column.id;
 					filter.columnIndex = index;
@@ -1096,7 +1112,7 @@ function initSvyGridFilters() {
 						if (column && column.filterType && column.filterType != 'NONE') {
 							//visibleColumns.push(col.dataprovider);
 							filter = new Object();
-							filter.text = column.headerTitle;
+							filter.text = getI18nText(column.headerTitle);
 							filter.dataprovider = column.dataprovider;
 							filter.id = column.id;
 							filter.columnIndex = colIndex;
@@ -1111,6 +1127,7 @@ function initSvyGridFilters() {
 					if (column.filterType && column.filterType != 'NONE' && column.visible) {
 						filter = new Object();
 						filter.text = column.headerTitle;
+						filter.text = getI18nText(column.headerTitle);
 						filter.dataprovider = column.dataprovider;
 						filter.id = column.id;
 						filter.columnIndex = i;
@@ -1413,7 +1430,7 @@ function initSvyGridFilters() {
 					var provider = simpleSearch.addSearchProvider(column.dataprovider);
 
 					// set the provider alias
-					var alias = column.headerTitle ? column.headerTitle : column.dataprovider;
+					var alias = column.headerTitle ? getI18nText(column.headerTitle) : column.dataprovider;
 					provider.setAlias(alias);
 
 					// if is a date use explicit search
@@ -2021,7 +2038,7 @@ function initAbstractToolbarFilterUX() {
 			if (filter) {
 				// set filter's dataprovider
 				filter.setDataProvider(column.dataprovider);
-				filter.setText(column.headerTitle);
+				filter.setText(getI18nText(column.headerTitle));
 				
 				// set default operator
 				var operator = popupTemplates.getDefaultOperator(filterType);
@@ -2295,7 +2312,7 @@ function initListComponentFilterRenderer() {
 	 */
 	ListComponentFilterRenderer.prototype.addGridFilter = function(column) {
 		var newFilter = this.getElement().newEntry();
-		newFilter.text = column.headerTitle;
+		newFilter.text = getI18nText(column.headerTitle);
 		newFilter.dataprovider = column.dataprovider;
 		newFilter.value = "";
 		
