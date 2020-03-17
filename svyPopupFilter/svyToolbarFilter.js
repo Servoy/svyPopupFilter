@@ -2371,14 +2371,18 @@ function initListComponentFilterRenderer() {
 		if (index || index == 0) {
 
 			// TODO can i make an API in listcomponent to update an entry value !?
+			// clear and re-draw all elements
 			element.clear();
 			for (i = 0; i < entries.length; i++) {
 				var entryCopy = entries[i];
 				var entry = element.newEntry();
+				
+				// copy entry properties
+				for (var prop in entryCopy) {
+					entry[prop] = entryCopy[prop];
+				}
 
-				entry.text = entryCopy.text;
-				if (entryCopy.dataprovider) entry.dataprovider = entryCopy.dataprovider;
-				entry.value = entryCopy.value;
+				// update display value if necessary
 				if (i === index) {
 					entry.value = displayValues.join(",");
 				}
