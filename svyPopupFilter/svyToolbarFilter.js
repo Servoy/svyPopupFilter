@@ -1424,9 +1424,37 @@ function initSvyGridFilters() {
 		for (var i = 0; tableDataSource && columns && i < columns.length; i++) {
 			var column = columns[i];
 
-			// TODO should search only on visible columns ?
-			if (column.dataprovider && column.visible) {
-
+			if (column.dataprovider) {
+				
+				// default behavior search only on visible columns.
+				
+				// TODO should use the column.visible property or the columnState visible ?
+				if (!column.visible) {
+					continue;
+				}
+				
+				// TODO use state of columns to determine non visible columns
+				// check the state of non visible columns stored by the user
+				if (false && !getConfigUseNonVisibleColumns()) {
+					
+					// TODO non visible columns should be updated at every search ?
+				
+					// scan only visible columns. Access the column state
+					var jsonState = this.getTable().getColumnState();
+					if (jsonState) {
+						/** @type {{columnState:Array}} */
+						var state = JSON.parse(jsonState);
+						/** @type {Array} */
+						var colsState = state.columnState ? state.columnState : [];
+						for (var j = 0; j < colsState.length; j++) {
+							if (colsState[j].hide) { // skip column if hidden
+								continue;
+							}
+						}
+					}
+				}
+				
+				
 				// Check if column exists
 				var relationName = scopes.svyDataUtils.getDataProviderRelationName(column.dataprovider)
 				var dataSource = relationName ? scopes.svyDataUtils.getRelationForeignDataSource(relationName) : tableDataSource;
