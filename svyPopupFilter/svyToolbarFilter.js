@@ -66,6 +66,7 @@ function FilterConfig() {
 }
 
 /**
+ * @since v1.1.0
  * @return {Boolean} Default true.
  * @private  
  * @properties={typeid:24,uuid:"CE62E19D-27B9-49C7-BD74-5B47D8F2F3B2"}
@@ -75,6 +76,9 @@ function getConfigUseNonVisibleColumns() {
 }
 
 /**
+ * Use only visible columns of the grid when set to false
+ * 
+ * @since v1.1.0
  * @public 
  * @param {Boolean} useNonVisibleColumns Default true.
  *
@@ -145,10 +149,31 @@ function setPopupRendererForm(formType, form) {
 }
 
 /**
+ * @since v1.1.0
  * @public 
  * Sets the default operator for the given formType
+ * 
+ * Is possible to change the default operator used by the filters using the global setting _setPopupDefaultOperator_.
+ * Each filter type can make use of a different set of operators; user enum scopes.svyPopupFilter.OPERATOR for available options.
+ * Specifically
+ * <br/>
+ * <br/>
+ *  - TOKEN: IS_IN(DEFAULT), LIKE, LIKE_CONTAINS<br/>
+ *  - NUMBER: EQUALS(DEFAULT), BETWEEN, GREATER_EQUAL, GREATER_THEN, SMALLER_EQUAL, SMALLER_THEN<br/>
+ *  - DATE: BETWEEN(DEFAULT), GREATER_EQUAL, SMALLER_EQUAL, EQUALS<br/>
+ *  - SELECT: IS_IN(DEFAULT)<br/>
+ *  <br/>
+ * 
+ * The TOKEN filter type used to search on TEXT fields by default will search for an exact match using the IS_IN clause. 
+ * Is possible to change such behavior into a LIKE for SEARCH_WORD% or %SEARCH_WORD% by changing the default operator to LIKE or LIKE_CONTAINS.
+ * 
  * @param {String} formType any of the FILTER_TYPES
  * @param {String} operator the default operator to be used. Use enum value from scopes.svyToolbarFilter.OPERATOR 
+ * 
+ * @example <pre>
+ *  // change default operator for TEXT token filters.
+ *  scopes.svyToolbarFilter.setPopupDefaultOperator(scopes.svyToolbarFilter.FILTER_TYPES.TOKEN, scopes.svyPopupFilter.OPERATOR.LIKE);
+ * </pre>
  *
  * @properties={typeid:24,uuid:"C1D86EEE-BC55-473B-A6E7-D963E3B9866E"}
  */
@@ -1399,9 +1424,37 @@ function initSvyGridFilters() {
 		for (var i = 0; tableDataSource && columns && i < columns.length; i++) {
 			var column = columns[i];
 
-			// TODO should search only on visible columns ?
-			if (column.dataprovider && column.visible) {
-
+			if (column.dataprovider) {
+				
+				// default behavior search only on visible columns.
+				
+				// TODO should use the column.visible property or the columnState visible ?
+				if (!column.visible) {
+					continue;
+				}
+				
+				// TODO use state of columns to determine non visible columns
+				// check the state of non visible columns stored by the user
+				if (false && !getConfigUseNonVisibleColumns()) {
+					
+					// TODO non visible columns should be updated at every search ?
+				
+					// scan only visible columns. Access the column state
+					var jsonState = this.getTable().getColumnState();
+					if (jsonState) {
+						/** @type {{columnState:Array}} */
+						var state = JSON.parse(jsonState);
+						/** @type {Array} */
+						var colsState = state.columnState ? state.columnState : [];
+						for (var j = 0; j < colsState.length; j++) {
+							if (colsState[j].hide) { // skip column if hidden
+								continue;
+							}
+						}
+					}
+				}
+				
+				
 				// Check if column exists
 				var relationName = scopes.svyDataUtils.getDataProviderRelationName(column.dataprovider)
 				var dataSource = relationName ? scopes.svyDataUtils.getRelationForeignDataSource(relationName) : tableDataSource;
