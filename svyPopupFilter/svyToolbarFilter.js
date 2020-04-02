@@ -993,7 +993,7 @@ function initSvyGridFilters() {
 		var filters = this.getActiveFilters();
 		
 		// remove previous filter
-		if (this.autoApply === true || forceApply === true) {
+		if ((this.autoApply === true || forceApply === true) && !this.onSearchCommand) {
 			foundset.removeFoundSetFilterParam(TOOLBAR_FILTER_NAME);
 		}
 		
@@ -1001,19 +1001,27 @@ function initSvyGridFilters() {
 		var filterQuery;
 		if (filters.length) {
 			filterQuery = getFilterQuery(filters, foundset);
-		
+			
 			// apply the query as filter
-			if (this.autoApply === true || forceApply === true) {
+			// DO NOTHING if onSearchCommand is set
+			if ((this.autoApply === true || forceApply === true) && !this.onSearchCommand) {
 				foundset.addFoundSetFilterParam(filterQuery, TOOLBAR_FILTER_NAME);
 			}
 		} else {
 			// refresh foundset since filters have been removed
-			filterQuery = foundset.getQuery();
+	
+			// if autoApply reload records and return the query
+			if ((forceApply === true || this.autoApply === true) && !this.searchText) {
+				foundset.loadRecords();
+				return foundset.getQuery();
+			}
+			
+			filterQuery = foundset.getQuery();			
 		}
 		
-		// TODO change this in Servoy 2019.12
-		//if ((forceApply === true || this.autoApply === true) && !this.onSearchCommand && !this.searchText) {
-		if ((forceApply === true || this.autoApply === true) && !this.searchText) {
+		// DO NOTHING if onSearchCommand is set
+		//if ((forceApply === true || this.autoApply === true) && !this.searchText) {
+		if ((forceApply === true || this.autoApply === true) && !this.onSearchCommand && !this.searchText) {
 			foundset.loadRecords();
 		}
 		
@@ -1357,8 +1365,33 @@ function initSvyGridFilters() {
 			this.simpleSearch.setSearchText(this.searchText);			
 		}
 		if (this.searchText) {
-			var simpleSearch = this.simpleSearch;
-			query = simpleSearch.getQuery();
+			
+			// filters need to be applied
+			if (this.onSearchCommand &&  this.getActiveFilters().length) {
+				
+				// include filters in query
+				var foundset = databaseManager.getFoundSet(this.simpleSearch.getDataSource());
+				var searchQuery = this.simpleSearch.getQuery();
+				
+				// add temp filters to make sure filterQuery is merged with searchQuery
+				var toolbarFilterName = TOOLBAR_FILTER_NAME + "-temp";
+				var searchFilterName = TOOLBAR_FILTER_NAME + "-temp-search";
+				foundset.addFoundSetFilterParam(filterQuery, toolbarFilterName);
+				foundset.addFoundSetFilterParam(searchQuery ,searchFilterName);
+				foundset.loadRecords();
+				
+				query = foundset.getQuery();
+				
+				// remove filters from query
+				foundset.removeFoundSetFilterParam(toolbarFilterName);
+				foundset.removeFoundSetFilterParam(searchFilterName);
+				foundset.loadRecords();
+
+			} else {
+				query = this.simpleSearch.getQuery();
+			}
+			
+
 		} else {
 			query = filterQuery;
 		}
