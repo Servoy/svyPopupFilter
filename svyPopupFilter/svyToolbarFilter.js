@@ -430,6 +430,12 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 	 */
 	this.onFilterRemovedEvent = null;
 	
+	/**
+	 * @protected 
+	 * @type {Boolean}
+	 */
+	this.useDatagridFormat = false;
+	
 	// TODO allow the form to implement such funcitonalities
 
 	// update grid filter
@@ -1602,6 +1608,22 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * Method to set either Datagrid format to be used for Filter toolbar display format or not.
+	 * Default set to false
+	 * 
+	 * @public 
+	 * @param {Boolean} useGridFormat Default false 
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.setDatagridFormat = function(useGridFormat) {
+		if(typeof(useGridFormat) == "boolean" &&  useGridFormat)
+			this.useDatagridFormat = true;
+		else
+			this.useDatagridFormat = false;
+		return this;
+	}
+	
+	/**
 	 * Allows to provide a method that will be called when the filter for a specific column is created<br>
 	 * That method then can create and return any filter that will then be used for this column
 	 * 
@@ -2243,7 +2265,22 @@ function initAbstractToolbarFilterUX() {
 		// format dates
 		displayValues = displayValues.map(function(v) {
 			if (v instanceof Date) {
-				return utils.dateFormat(v, "dd-MM-yyyy");
+				var dateFormat = "dd-MM-yyyy";
+				if(thisIntance['useDatagridFormat'] && column.format != null && column.format.trim() != "")
+				{
+					if(column.format.indexOf("{") != -1)
+					{
+						var dateObj = JSON.parse(column.format);
+						if(dateObj.displayFormat != null && dateObj.displayFormat.trim() != "")
+							dateFormat = dateObj.displayFormat;		
+					}
+					else
+						dateFormat = column.format;
+					
+					if(dateFormat.indexOf("|") != -1)
+						dateFormat = dateFormat.substring(0,dateFormat.indexOf("|"));
+				}
+				return utils.dateFormat(v, dateFormat);
 			} else {
 				return v;
 			}
