@@ -63,6 +63,7 @@ function FilterConfig() {
 	// this.autoApply = true;
 	
 	this.useNonVisibleColumns = true;
+	this.globalDateDisplayFormat = "dd-MM-yyyy";
 }
 
 /**
@@ -87,6 +88,19 @@ function getConfigUseNonVisibleColumns() {
 function setConfigUseNonVisibleColumns(useNonVisibleColumns) {
 	 // TODO can i make it an UI property
 	 globalFilterConfig.useNonVisibleColumns = useNonVisibleColumns;
+}
+
+/**
+ * Sets global display date format to be used
+ * 
+ * @public 
+ * @param {String} displayFormat
+ *
+ * @properties={typeid:24,uuid:"1637F3D9-CE2A-445C-B0C3-9150B13B75C7"}
+ */
+function setConfigDateDisplayFormat(displayFormat) {
+	if(displayFormat != null && displayFormat.trim() != "")
+		globalFilterConfig.globalDateDisplayFormat = displayFormat;
 }
 
 /**
@@ -429,12 +443,6 @@ function AbstractToolbarFilterUX(uiComponent, tableComponent) {
 	 * @type {String}
 	 */
 	this.onFilterRemovedEvent = null;
-	
-	/**
-	 * @protected 
-	 * @type {Boolean}
-	 */
-	this.useDatagridFormat = false;
 	
 	// TODO allow the form to implement such funcitonalities
 
@@ -1608,22 +1616,6 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
-	 * Method to set either Datagrid format to be used for Filter toolbar display format or not.
-	 * Default set to false
-	 * 
-	 * @public 
-	 * @param {Boolean} useGridFormat Default false 
-	 * @this {AbstractToolbarFilterUX}
-	 */
-	AbstractToolbarFilterUX.prototype.setDatagridFormat = function(useGridFormat) {
-		if(typeof(useGridFormat) == "boolean" &&  useGridFormat)
-			this.useDatagridFormat = true;
-		else
-			this.useDatagridFormat = false;
-		return this;
-	}
-	
-	/**
 	 * Allows to provide a method that will be called when the filter for a specific column is created<br>
 	 * That method then can create and return any filter that will then be used for this column
 	 * 
@@ -2265,22 +2257,7 @@ function initAbstractToolbarFilterUX() {
 		// format dates
 		displayValues = displayValues.map(function(v) {
 			if (v instanceof Date) {
-				var dateFormat = "dd-MM-yyyy";
-				if(thisIntance['useDatagridFormat'] && column.format != null && column.format.trim() != "")
-				{
-					if(column.format.indexOf("{") != -1)
-					{
-						var dateObj = JSON.parse(column.format);
-						if(dateObj.displayFormat != null && dateObj.displayFormat.trim() != "")
-							dateFormat = dateObj.displayFormat;		
-					}
-					else
-						dateFormat = column.format;
-					
-					if(dateFormat.indexOf("|") != -1)
-						dateFormat = dateFormat.substring(0,dateFormat.indexOf("|"));
-				}
-				return utils.dateFormat(v, dateFormat);
+				return utils.dateFormat(v, globalFilterConfig.globalDateDisplayFormat);
 			} else {
 				return v;
 			}
