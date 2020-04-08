@@ -63,6 +63,7 @@ function FilterConfig() {
 	// this.autoApply = true;
 	
 	this.useNonVisibleColumns = true;
+	this.globalDateDisplayFormat = "dd-MM-yyyy";
 }
 
 /**
@@ -87,6 +88,19 @@ function getConfigUseNonVisibleColumns() {
 function setConfigUseNonVisibleColumns(useNonVisibleColumns) {
 	 // TODO can i make it an UI property
 	 globalFilterConfig.useNonVisibleColumns = useNonVisibleColumns;
+}
+
+/**
+ * Sets global display date format to be used
+ * 
+ * @public 
+ * @param {String} displayFormat
+ *
+ * @properties={typeid:24,uuid:"1637F3D9-CE2A-445C-B0C3-9150B13B75C7"}
+ */
+function setConfigDateDisplayFormat(displayFormat) {
+	if(displayFormat != null && displayFormat.trim() != "")
+		globalFilterConfig.globalDateDisplayFormat = displayFormat;
 }
 
 /**
@@ -2243,7 +2257,7 @@ function initAbstractToolbarFilterUX() {
 		// format dates
 		displayValues = displayValues.map(function(v) {
 			if (v instanceof Date) {
-				return utils.dateFormat(v, "dd-MM-yyyy");
+				return utils.dateFormat(v, globalFilterConfig.globalDateDisplayFormat);
 			} else {
 				return v;
 			}
