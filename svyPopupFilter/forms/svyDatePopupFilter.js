@@ -1,3 +1,8 @@
+/** @type {String}
+ * @properties={typeid:35,uuid:"DF8798A3-ACD7-450C-BAC3-F9C007485AE3"}
+ */
+var prvOperator = null;
+
 /**
  * Handle changed data, return false if the value should not be accepted. In NGClient you can return also a (i18n) string, instead of false, which will be shown as a tooltip.
  *
@@ -27,16 +32,37 @@ function updateUI() {
 	case OPERATOR.GREATER_THEN:
 	case OPERATOR.GREATER_EQUAL:
 		elements.calendarDateFrom.enabled = true;
+		elements.calendarDateFrom.visible = true;
+		elements.calendarDateFrom.cssPosition.w("calc(100% - 30px)");
 		elements.calendarDateTo.enabled = false;
+		elements.calendarDateTo.visible = false;
+		if(prvOperator == OPERATOR.SMALLER_EQUAL || prvOperator == OPERATOR.SMALLER_THEN)
+			dateFrom = dateTo;		
+		prvOperator = operator;		
 		break;
 	case OPERATOR.SMALLER_THEN:
 	case OPERATOR.SMALLER_EQUAL:
 		elements.calendarDateFrom.enabled = false;
+		elements.calendarDateFrom.visible = false;		
 		elements.calendarDateTo.enabled = true;
+		elements.calendarDateTo.visible = true;
+		elements.calendarDateTo.cssPosition.w("calc(100% - 30px)");
+		if(prvOperator == OPERATOR.GREATER_EQUAL || prvOperator == OPERATOR.GREATER_THEN || prvOperator == OPERATOR.EQUALS || prvOperator == OPERATOR.BETWEEN)
+			dateTo = dateFrom;		
+		prvOperator = operator;		
 		break;
 	case OPERATOR.BETWEEN:
-		elements.calendarDateFrom.enabled = true;
+		elements.calendarDateFrom.enabled = true;	
+		elements.calendarDateFrom.visible = true;	
+		elements.calendarDateFrom.cssPosition.w("calc(50% - 30px)");	
 		elements.calendarDateTo.enabled = true;
+		elements.calendarDateTo.visible = true;	
+		elements.calendarDateTo.cssPosition.w("calc(50% - 30px)");	
+		if(prvOperator == OPERATOR.GREATER_EQUAL || prvOperator == OPERATOR.GREATER_THEN || prvOperator == OPERATOR.EQUALS)
+			dateTo = dateFrom;
+		if(prvOperator == OPERATOR.SMALLER_EQUAL || prvOperator == OPERATOR.SMALLER_THEN)
+			dateFrom = dateTo;		
+		prvOperator = operator;
 		break;
 	default:
 		break;
@@ -55,10 +81,20 @@ function getSelectedFilterValues() {
 	case OPERATOR.EQUALS:
 	case OPERATOR.GREATER_THEN:
 	case OPERATOR.GREATER_EQUAL:
-		return [scopes.svyDateUtils.toStartOfDay(dateFrom)];
+		if (dateFrom){
+			return [scopes.svyDateUtils.toStartOfDay(dateFrom)];
+		}
+		else {
+			return [];
+		}
 	case OPERATOR.SMALLER_THEN:
 	case OPERATOR.SMALLER_EQUAL:
-		return [scopes.svyDateUtils.toEndOfDay(dateTo)];
+	if (dateTo){
+			return [scopes.svyDateUtils.toEndOfDay(dateTo)];
+		}
+		else {
+			return [];
+		}		
 	case OPERATOR.BETWEEN:
 		if (dateFrom && dateTo) {
 			return [scopes.svyDateUtils.toStartOfDay(dateFrom), scopes.svyDateUtils.toEndOfDay(dateTo)];
