@@ -131,6 +131,11 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
     border-left: 0;
 }
 
+/* Style disabled days */
+.svy-popup-filter-date .bts-calendar-inline .day.disabled {
+	opacity: 0.5;
+}
+
 /**************************************
 *
 *  Number Filter 
