@@ -55,10 +55,20 @@ function getSelectedFilterValues() {
 	case OPERATOR.EQUALS:
 	case OPERATOR.GREATER_THEN:
 	case OPERATOR.GREATER_EQUAL:
-		return [scopes.svyDateUtils.toStartOfDay(dateFrom)];
+		if (dateFrom){
+			return [scopes.svyDateUtils.toStartOfDay(dateFrom)];
+		}
+		else {
+			return [];
+		}	
 	case OPERATOR.SMALLER_THEN:
 	case OPERATOR.SMALLER_EQUAL:
-		return [scopes.svyDateUtils.toEndOfDay(dateTo)];
+		if (dateTo){
+			return [scopes.svyDateUtils.toEndOfDay(dateTo)];
+		}
+		else {
+			return [];
+		}	
 	case OPERATOR.BETWEEN:
 		if (dateFrom && dateTo) {
 			return [scopes.svyDateUtils.toStartOfDay(dateFrom), scopes.svyDateUtils.toEndOfDay(dateTo)];
