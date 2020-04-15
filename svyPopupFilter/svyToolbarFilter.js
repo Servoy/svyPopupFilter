@@ -1565,8 +1565,11 @@ function initSvyGridFilters() {
 		if (this.onSearchCommand) {
 			//fire onSearchCommand
 			this.onSearchCommand.call(this, searchQuery, foundset);
-		} else if (searchTextChanged || this.searchText) {
-			//apply search if relevant
+			
+			// if there is no search text & autoApply is false do nothing, filters have been already applied as foundset filter.
+		} else if ((searchTextChanged && !this.autoApply) || this.searchText) { 
+			
+			//apply search if relevant (any time searchText changes)
 			foundset.loadRecords(searchQuery);
 		}
 	}
