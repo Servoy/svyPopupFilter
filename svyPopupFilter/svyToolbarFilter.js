@@ -113,22 +113,22 @@ function PopupRendererForms() {
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.datePopupFilterTemplate = {template: forms.svyDatePopupFilter};
+	this.datePopupFilterTemplate = {template: "svyDatePopupFilter"};
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.numberPopupFilterTemplate = {template: forms.svyNumberPopupFilter};
+	this.numberPopupFilterTemplate = {template: "svyNumberPopupFilter"};
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.tokenPopupFilterTemplate = {template: forms.svyTokenPopupFilter};
+	this.tokenPopupFilterTemplate = {template: "svyTokenPopupFilter"};
 	/** 
 	 * @protected
-	 * @type {RuntimeForm<AbstractLookup>} 
+	 * @type {{template:String}} 
 	 * */
-	this.selectFilterTemplate = {template: forms.svySelectPopupFilter};
+	this.selectFilterTemplate = {template: "svySelectPopupFilter"};
 }
 
 /**
@@ -213,9 +213,12 @@ function initPopupRendererForms() {
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.getRendererForm = function(formType) {
-		/** @type {{template:RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>}} */
+		/** @type {{template:String}} */
 		var result = this[formType];
-		return result.template;
+		var formName = result.template;
+		/** @type {RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>} */
+		var form = forms[formName];
+		return form;
 	}
 	
 	/** 
@@ -227,7 +230,8 @@ function initPopupRendererForms() {
 	 * @this {PopupRendererForms} 
 	 * */
 	PopupRendererForms.prototype.setRendererForm = function(formType, form) {
-		this[formType].template = form;
+		var formName = form['controller'].getName()
+		this[formType].template = formName;
 		return this;
 	}	
 	

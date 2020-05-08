@@ -607,9 +607,14 @@ function initAbstractPopupFilter() {
 
 		/** @type {RuntimeForm<AbstractPopupFilter>} */
 		var runtimeForm;
-		if (this.formInstanceName && forms[this.formInstanceName]) {
+		if (this.formInstanceName && this.formInstanceName in forms) { // form is in memory
 			runtimeForm = forms[this.formInstanceName];
-		} else {
+		} else if (this.formInstanceName) {	// form went out of memory, then clear the form instance
+			solutionModel.removeForm(this.formInstanceName);
+		} 
+		
+		// create new form instance
+		if (!runtimeForm) {	
 
 			/** @type {RuntimeForm<AbstractPopupFilter>} */
 			var popupFilterForm;
