@@ -711,15 +711,24 @@ function getFilterQuery(filters, foundset) {
 			});
 		}
 
-		// skip filter if no values
-		if (!qValues || !qValues.length) {
+		var OPERATOR = scopes.svyPopupFilter.OPERATOR;
+
+		// skip filter if no values & filter != NULL/NOT_NULL
+		if ((op!= OPERATOR.IS_NULL && op!= OPERATOR.NOT_NULL) && (!qValues || !qValues.length)) {
 			continue;
 		}
 
 		var value;
-		var OPERATOR = scopes.svyPopupFilter.OPERATOR;
 
 		switch (op) {
+		case OPERATOR.NOT_NULL:
+				useNot = true;
+		case OPERATOR.IS_NULL:
+				op = "isNull";
+				value = null;
+				// No need to lower if we want to compare NULL
+				useIgnoreCase = false;
+				break;
 		case OPERATOR.EQUALS:
 
 			if (qValues[0] && qValues[0] instanceof Date) {
@@ -847,6 +856,9 @@ function getFilterQuery(filters, foundset) {
 		}
 		
 		switch (op) {
+		case "isNull" :
+			whereClause = whereClause[op];
+			break;
 		case "between":
 			whereClause = whereClause[op](value[0], value[1]);
 			break;

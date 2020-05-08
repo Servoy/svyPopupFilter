@@ -12,6 +12,8 @@ var SVY_POPUP_FILTER_VERSION = '1.1.1';
  * @properties={typeid:35,uuid:"39D1503E-471D-4DFC-A6EC-B8EF46289CF3",variableType:-4}
  */
 var OPERATOR = {
+	IS_NULL: "isNull",
+	NOT_NULL: "!isNull",
 	EQUALS: "eq",
 	/** All values starting with search input e.g. LIKE SEARCH_WORD% */ 
 	LIKE: "like",
