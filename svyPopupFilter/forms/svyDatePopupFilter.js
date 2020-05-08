@@ -1,4 +1,17 @@
 /**
+ * @protected
+ * @param {Boolean} firstShow
+ * @param {JSEvent} event
+ *
+ * @properties={typeid:24,uuid:"BB66FE55-1740-40BF-A686-F8341E469315"}
+ * @override
+ */
+function onShow(firstShow,event) {
+	_super.onShow(firstShow,event);
+	updateUI();
+}
+
+/**
  * Handle changed data, return false if the value should not be accepted. In NGClient you can return also a (i18n) string, instead of false, which will be shown as a tooltip.
  *
  * @param {String} oldValue old value
@@ -23,6 +36,11 @@ function onDataChange(oldValue, newValue, event) {
 function updateUI() {
 	var OPERATOR = scopes.svyPopupFilter.OPERATOR;
 	switch (operator) {
+	case OPERATOR.NOT_NULL:
+	case OPERATOR.IS_NULL:
+		elements.calendarDateFrom.enabled = false;
+		elements.calendarDateTo.enabled = false;
+		break;
 	case OPERATOR.EQUALS:
 	case OPERATOR.GREATER_THEN:
 	case OPERATOR.GREATER_EQUAL:
@@ -52,6 +70,9 @@ function getSelectedFilterValues() {
 
 	var OPERATOR = scopes.svyPopupFilter.OPERATOR;
 	switch (operator) {
+	case OPERATOR.NOT_NULL:
+	case OPERATOR.IS_NULL:
+		return [null];
 	case OPERATOR.EQUALS:
 	case OPERATOR.GREATER_THEN:
 	case OPERATOR.GREATER_EQUAL:
