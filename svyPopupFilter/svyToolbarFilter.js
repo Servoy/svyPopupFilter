@@ -1018,8 +1018,7 @@ function clearFilters(foundset) {
  * @param {RuntimeWebComponent<customrenderedcomponents-customlist>|RuntimeWebComponent<customrenderedcomponents-customlist_abs>} listComponent
  * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} table
  *
- * @extends {AbstractToolbarFilterUX}
- * @this {ListComponentFilterRenderer}
+ * @returns {ListComponentFilterRenderer}
  * @public
  * @example <pre>
  * //keep track of toolbarFilter object in a form variable

@@ -1,6 +1,6 @@
 /**
  * @protected 
- * @type {String}
+ * @type {Array}
  *
  * @properties={typeid:35,uuid:"1C63E0A0-C807-4052-84E5-43CB41A7C9CA",variableType:-4}
  */
