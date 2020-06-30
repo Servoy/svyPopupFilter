@@ -855,6 +855,12 @@ function getFilterQuery(filters, foundset) {
 			whereClause = whereClause["not"];
 		}
 		
+		var or = query.or;
+		var and = query.and;
+		var hasAnd = false;
+		var hasOr = false;
+		var v;
+		
 		switch (op) {
 		case "isNull" :
 			whereClause = whereClause[op];
@@ -864,15 +870,71 @@ function getFilterQuery(filters, foundset) {
 			break;
 		case "like":
 			if (value instanceof Array) {
-				var or = query.or;
-				for (var v = 0; v < value.length; v++) {
+				for (v = 0; v < value.length; v++) {
+					if (value[v] instanceof String && value[v].indexOf("!=") === 0) {
+						// not like%
+						and.add(whereClause.not[op](value[v].substr(2)));
+						hasAnd = true;
+					} else if (value[v] instanceof String && value[v].indexOf("%%!=") === 0 ) {
+						// not %like%
+						and.add(whereClause.not[op]("%" + value[v].substr(4)));
+						hasAnd = true;
+					} else {
 					or.add(whereClause[op](value[v]));
+						hasOr = true;
+					}
 				}
+				
+				// handle not LIKE filters
+				if (hasAnd) {
+					if (hasOr) {
+						and.add(or);
+				}
+					whereClause = and;
+				} else {
 				whereClause = or;
+				}
+				
 				break;
 			}
 			
+			// handle not like
+			if (value[v] instanceof String && value.indexOf("!=") === 0 ) {
+				whereClause = whereClause.not[op](value.substr(2));
+			} else if (value[v] instanceof String && value.indexOf("%!=") === 0 ) {
+				whereClause = whereClause.not[op]("%" + value.substr(3));
+			} else {
 			whereClause = whereClause[op](value);
+			}
+			break;
+		case "isin":
+			if (value instanceof Array) {
+				var isInValues = [];
+				var notInValues = [];
+				for (v = 0; v < value.length; v++) {
+					if (value[v] instanceof String && value[v].indexOf("!") === 0) {
+						//not
+						notInValues.push(value[v]);
+					} else {
+						isInValues.push(value[v]);
+					}
+				}
+				
+				if (isInValues.length) {
+					and.add(whereClause[op](isInValues));
+				}
+				if (notInValues.length) {
+					and.add(whereClause.not[op](notInValues));
+				}
+				
+				whereClause = and;
+				break;
+			}
+			
+			// handle not
+			if (value.indexOf("!") === 0 ) {
+				whereClause = whereClause.not[op](value.substr(2));
+			}
 			break;
 		default:
 			whereClause = whereClause[op](value);
@@ -2368,10 +2430,21 @@ function initListComponentFilterRenderer() {
 		return "(function renderFilterEntry(entry) {  \n\
 			var template = '';\n\
 			var strDivider = ' : ';\n\
+			var entryValue = entry.value ? entry.value.toString() : ''; \n\
+			var valuesArr = entryValue.split(',');\n\
+			for ( var i = 0; i < valuesArr.length ; i++ ) {\n\
+				if (valuesArr[i].indexOf('!=') === 0) { \n\
+					valuesArr[i] = '-' + valuesArr[i].substring(2, valuesArr[i].length); \n\
+				} else if (valuesArr[i].indexOf('!') === 0) { \n\
+					valuesArr[i] = '-' + valuesArr[i].substring(1, valuesArr[i].length); \n\
+				} else if (valuesArr[i].indexOf('%!=') === 0) { \n\
+					valuesArr[i] = '-' + valuesArr[i].substring(3, valuesArr[i].length); \n\
+				} \n\
+			}\n\
 			template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \n\
 			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + strDivider + entry.value\">' + \n\
 				'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
-				'<span class=\"toolbar-filter-tag-value\"> ' + entry.value.split(',').join(', ') + ' </span>' + \n\
+				'<span class=\"toolbar-filter-tag-value\"> ' + valuesArr.join(', ') + ' </span>' + \n\
 				'<span class=\"toolbar-filter-tag-icon fas fa-angle-down\">' + '</span>' + \n\
 			'</button>' + \n\
 			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"close\">' + \n\

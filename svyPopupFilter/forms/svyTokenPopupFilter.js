@@ -62,19 +62,37 @@ function setSelectedFilterValues(selectedValues) {
 }
 
 /**
- * @param entry.dataprovider name
- * @param entry.text timeEntry
+ * @param {{text: String}} entry
  *
  * @protected
  * @properties={typeid:24,uuid:"41DCC810-7BC6-4D8F-BD4B-251DA79704E2"}
  */
 function renderFilterEntry(entry) {
+	var entryText = entry.text;
+	
+	if (!(entryText instanceof String)) {
+		entryText = entryText.toString();
+	}
+	
+	var isExcluded = false;
+	if (entryText.indexOf('!=') === 0) {
+		entryText = entryText.substring(2);
+		isExcluded = true;
+	} else if (entryText.indexOf('!') === 0) {
+		entryText = entryText.substring(1);
+		isExcluded = true;
+	} else if (entryText.indexOf('%!=') === 0) {
+		entryText = entryText.substring(3);
+		isExcluded = true;
+	}
+	
 	var template = '';
 	template += '<div class="row">' + 
 	'<div class="col-md-12 svy-popup-filter-token">' + 
-		'<span class="fa fa-trash text-danger svy-popup-filter-token-icon" data-target="close"></span>' + 
+		'<span class="fa fa-trash svy-popup-filter-token-icon margin-right-10" data-target="close"></span>' + 
+		'<span class="fas ' + (isExcluded ? 'fa-minus-circle' : 'fa-check-circle') + ' svy-popup-filter-token-icon' + (isExcluded ? ' text-warning' : ' text-success') + '" data-target="exclude"></span>' + 
 		'<span class="svy-popup-filter-token-text">' + 
-				entry.text + 
+			entryText + 
 		'</span>' +
 	'</div>' + 
 	'</div>';
@@ -122,8 +140,10 @@ function onDataChange(oldValue, newValue, event) {
  * @properties={typeid:24,uuid:"A67A8863-8ACB-48BF-BDC1-0F65B9F0C566"}
  */
 function onClick(entry, index, dataTarget, event) {
-	if (dataTarget == "close") {
+	if (dataTarget === "close") {
 		removeTag(entry.text, index);
+	} else if (dataTarget === "exclude") {
+		toggleExcludeTag(entry.text, index);
 	}
 }
 
@@ -156,6 +176,19 @@ function clear() {
  */
 function addTag(text) {
 	if (!text && text != "0") return;
+	
+	if (text.indexOf('-') === 0) {
+		//exclude
+		text = text.substring(1);
+		if (operator === scopes.svyPopupFilter.OPERATOR.IS_IN) {
+			text = '!' + text;
+		} else if (operator === scopes.svyPopupFilter.OPERATOR.LIKE) {
+			text = '!=' + text;
+		} else if (operator === scopes.svyPopupFilter.OPERATOR.LIKE_CONTAINS) {
+			text = '%!=' + text;
+		}
+	}
+	
 	if (values.indexOf(text) == -1) {
 		values.push(text);
 		var tag = elements.listTags.newEntry();
@@ -182,5 +215,45 @@ function removeTag(text, index) {
 		elements.listTags.removeEntry(index);
 	} else {
 		// do nothing
+	}
+}
+
+/**
+ * @protected 
+ * @param {String} text
+ * @param {Number} index
+ *
+ * @properties={typeid:24,uuid:"D4A4AA8C-98E8-40AA-9B21-F7195A1D4BCA"}
+ */
+function toggleExcludeTag(text, index) {
+	/** @type {String} */
+	var valueEntry = values[index];
+	if (operator === scopes.svyPopupFilter.OPERATOR.LIKE) {
+		//not like
+		if (valueEntry.indexOf("!=") === 0) {
+			values[index] = valueEntry.replace("!=", "");
+		} else {
+			values[index] = "!=" + values[index];			
+		}
+	} else if (operator === scopes.svyPopupFilter.OPERATOR.LIKE_CONTAINS) {
+		//not like contains
+		if (valueEntry.indexOf("%!=") === 0) {
+			values[index] = valueEntry.replace("%!=", "");
+		} else {
+			values[index] = "%!=" + values[index];			
+		}
+	} else if (operator === scopes.svyPopupFilter.OPERATOR.IS_IN) {
+		//not
+		if (valueEntry.indexOf("!") === 0) {
+			values[index] = valueEntry.replace("!", "");
+		} else {
+			values[index] = "!" + values[index];			
+		}
+	}
+	
+	elements.listTags.clear();
+	for (var i = 0; i < values.length; i++) {
+		var tag = elements.listTags.newEntry();
+		tag.text = values[i];
 	}
 }
