@@ -190,11 +190,12 @@ size:{
 height:25,
 width:25
 },
-styleclass:"text-tertiary clickable"
+styleclass:"fa fa-close text-tertiary clickable"
 },
 name:"faClose",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"fa fa-close text-tertiary clickable",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"A159D254-8C83-4D01-A915-08C5927D10CC"
 },

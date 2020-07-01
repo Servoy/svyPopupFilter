@@ -59,7 +59,8 @@ styleclass:"pull-right btn-close text-tertiary clickable"
 location:"2,2",
 name:"faClose",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"fa fa-close pull-right btn-close text-tertiary clickable",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"1916976D-2F8A-41FA-890C-48B91A3DAED0"
 },
@@ -150,7 +151,8 @@ width:25
 location:"1,1",
 name:"iconRemoveAll",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"fa fa-trash text-danger clickable svy-popup-filter-token-icon",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"9A163BB7-51AB-4844-9461-A4FB0A44894F"
 }
