@@ -696,7 +696,7 @@ function getFilterQuery(filters, foundset) {
 		});
 		
 		//Dont use lower on date
-		if(qValues.length && (qValues[0] instanceof Date || qValues[0] instanceof Number)) {
+		if(qValues.length && (qValues[0] instanceof Date || qValues[0] instanceof Number || qValues[0] instanceof UUID)) {
 			useIgnoreCase = false;
 		}
 		

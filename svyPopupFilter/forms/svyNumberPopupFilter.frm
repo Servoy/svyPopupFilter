@@ -73,12 +73,14 @@ size:{
 height:25,
 width:25
 },
-styleclass:"pull-right btn-close text-tertiary clickable"
+styleClass:"fa fa-close pull-right btn-close text-tertiary clickable",
+styleclass:"fa fa-close pull-right btn-close text-tertiary clickable"
 },
 location:"1,1",
 name:"faClose",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"fa fa-close pull-right btn-close text-tertiary clickable",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"9FB676D0-7DA3-4635-AEC9-BADAD9F5BD56"
 }
@@ -216,12 +218,14 @@ size:{
 height:25,
 width:25
 },
+styleClass:"fa fa-circle-o text-tertiary clickable",
 styleclass:"fa fa-circle-o text-tertiary clickable"
 },
 location:"1,1",
 name:"iconBetween",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"fa fa-circle-o text-tertiary clickable",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"245DD8ED-3E05-48E8-B203-FF747C36B32A"
 },
@@ -344,12 +348,14 @@ size:{
 height:25,
 width:25
 },
+styleClass:"fa fa-dot-circle text-primary clickable",
 styleclass:"fas fa-dot-circle text-primary clickable"
 },
 location:"1,1",
 name:"iconEqualTo",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"fa fa-dot-circle text-primary clickable",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"CB23062F-D3EF-47D3-A141-D61D75273E43"
 }
@@ -499,12 +505,14 @@ size:{
 height:25,
 width:25
 },
+styleClass:"fa fa-circle-o text-tertiary clickable",
 styleclass:"fa fa-circle-o text-tertiary clickable"
 },
 location:"1,1",
 name:"iconSmaller",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"fa fa-circle-o text-tertiary clickable",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"331244D5-D93B-41F4-8C5F-11F9434DD874"
 },
@@ -627,12 +635,14 @@ size:{
 height:25,
 width:25
 },
+styleClass:"fa fa-circle-o text-tertiary clickable",
 styleclass:"fa fa-circle-o text-tertiary clickable"
 },
 location:"1,1",
 name:"iconGreater",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"fa fa-circle-o text-tertiary clickable",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"4799C449-0A08-461C-98CC-EE2125526418"
 }

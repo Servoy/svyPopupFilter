@@ -79,47 +79,81 @@ function onActionToggleBetween(event) {
 }
 
 /**
+ * @protected 
+ * @param {RuntimeWebComponent<bootstrapcomponents-label>} element
+ *
+ * @properties={typeid:24,uuid:"48A21376-C5A9-4035-AB92-6CCD31896C0D"}
+ */
+function setIconUnselected(element) {
+	element.removeStyleClass('fa-dot-circle');
+	if(!element.hasStyleClass('fa-circle-o')) {
+		element.addStyleClass('fa-circle-o');
+	}
+	element.removeStyleClass('text-primary');
+	if(!element.hasStyleClass('text-tertiary')) {
+		element.addStyleClass('text-tertiary');
+	}
+}
+
+/**
+ * @protected 
+ * @param {RuntimeWebComponent<bootstrapcomponents-label>} element
+ * 
+ * @properties={typeid:24,uuid:"05318382-7231-48C9-9F63-E1BDB095281C"}
+ */
+function setIconSelected(element) {
+	element.removeStyleClass('fa-circle-o');
+	if(!element.hasStyleClass('fa-dot-circle')) {
+		element.addStyleClass('fa-dot-circle');
+	}
+	element.removeStyleClass('text-tertiary');
+	if(!element.hasStyleClass('text-primary')) {
+		element.addStyleClass('text-primary');
+	}
+}
+
+/**
  * @protected
  * @properties={typeid:24,uuid:"0F223D2E-2293-4D7F-A3FE-3508E1761285"}
  */
 function updateUI() {
 	elements.labelEqualTo.addStyleClass("text-tertiary");
-	elements.iconEqualTo.styleclass = "fa fa-circle-o text-tertiary clickable";
+	setIconUnselected(elements.iconEqualTo);
 	elements.textboxEqualTo.enabled = false;
 
 	elements.labelGreater.addStyleClass("text-tertiary");
-	elements.iconGreater.styleclass = "fa fa-circle-o text-tertiary clickable";
+	setIconUnselected(elements.iconGreater);
 	elements.textboxGreater.enabled = false;
 
 	elements.labelSmaller.addStyleClass("text-tertiary");
-	elements.iconSmaller.styleclass = "fa fa-circle-o text-tertiary clickable";
+	setIconUnselected(elements.iconSmaller);
 	elements.textboxSmaller.enabled = false;
 
 	elements.labelBetween.addStyleClass("text-tertiary");
-	elements.iconBetween.styleclass = "fa fa-circle-o text-tertiary clickable";
+	setIconUnselected(elements.iconBetween);
 	elements.textboxBetweenMin.enabled = false;
 	elements.textboxBetweenMax.enabled = false;
 
 	switch (operator) {
 	case scopes.svyPopupFilter.OPERATOR.EQUALS:
 		elements.labelEqualTo.removeStyleClass("text-tertiary");
-		elements.iconEqualTo.styleclass = "fas fa-dot-circle text-primary clickable";
+		setIconSelected(elements.iconEqualTo);
 		elements.textboxEqualTo.enabled = true;
 		break;
 	case scopes.svyPopupFilter.OPERATOR.BETWEEN:
 		elements.labelBetween.removeStyleClass("text-tertiary");
-		elements.iconBetween.styleclass = "fas fa-dot-circle text-primary clickable";
+		setIconSelected(elements.iconBetween);
 		elements.textboxBetweenMin.enabled = true;
 		elements.textboxBetweenMax.enabled = true;
 		break;
 	case scopes.svyPopupFilter.OPERATOR.GREATER_THEN:
 		elements.labelGreater.removeStyleClass("text-tertiary");
-		elements.iconGreater.styleclass = "fas fa-dot-circle text-primary clickable";
+		setIconSelected(elements.iconGreater);
 		elements.textboxGreater.enabled = true;
 		break;
 	case scopes.svyPopupFilter.OPERATOR.SMALLER_THEN:
 		elements.labelSmaller.removeStyleClass("text-tertiary");
-		elements.iconSmaller.styleclass = "fas fa-dot-circle text-primary clickable";
+		setIconSelected(elements.iconSmaller);
 		elements.textboxSmaller.enabled = true;
 		break;
 	default:
