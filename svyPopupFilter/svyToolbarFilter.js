@@ -914,7 +914,7 @@ function getFilterQuery(filters, foundset) {
 				for (v = 0; v < value.length; v++) {
 					if (value[v] instanceof String && value[v].indexOf("!") === 0) {
 						//not
-						notInValues.push(value[v]);
+						notInValues.push(value[v].substr(1));
 					} else {
 						isInValues.push(value[v]);
 					}
