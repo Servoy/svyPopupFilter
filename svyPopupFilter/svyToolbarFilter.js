@@ -1602,24 +1602,30 @@ function initSvyGridFilters() {
 						}
 					}
 
-					// create the search provider
-					// TODO shall i remove all white spaces !?
-					var provider = simpleSearch.addSearchProvider(column.dataprovider);
+					try {
+						// create the search provider
+						// TODO shall i remove all white spaces !?
+						var provider = simpleSearch.addSearchProvider(column.dataprovider);
+						
+						// set the provider alias
+						var alias = column.headerTitle ? getI18nText(column.headerTitle) : column.dataprovider;
+						provider.setAlias(alias);
 
-					// set the provider alias
-					var alias = column.headerTitle ? getI18nText(column.headerTitle) : column.dataprovider;
-					provider.setAlias(alias);
+						// if is a date use explicit search
+						if (col.getType() === JSColumn.DATETIME) {
+							provider.setImpliedSearch(false);
+						}
 
-					// if is a date use explicit search
-					if (col.getType() === JSColumn.DATETIME) {
-						provider.setImpliedSearch(false);
-					}
+						// add valuelist substitutions
+						for (var index = 1; vlItems && index <= vlItems.getMaxRowIndex(); index++) {
+							var vlItem = vlItems.getRowAsArray(index);
+							provider.addSubstitution(vlItem[0], vlItem[1])
 
-					// add valuelist substitutions
-					for (var index = 1; vlItems && index <= vlItems.getMaxRowIndex(); index++) {
-						var vlItem = vlItems.getRowAsArray(index);
-						provider.addSubstitution(vlItem[0], vlItem[1])
-
+						}
+					} 
+					catch (e) {
+						// when addSearchProvider fails due to a cross-db  dataprovider it throws an exception and the toolbar filter is not created
+						application.output("skip search on column with dataprovider " + column.dataprovider);
 					}
 				}
 			}
@@ -2255,11 +2261,15 @@ function initAbstractToolbarFilterUX() {
 		var columnFilters = this.svyGridFilters.getFilters();
 		for (var index = 0; index < columnFilters.length; index++) {
 			var columnFilter = columnFilters[index];
+			var column = this.getColumn(columnFilter.dataprovider);
 			var check = filterPopupMenu.addCheckBox(columnFilter.dataprovider);
-			check.selected = this.hasActiveFilter(this.getColumn(columnFilter.dataprovider));
+			check.selected = this.hasActiveFilter(column);
 			check.text = columnFilter.text;
 			check.methodArguments = [columnFilter.columnIndex, columnFilter.id, columnFilter.dataprovider]
 			check.setMethod(onFilterPopupMenuClicked);
+			// If there isn't a search provider this column filter cannot be used (cross-db dataprovider)
+			// TODO should be hidden instead of disabled?
+			check.enabled = !!this.getSearchProvider(column);
 		}
 
 		filterPopupMenu.cssClass = "toolbar-filter-popup";
