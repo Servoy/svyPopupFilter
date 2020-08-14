@@ -1625,7 +1625,7 @@ function initSvyGridFilters() {
 					} 
 					catch (e) {
 						// when addSearchProvider fails due to a cross-db  dataprovider it throws an exception and the toolbar filter is not created
-						application.output("skip search on column with dataprovider " + column.dataprovider);
+						application.output("skip search on column with dataprovider: " + column.dataprovider + '. Please check other log messages to see if this is a cross-db dataprovider which it is not supported');
 					}
 				}
 			}
@@ -2267,9 +2267,6 @@ function initAbstractToolbarFilterUX() {
 			check.text = columnFilter.text;
 			check.methodArguments = [columnFilter.columnIndex, columnFilter.id, columnFilter.dataprovider]
 			check.setMethod(onFilterPopupMenuClicked);
-			// If there isn't a search provider this column filter cannot be used (cross-db dataprovider)
-			// TODO should be hidden instead of disabled?
-			check.enabled = !!this.getSearchProvider(column);
 		}
 
 		filterPopupMenu.cssClass = "toolbar-filter-popup";
