@@ -1661,9 +1661,43 @@ function initSvyGridFilters() {
 			application.output("cannot apply filters for undefined foundset for table; " + this.getTable().getFormName() + "."+ this.getTable().getName() + ". May happen for a related foundset where parent record is undefined. ", LOGGINGLEVEL.DEBUG)
 			return;
 		}
+		
+		// apply sort by default
+		var sortString = foundset.getCurrentSort();
 
 		// quick search
 		var searchQuery = this.getQuery();
+		
+		// keep the sort
+		if (sortString) {
+			var sorts = sortString.split(",");
+			
+			// it can handle joins
+			searchQuery.sort.clear();
+			for (var i = 0; i < sorts.length; i++) {
+				var sort = sorts[i].trim();
+				var sortDataProvider = sort.split(" ")[0];
+
+				// TODO can be an utility method
+				/** @type {QBSelect} */
+				var querySource = null;
+				var aDP = sortDataProvider.split('.');
+				for (var j = 0; j < aDP.length - 1; j++) {
+					querySource = querySource == null ? searchQuery.joins[aDP[j]] : querySource.joins[aDP[j]];
+				}
+
+				/** @type {QBColumn} */
+				var sortColumn = querySource == null ? searchQuery.columns[aDP[aDP.length - 1]] : querySource.columns[aDP[aDP.length - 1]];
+
+				if (sort.split(" ")[1] === "desc") {
+					searchQuery.sort.add(sortColumn.desc);
+				} else {
+					searchQuery.sort.add(sortColumn.asc);
+				}
+			}
+			
+			searchQuery.result.distinct = false;
+		}
 
 		if (this.onSearchCommand) {
 			//fire onSearchCommand
