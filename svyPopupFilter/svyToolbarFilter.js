@@ -1092,6 +1092,11 @@ function initSvyGridFilters() {
 	 */
 	SvyGridFilters.prototype.applyFilters = function(forceApply) {
 		var foundset = this.getFoundSet();
+		if (!foundset) {
+			application.output("cannot apply filters for undefined foundset for table; " + this.getTable().getFormName() + "."+ this.getTable().getName() + ". May happen for a related foundset where parent record is undefined. ", LOGGINGLEVEL.DEBUG)
+			return null;
+		}
+		
 		var filters = this.getActiveFilters();
 		
 		// remove previous filter
@@ -1652,6 +1657,10 @@ function initSvyGridFilters() {
 	SvyGridFilters.prototype.search = function() {
 		var searchTextChanged = this.searchText !== this.simpleSearch.getSearchText() ? true : false;
 		var foundset = this.getFoundSet();
+		if (!foundset) {
+			application.output("cannot apply filters for undefined foundset for table; " + this.getTable().getFormName() + "."+ this.getTable().getName() + ". May happen for a related foundset where parent record is undefined. ", LOGGINGLEVEL.DEBUG)
+			return;
+		}
 
 		// quick search
 		var searchQuery = this.getQuery();
