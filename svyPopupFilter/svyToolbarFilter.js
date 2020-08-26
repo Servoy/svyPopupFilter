@@ -9,6 +9,10 @@ var FILTER_TYPES = {
 	 * */
 	DATE: 'datePopupFilterTemplate',
 	/**
+	 * INTEGER filter
+	 * */
+	INTEGER: 'integerPopupFilterTemplate',
+	/**
 	 * Number filter
 	 * */
 	NUMBER: 'numberPopupFilterTemplate',
@@ -118,6 +122,11 @@ function PopupRendererForms() {
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
+	this.integerPopupFilterTemplate = {template: "svyIntegerPopupFilter"};
+	/** 
+	 * @protected
+	 * @type {RuntimeForm<AbstractPopupFilter>} 
+	 * */
 	this.numberPopupFilterTemplate = {template: "svyNumberPopupFilter"};
 	/** 
 	 * @protected
@@ -173,6 +182,7 @@ function setPopupRendererForm(formType, form) {
  * <br/>
  * <br/>
  *  - TOKEN: IS_IN(DEFAULT), LIKE, LIKE_CONTAINS<br/>
+ *  - INTEGER: EQUALS(DEFAULT), BETWEEN, GREATER_EQUAL, GREATER_THEN, SMALLER_EQUAL, SMALLER_THEN<br/>
  *  - NUMBER: EQUALS(DEFAULT), BETWEEN, GREATER_EQUAL, GREATER_THEN, SMALLER_EQUAL, SMALLER_THEN<br/>
  *  - DATE: BETWEEN(DEFAULT), GREATER_EQUAL, SMALLER_EQUAL, EQUALS<br/>
  *  - SELECT: IS_IN(DEFAULT)<br/>
@@ -268,6 +278,7 @@ function initPopupRendererForms() {
 		case FILTER_TYPES.SELECT:
 			allowedOperators = [OPERATOR.IS_IN];
 			break;
+		case FILTER_TYPES.INTEGER:
 		case FILTER_TYPES.NUMBER:
 			allowedOperators = [OPERATOR.BETWEEN, OPERATOR.GREATER_EQUAL, OPERATOR.GREATER_THEN, OPERATOR.SMALLER_EQUAL, OPERATOR.SMALLER_THEN, OPERATOR.EQUALS];
 			break;
@@ -1989,6 +2000,7 @@ function initAbstractToolbarFilterUX() {
 
 			switch (column.filterType) {
 
+			case 'INTEGER':
 			case 'NUMBER':
 				obj.values = obj.values.map(function(value) {
 					return utils.stringToNumber(value);
@@ -2205,10 +2217,24 @@ function initAbstractToolbarFilterUX() {
 					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.TOKEN));
 					break;
 				case 'NUMBER':
-					// number picker
-					filterType = FILTER_TYPES.NUMBER;
-					filter = scopes.svyPopupFilter.createNumberFilter();
-					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.NUMBER));
+					
+					// Check if column type is Number or Integer
+					var relationName = scopes.svyDataUtils.getDataProviderRelationName(column.dataprovider)
+					var dataSource = relationName ? scopes.svyDataUtils.getRelationForeignDataSource(relationName) : this.svyGridFilters.getFoundSet().getDataSource();
+					var jstable = databaseManager.getTable(dataSource);
+					var jscol = jstable.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(column.dataprovider));
+					
+					// if DB column and column is a NUMBER
+					if (jscol && jscol.getType() == JSColumn.NUMBER) {
+						filterType = FILTER_TYPES.NUMBER;
+						filter = scopes.svyPopupFilter.createNumberFilter();
+						filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.NUMBER));
+					} else {
+						filterType = FILTER_TYPES.INTEGER;
+						filter = scopes.svyPopupFilter.createIntegerFilter();
+						filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.INTEGER));
+					}
+					
 					break;
 				case 'DATE':
 					// calendar picker
