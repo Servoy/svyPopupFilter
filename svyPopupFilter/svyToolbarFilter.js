@@ -1917,14 +1917,62 @@ function initAbstractToolbarFilterUX() {
 	 * 
 	 * @param {String} dataprovider
 	 * @param {Array} values
+	 * @param {String} operator
 	 * 
 	 * @return {Boolean}
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
-	AbstractToolbarFilterUX.prototype.updateGridFilter = function(dataprovider, values) {
+	AbstractToolbarFilterUX.prototype.updateGridFilter = function(dataprovider, values, operator) {
 		throw scopes.svyExceptions.AbstractMethodInvocationException("updateGridFilter not implemented")
 	}
+	
+	/**
+	 *  
+	 * @protected 
+	 * @param {String} operator
+	 * 
+	 * @return {String}
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.getOperatorText = function(operator) {
+		
+		var operatorText = "";
+		var OPERATOR = scopes.svyPopupFilter.OPERATOR;
+		switch (operator) {
+		case OPERATOR.GREATER_THEN:
+			operatorText = ">";
+			break;
+		case OPERATOR.GREATER_EQUAL:
+			operatorText = ">";
+			break;
+		case OPERATOR.SMALLER_THEN:
+			operatorText = "<";
+			break;
+		case OPERATOR.SMALLER_EQUAL:
+			operatorText = "<";
+			break;
+		case OPERATOR.BETWEEN:
+			operatorText = "...";
+			break;
+		case OPERATOR.IS_NULL:
+			operatorText = "Empty";
+			break;
+		case OPERATOR.NOT_NULL:
+			operatorText = "Not Empty";
+			break;
+		case OPERATOR.EQUALS:
+		case OPERATOR.LIKE:
+		case OPERATOR.LIKE_CONTAINS:
+		case OPERATOR.IS_IN:
+		default:
+			break;
+		}
+		
+		return operatorText;
+	}
+
 	
 	/**
 	 * @param {CustomType<aggrid-groupingtable.column>} column
@@ -2366,6 +2414,15 @@ function initAbstractToolbarFilterUX() {
 				displayValues[i] = application.getValueListDisplayValue(column.valuelist, values[i]);
 			}
 		}
+		
+		// Clean up values from empty values
+		displayValues = displayValues.filter(function(qv) {
+			if (qv === undefined || qv === null || qv === '') {
+				return false;
+			} else {
+				return true;
+			}
+		});
 
 		// format dates
 		displayValues = displayValues.map(function(v) {
@@ -2377,7 +2434,7 @@ function initAbstractToolbarFilterUX() {
 		});
 		
 		// update the UI
-		thisIntance.updateGridFilter(filter.getDataProvider(), displayValues);
+		thisIntance.updateGridFilter(filter.getDataProvider(), displayValues, filter.getOperator());
 		
 		// apply the search
 		gridFilters.search();
@@ -2473,9 +2530,11 @@ function initListComponentFilterRenderer() {
 					valuesArr[i] = '-' + valuesArr[i].substring(3, valuesArr[i].length); \n\
 				} \n\
 			}\n\
+			console.log(entry.text + entry.strDivider + entry.value);\n\
 			template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \n\
-			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + strDivider + entry.value\">' + \n\
+			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + entry.operator + \\' \\' + entry.value\">' + \n\
 				'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
+				'<span class=\"toolbar-filter-tag-operator\">' + entry.operator + '</span>' + \n\
 				'<span class=\"toolbar-filter-tag-value\"> ' + valuesArr.join(', ') + ' </span>' + \n\
 				'<span class=\"toolbar-filter-tag-icon fas fa-angle-down\">' + '</span>' + \n\
 			'</button>' + \n\
@@ -2539,6 +2598,7 @@ function initListComponentFilterRenderer() {
 		newFilter.text = getI18nText(column.headerTitle);
 		newFilter.dataprovider = column.dataprovider;
 		newFilter.value = "";
+		newFilter.operator = "";
 		
 		// if has active filters
 		var element = this.getElement();
@@ -2573,16 +2633,20 @@ function initListComponentFilterRenderer() {
 	/**
 	 * @param {String} dataprovider
 	 * @param {Array} displayValues
+	 * @param {String} operator
 	 *
 	 * @protected
 	 * 
 	 * @this {ListComponentFilterRenderer}
 	 */
-	ListComponentFilterRenderer.prototype.updateGridFilter = function(dataprovider, displayValues) {
+	ListComponentFilterRenderer.prototype.updateGridFilter = function(dataprovider, displayValues, operator) {
 		var index;
 		var element = this.getElement();
 		var count = element.getEntriesCount();
 		var entries = [];
+		
+		var operatorText = this.getOperatorText(operator);
+		
 		for (var i = 0; i < count; i++) {
 			var filterTag = element.getEntry(i);
 			// TODO can i rely on dataprovider only !?
@@ -2609,6 +2673,20 @@ function initListComponentFilterRenderer() {
 				// update display value if necessary
 				if (i === index) {
 					entry.value = displayValues.join(",");
+
+					var OPERATOR = scopes.svyPopupFilter.OPERATOR;
+					
+					// show val1...val2
+					if (operator == OPERATOR.BETWEEN && displayValues.length) {
+						var displayValue1 = displayValues[0] ? displayValues[0] : "";
+						var displayValue2 = displayValues[0] ? displayValues[0] : "";
+						entry.value =  displayValue1 + "..." + displayValue2;
+						entry.operator = "";
+					} else {
+						// do not show operator unless value is set or operator IS_NULL OR NOT_NULL
+						var showOperator = ( operator == OPERATOR.IS_NULL || operator == OPERATOR.NOT_NULL) || ( displayValues.length && operatorText) ? true : false;
+						entry.operator = showOperator ? " " + operatorText : "";
+					}
 				}
 
 			}
