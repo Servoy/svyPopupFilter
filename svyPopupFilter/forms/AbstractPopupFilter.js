@@ -57,6 +57,12 @@ var confirmSelectEmptyValue = false;
  */
 function onShow(firstShow, event) {
 	
+	// set the filter values (they may have been set via APIs while form was hidden)
+	setSelectedFilterValues(filter.getValues());
+	if (filter.getOperator()) {
+		setOperator(filter.getOperator());
+	}
+	
 	// reset confirmSeleciton to init state false
 	confirmSelection = false;
 	confirmSelectEmptyValue = false;

@@ -38,6 +38,16 @@ function createDateFilter() {
 }
 
 /**
+*
+* @public
+* @return {SvyIntegerFilter}
+* @properties={typeid:24,uuid:"BEAC7A31-3616-45C2-A225-B14C3DC741FB"}
+*/
+function createIntegerFilter() {
+	return new SvyIntegerFilter();
+}
+
+/**
  *
  * @public
  * @return {SvyNumberFilter}
@@ -245,6 +255,22 @@ function SvyDateFilter(){
 	// TODO set the default date filter
 	this.setRendererForm(forms.svyDatePopupFilter);
 }
+
+/**
+ * 
+ * @public 
+ * @constructor 
+ * 
+ * @extends {AbstractPopupFilter}
+ * @properties={typeid:24,uuid:"40949CD4-5BB7-4414-B518-F1168F82234F"}
+ */
+function SvyIntegerFilter(){
+	
+	AbstractPopupFilter.call(this);
+	
+	this.setRendererForm(forms.svyNumberPopupFilter);
+}
+
 
 /**
  * 
@@ -737,6 +763,16 @@ function initSvyDateFilter() {
 /**
  * @constructor 
  * @private 
+ * @properties={typeid:24,uuid:"37EA654C-6FC7-4573-AF99-3BBB98AB300E"}
+ */
+function initSvyIntegerFilter() {
+	SvyIntegerFilter.prototype = Object.create(AbstractPopupFilter.prototype);
+	SvyIntegerFilter.prototype.constructor = SvyIntegerFilter;
+}
+
+/**
+ * @constructor 
+ * @private 
  * @properties={typeid:24,uuid:"EC77FC4C-4534-4819-958B-D9A1B700018E"}
  */
 function initSvyNumberFilter() {
@@ -941,6 +977,7 @@ function getVersion() {
 var init = (function() {
 	initAbstractPopupFilter();
 	initSvyDateFilter();
+	initSvyIntegerFilter();
 	initSvyNumberFilter();
 	initSvyTokenFilter();
 	initSvySelectFilter();

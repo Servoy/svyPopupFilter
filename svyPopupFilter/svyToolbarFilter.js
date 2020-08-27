@@ -9,6 +9,10 @@ var FILTER_TYPES = {
 	 * */
 	DATE: 'datePopupFilterTemplate',
 	/**
+	 * INTEGER filter
+	 * */
+	INTEGER: 'integerPopupFilterTemplate',
+	/**
 	 * Number filter
 	 * */
 	NUMBER: 'numberPopupFilterTemplate',
@@ -118,6 +122,11 @@ function PopupRendererForms() {
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
+	this.integerPopupFilterTemplate = {template: "svyIntegerPopupFilter"};
+	/** 
+	 * @protected
+	 * @type {RuntimeForm<AbstractPopupFilter>} 
+	 * */
 	this.numberPopupFilterTemplate = {template: "svyNumberPopupFilter"};
 	/** 
 	 * @protected
@@ -173,6 +182,7 @@ function setPopupRendererForm(formType, form) {
  * <br/>
  * <br/>
  *  - TOKEN: IS_IN(DEFAULT), LIKE, LIKE_CONTAINS<br/>
+ *  - INTEGER: EQUALS(DEFAULT), BETWEEN, GREATER_EQUAL, GREATER_THEN, SMALLER_EQUAL, SMALLER_THEN<br/>
  *  - NUMBER: EQUALS(DEFAULT), BETWEEN, GREATER_EQUAL, GREATER_THEN, SMALLER_EQUAL, SMALLER_THEN<br/>
  *  - DATE: BETWEEN(DEFAULT), GREATER_EQUAL, SMALLER_EQUAL, EQUALS<br/>
  *  - SELECT: IS_IN(DEFAULT)<br/>
@@ -268,6 +278,7 @@ function initPopupRendererForms() {
 		case FILTER_TYPES.SELECT:
 			allowedOperators = [OPERATOR.IS_IN];
 			break;
+		case FILTER_TYPES.INTEGER:
 		case FILTER_TYPES.NUMBER:
 			allowedOperators = [OPERATOR.BETWEEN, OPERATOR.GREATER_EQUAL, OPERATOR.GREATER_THEN, OPERATOR.SMALLER_EQUAL, OPERATOR.SMALLER_THEN, OPERATOR.EQUALS];
 			break;
@@ -728,7 +739,8 @@ function getFilterQuery(filters, foundset) {
 
 		switch (op) {
 		case OPERATOR.NOT_NULL:
-				useNot = true;
+                useNot = true;
+                break;
 		case OPERATOR.IS_NULL:
 				op = "isNull";
 				value = null;
@@ -1087,6 +1099,11 @@ function initSvyGridFilters() {
 	 */
 	SvyGridFilters.prototype.applyFilters = function(forceApply) {
 		var foundset = this.getFoundSet();
+		if (!foundset) {
+			application.output("cannot apply filters for undefined foundset for table; " + this.getTable().getFormName() + "."+ this.getTable().getName() + ". May happen for a related foundset where parent record is undefined. ", LOGGINGLEVEL.DEBUG)
+			return null;
+		}
+		
 		var filters = this.getActiveFilters();
 		
 		// remove previous filter
@@ -1701,9 +1718,47 @@ function initSvyGridFilters() {
 	SvyGridFilters.prototype.search = function() {
 		var searchTextChanged = this.searchText !== this.simpleSearch.getSearchText() ? true : false;
 		var foundset = this.getFoundSet();
+		if (!foundset) {
+			application.output("cannot apply filters for undefined foundset for table; " + this.getTable().getFormName() + "."+ this.getTable().getName() + ". May happen for a related foundset where parent record is undefined. ", LOGGINGLEVEL.DEBUG)
+			return;
+		}
+		
+		// apply sort by default
+		var sortString = foundset.getCurrentSort();
 
 		// quick search
 		var searchQuery = this.getQuery();
+		
+		// keep the sort
+		if (sortString) {
+			var sorts = sortString.split(",");
+			
+			// it can handle joins
+			searchQuery.sort.clear();
+			for (var i = 0; i < sorts.length; i++) {
+				var sort = sorts[i].trim();
+				var sortDataProvider = sort.split(" ")[0];
+
+				// TODO can be an utility method
+				/** @type {QBSelect} */
+				var querySource = null;
+				var aDP = sortDataProvider.split('.');
+				for (var j = 0; j < aDP.length - 1; j++) {
+					querySource = querySource == null ? searchQuery.joins[aDP[j]] : querySource.joins[aDP[j]];
+				}
+
+				/** @type {QBColumn} */
+				var sortColumn = querySource == null ? searchQuery.columns[aDP[aDP.length - 1]] : querySource.columns[aDP[aDP.length - 1]];
+
+				if (sort.split(" ")[1] === "desc") {
+					searchQuery.sort.add(sortColumn.desc);
+				} else {
+					searchQuery.sort.add(sortColumn.asc);
+				}
+			}
+			
+			searchQuery.result.distinct = false;
+		}
 
 		if (this.onSearchCommand) {
 			//fire onSearchCommand
@@ -1966,17 +2021,64 @@ function initAbstractToolbarFilterUX() {
 	 * 
 	 * @param {String} dataprovider
 	 * @param {Array} values
+	 * @param {String} operator
 	 * 
 	 * @return {Boolean}
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
-	AbstractToolbarFilterUX.prototype.updateGridFilter = function(dataprovider, values) {
+	AbstractToolbarFilterUX.prototype.updateGridFilter = function(dataprovider, values, operator) {
 		throw scopes.svyExceptions.AbstractMethodInvocationException("updateGridFilter not implemented")
 	}
 	
 	/**
-	 * @param {CustomType<aggrid-groupingtable.column>|{text:String, dataprovider:String, id:String, columnIndex:Number}} column
+	 *  
+	 * @protected 
+	 * @param {String} operator
+	 * 
+	 * @return {String}
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.getOperatorText = function(operator) {
+		
+		var operatorText = "";
+		var OPERATOR = scopes.svyPopupFilter.OPERATOR;
+		switch (operator) {
+		case OPERATOR.GREATER_THEN:
+			operatorText = ">";
+			break;
+		case OPERATOR.GREATER_EQUAL:
+			operatorText = ">";
+			break;
+		case OPERATOR.SMALLER_THEN:
+			operatorText = "<";
+			break;
+		case OPERATOR.SMALLER_EQUAL:
+			operatorText = "<";
+			break;
+		case OPERATOR.BETWEEN:
+			operatorText = "...";
+			break;
+		case OPERATOR.IS_NULL:
+			operatorText = "Empty";
+			break;
+		case OPERATOR.NOT_NULL:
+			operatorText = "Not Empty";
+			break;
+		case OPERATOR.EQUALS:
+		case OPERATOR.LIKE:
+		case OPERATOR.LIKE_CONTAINS:
+		case OPERATOR.IS_IN:
+		default:
+			break;
+		}
+		
+		return operatorText;
+	}
+
+	/**
+     * @param {CustomType<aggrid-groupingtable.column>|{text:String, dataprovider:String, id:String, columnIndex:Number}} column
 	 * 
 	 * @return {Boolean}
 	 * 
@@ -2049,6 +2151,7 @@ function initAbstractToolbarFilterUX() {
 
 			switch (column.filterType) {
 
+			case 'INTEGER':
 			case 'NUMBER':
 				obj.values = obj.values.map(function(value) {
 					return utils.stringToNumber(value);
@@ -2280,10 +2383,24 @@ function initAbstractToolbarFilterUX() {
 					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.TOKEN));
 					break;
 				case 'NUMBER':
-					// number picker
-					filterType = FILTER_TYPES.NUMBER;
-					filter = scopes.svyPopupFilter.createNumberFilter();
-					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.NUMBER));
+					
+					// Check if column type is Number or Integer
+					var relationName = scopes.svyDataUtils.getDataProviderRelationName(column.dataprovider)
+					var dataSource = relationName ? scopes.svyDataUtils.getRelationForeignDataSource(relationName) : this.svyGridFilters.getFoundSet().getDataSource();
+					var jstable = databaseManager.getTable(dataSource);
+					var jscol = jstable.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(column.dataprovider));
+					
+					// if DB column and column is a NUMBER
+					if (jscol && jscol.getType() == JSColumn.NUMBER) {
+						filterType = FILTER_TYPES.NUMBER;
+						filter = scopes.svyPopupFilter.createNumberFilter();
+						filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.NUMBER));
+					} else {
+						filterType = FILTER_TYPES.INTEGER;
+						filter = scopes.svyPopupFilter.createIntegerFilter();
+						filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.INTEGER));
+					}
+					
 					break;
 				case 'DATE':
 					// calendar picker
@@ -2458,6 +2575,15 @@ function initAbstractToolbarFilterUX() {
 				displayValues[i] = application.getValueListDisplayValue(column.valuelist, values[i]);
 			}
 		}
+		
+		// Clean up values from empty values
+		displayValues = displayValues.filter(function(qv) {
+			if (qv === undefined || qv === null || qv === '') {
+				return false;
+			} else {
+				return true;
+			}
+		});
 
 		// format dates
 		displayValues = displayValues.map(function(v) {
@@ -2469,7 +2595,7 @@ function initAbstractToolbarFilterUX() {
 		});
 		
 		// update the UI
-		thisIntance.updateGridFilter(filter.getDataProvider(), displayValues);
+		thisIntance.updateGridFilter(filter.getDataProvider(), displayValues, filter.getOperator());
 		
 		// apply the search
 		gridFilters.search();
@@ -2563,9 +2689,11 @@ function initListComponentFilterRenderer() {
 					valuesArr[i] = '-' + valuesArr[i].substring(3, valuesArr[i].length); \n\
 				} \n\
 			}\n\
+			console.log(entry.text + entry.strDivider + entry.value);\n\
 			template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \n\
-			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + strDivider + entry.value\">' + \n\
+			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + entry.operator + \\' \\' + entry.value\">' + \n\
 				'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
+				'<span class=\"toolbar-filter-tag-operator\">' + entry.operator + '</span>' + \n\
 				'<span class=\"toolbar-filter-tag-value\"> ' + valuesArr.join(', ') + ' </span>' + \n\
 				'<span class=\"toolbar-filter-tag-icon fas fa-angle-down\">' + '</span>' + \n\
 			'</button>' + \n\
@@ -2635,6 +2763,7 @@ function initListComponentFilterRenderer() {
 		newFilter.text = getI18nText(column.headerTitle);
 		newFilter.dataprovider = column.dataprovider;
 		newFilter.value = "";
+		newFilter.operator = "";
 		
 		// if has active filters
 		var element = this.getElement();
@@ -2669,16 +2798,20 @@ function initListComponentFilterRenderer() {
 	/**
 	 * @param {String} dataprovider
 	 * @param {Array} displayValues
+	 * @param {String} operator
 	 *
 	 * @protected
 	 * 
 	 * @this {ListComponentFilterRenderer}
 	 */
-	ListComponentFilterRenderer.prototype.updateGridFilter = function(dataprovider, displayValues) {
+	ListComponentFilterRenderer.prototype.updateGridFilter = function(dataprovider, displayValues, operator) {
 		var index;
 		var element = this.getElement();
 		var count = element.getEntriesCount();
 		var entries = [];
+		
+		var operatorText = this.getOperatorText(operator);
+		
 		for (var i = 0; i < count; i++) {
 			var filterTag = element.getEntry(i);
 			// TODO can i rely on dataprovider only !?
@@ -2705,6 +2838,20 @@ function initListComponentFilterRenderer() {
 				// update display value if necessary
 				if (i === index) {
 					entry.value = displayValues.join(",");
+
+					var OPERATOR = scopes.svyPopupFilter.OPERATOR;
+					
+					// show val1...val2
+					if (operator == OPERATOR.BETWEEN && displayValues.length) {
+						var displayValue1 = displayValues[0] ? displayValues[0] : "";
+						var displayValue2 = displayValues[0] ? displayValues[0] : "";
+						entry.value =  displayValue1 + "..." + displayValue2;
+						entry.operator = "";
+					} else {
+						// do not show operator unless value is set or operator IS_NULL OR NOT_NULL
+						var showOperator = ( operator == OPERATOR.IS_NULL || operator == OPERATOR.NOT_NULL) || ( displayValues.length && operatorText) ? true : false;
+						entry.operator = showOperator ? " " + operatorText : "";
+					}
 				}
 
 			}
