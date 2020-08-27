@@ -2339,14 +2339,14 @@ function initAbstractToolbarFilterUX() {
 					var jscol = jstable.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(column.dataprovider));
 					
 					// if DB column and column is a NUMBER
-					if (jscol && jscol.getType() == JSColumn.NUMBER) {
-						filterType = FILTER_TYPES.NUMBER;
-						filter = scopes.svyPopupFilter.createNumberFilter();
-						filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.NUMBER));
-					} else {
+					if (jscol && jscol.getType() == JSColumn.INTEGER) {
 						filterType = FILTER_TYPES.INTEGER;
 						filter = scopes.svyPopupFilter.createIntegerFilter();
 						filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.INTEGER));
+					} else {
+						filterType = FILTER_TYPES.NUMBER;
+						filter = scopes.svyPopupFilter.createNumberFilter();
+						filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.NUMBER));
 					}
 					
 					break;
