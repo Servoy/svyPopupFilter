@@ -166,6 +166,21 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 
 /**************************************
 *
+*  Check Filter 
+*  
+***************************************/
+.svy-popup-filter-check .hr {
+	border: 0 solid #DBDBDB;
+    border-bottom-width: 1px;
+}
+
+.svy-popup-filter-check .flex-item {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+/**************************************
+*
 *  Token Filter 
 *  
 ***************************************/
@@ -182,7 +197,7 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 }
 
 .svy-popup-filter .svy-popup-filter-token { 
-	padding: 10px 15px;
+	padding: 15px;
 	border-top: 1px solid #DBDBDB;
 }
 

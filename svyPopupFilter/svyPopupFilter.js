@@ -15,6 +15,7 @@ var OPERATOR = {
 	IS_NULL: "isNull",
 	NOT_NULL: "!isNull",
 	EQUALS: "eq",
+	EQUALS_OR_NULL: "^||eq",
 	/** All values starting with search input e.g. LIKE SEARCH_WORD% */ 
 	LIKE: "like",
 	/** All values containing search input e.g. LIKE %SEARCH_WORD% */ 
@@ -76,6 +77,16 @@ function createTokenFilter() {
 */
 function createSelectFilter(dataProvider, lookup) {
 	return new SvySelectFilter(dataProvider, lookup);
+}
+
+/**
+*
+* @public
+* @return {SvyCheckFilter}
+* @properties={typeid:24,uuid:"40D19C13-BA73-489F-A722-676F326E1BC7"}
+*/
+function createCheckFilter() {
+	return new SvyCheckFilter();
 }
 
 /**
@@ -300,6 +311,21 @@ function SvyTokenFilter(){
 	AbstractPopupFilter.call(this);
 	
 	this.setRendererForm(forms.svyTokenPopupFilter);
+}
+
+/**
+ * 
+ * @public 
+ * @constructor 
+ * 
+ * @extends {AbstractPopupFilter}
+ * @properties={typeid:24,uuid:"FAD6ACF4-3054-43D4-8D5C-32B4909271C4"}
+ */
+function SvyCheckFilter(){
+	
+	AbstractPopupFilter.call(this);
+	
+	this.setRendererForm(forms.svyCheckPopupFilter);
 }
 
 /**
@@ -793,6 +819,16 @@ function initSvyTokenFilter() {
 /**
  * @constructor 
  * @private 
+ * @properties={typeid:24,uuid:"6B6B2D00-994D-486E-85A3-F19626D39D1B"}
+ */
+function initSvyCheckFilter() {
+	SvyCheckFilter.prototype = Object.create(AbstractPopupFilter.prototype);
+	SvyCheckFilter.prototype.constructor = SvyCheckFilter;
+}
+
+/**
+ * @constructor 
+ * @private 
  * @properties={typeid:24,uuid:"42D4D799-F710-4AD1-86CF-401ACE6A1E87"}
  */
 function initSvySelectFilter() {
@@ -980,5 +1016,6 @@ var init = (function() {
 	initSvyIntegerFilter();
 	initSvyNumberFilter();
 	initSvyTokenFilter();
+	initSvyCheckFilter();
 	initSvySelectFilter();
 })();

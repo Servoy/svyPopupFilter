@@ -23,7 +23,11 @@ var FILTER_TYPES = {
 	/**
 	 * Select filter
 	 * */
-	SELECT: 'selectFilterTemplate'
+	SELECT: 'selectFilterTemplate',
+	/**
+	 * Check filter
+	 * */
+	CHECK: 'checkPopupFilterTemplate'
 };
 
 /**
@@ -138,6 +142,12 @@ function PopupRendererForms() {
 	 * @type {{template:String}} 
 	 * */
 	this.selectFilterTemplate = {template: "svySelectPopupFilter"};
+	
+	/** 
+	 * @protected
+	 * @type {RuntimeForm<AbstractPopupFilter>} 
+	 * */
+	this.checkPopupFilterTemplate = {template: "svyCheckPopupFilter"};
 }
 
 /**
@@ -185,6 +195,7 @@ function setPopupRendererForm(formType, form) {
  *  - INTEGER: EQUALS(DEFAULT), BETWEEN, GREATER_EQUAL, GREATER_THEN, SMALLER_EQUAL, SMALLER_THEN<br/>
  *  - NUMBER: EQUALS(DEFAULT), BETWEEN, GREATER_EQUAL, GREATER_THEN, SMALLER_EQUAL, SMALLER_THEN<br/>
  *  - DATE: BETWEEN(DEFAULT), GREATER_EQUAL, SMALLER_EQUAL, EQUALS<br/>
+ *	- CHECK : EQUALS<br/>
  *  - SELECT: IS_IN(DEFAULT)<br/>
  *  <br/>
  * 
@@ -280,10 +291,13 @@ function initPopupRendererForms() {
 			break;
 		case FILTER_TYPES.INTEGER:
 		case FILTER_TYPES.NUMBER:
-			allowedOperators = [OPERATOR.BETWEEN, OPERATOR.GREATER_EQUAL, OPERATOR.GREATER_THEN, OPERATOR.SMALLER_EQUAL, OPERATOR.SMALLER_THEN, OPERATOR.EQUALS];
+			allowedOperators = [OPERATOR.BETWEEN, OPERATOR.GREATER_EQUAL, OPERATOR.GREATER_THEN, OPERATOR.SMALLER_EQUAL, OPERATOR.SMALLER_THEN, OPERATOR.EQUALS, OPERATOR.EQUALS_OR_NULL];
 			break;
 		case FILTER_TYPES.DATE:
-			allowedOperators = [OPERATOR.BETWEEN, OPERATOR.GREATER_EQUAL, OPERATOR.SMALLER_EQUAL, OPERATOR.EQUALS];
+			allowedOperators = [OPERATOR.BETWEEN, OPERATOR.GREATER_EQUAL, OPERATOR.SMALLER_EQUAL, OPERATOR.EQUALS, OPERATOR.EQUALS_OR_NULL];
+			break;
+		case FILTER_TYPES.CHECK:
+			allowedOperators = [OPERATOR.EQUALS, OPERATOR.EQUALS_OR_NULL];
 			break;
 		default:
 			break;
@@ -752,6 +766,10 @@ function getFilterQuery(filters, foundset) {
 				value = qValues[0];
 			}
 			break;
+		case OPERATOR.EQUALS_OR_NULL:
+			op = "^||eq";
+			value = qValues[0];
+			break;
 		case OPERATOR.GREATER_EQUAL:
 			op = "ge";
 			value = qValues[0];
@@ -946,6 +964,8 @@ function getFilterQuery(filters, foundset) {
 			if (value.indexOf("!") === 0 ) {
 				whereClause = whereClause.not[op](value.substr(2));
 			}
+		case "^||eq":
+			whereClause = query.or.add(whereClause.eq(value)).add(whereClause.isNull);
 			break;
 		default:
 			whereClause = whereClause[op](value);
@@ -2091,6 +2111,7 @@ function initAbstractToolbarFilterUX() {
 
 			switch (column.filterType) {
 
+			case 'CHECK':
 			case 'INTEGER':
 			case 'NUMBER':
 				obj.values = obj.values.map(function(value) {
@@ -2332,6 +2353,14 @@ function initAbstractToolbarFilterUX() {
 					filterType = FILTER_TYPES.DATE;
 					filter = scopes.svyPopupFilter.createDateFilter();
 					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.DATE));
+					break;
+				case 'RADIO':
+					// TODO shall i check the check type ?
+				
+					// calendar picker
+					filterType = FILTER_TYPES.CHECK;
+					filter = scopes.svyPopupFilter.createCheckFilter();
+					filter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.CHECK));
 					break;
 				default:
 					break;
