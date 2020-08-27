@@ -835,6 +835,19 @@ function initSvySelectFilter() {
 	SvySelectFilter.prototype = Object.create(AbstractPopupFilter.prototype);
 	SvySelectFilter.prototype.constructor = SvySelectFilter;
 	
+	/**
+	 * @param {Array} values
+	 * 
+	 * @this {SvySelectFilter}
+	 */
+	SvySelectFilter.prototype.setValues = function(values) {
+		AbstractPopupFilter.prototype.setValues.call(this, values);
+		
+		// TODO this may not be enough if the in-memory datasource of the lookup is refreshed before show.
+		this.lookup.setSelectedValues(values);
+		return this;
+	}
+	
 	
 	/**
 	 * @public 
