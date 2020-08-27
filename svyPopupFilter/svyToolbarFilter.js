@@ -2285,6 +2285,8 @@ function initAbstractToolbarFilterUX() {
 	/**
 	 * @param {CustomType<aggrid-groupingtable.column>} column
 	 * 
+	 * @return {scopes.svyPopupFilter.AbstractPopupFilter}
+	 * 
 	 * @protected 
 	 *
 	 * @this {AbstractToolbarFilterUX}
