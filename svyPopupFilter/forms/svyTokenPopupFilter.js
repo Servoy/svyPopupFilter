@@ -32,12 +32,10 @@ function onShow(firstShow,event) {
 	
 	_super.onShow(firstShow,event);
 	
-	if (firstShow) {
-		elements.listTags.clear();
-		for (var i = 0; i < values.length; i++) {
-			var tag = elements.listTags.newEntry();
-			tag.text = values[i];
-		}
+	elements.listTags.clear();
+	for (var i = 0; i < values.length; i++) {
+		var tag = elements.listTags.newEntry();
+		tag.text = values[i];
 	}
 }
 
