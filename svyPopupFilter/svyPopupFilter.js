@@ -891,7 +891,7 @@ function initSvySelectFilter() {
 				callback.call(this, values, OPERATOR.IS_IN, thisInstance);
 			}
 		}
-		
+		this.lookup.setSelectedValues(thisInstance.getValues())
 		return this.lookup.createPopUp(svySelectCallback);
 	}
 
