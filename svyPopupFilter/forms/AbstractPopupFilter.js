@@ -242,7 +242,7 @@ function newInstance(filterObj) {
 	// TODO: does it need to be a new form instance each time !?
 	
 	// create JSForm clone
-	var formName = controller.getName()+ '_' + application.getUUID().toString().split('-')[0];
+	var formName = controller.getName() + '_' + application.getUUID().toString().replace(/-/g,'_');
 	var jsForm = solutionModel.cloneForm(formName, solutionModel.getForm(controller.getName()));
 
 	// pass control to sub form(s)
