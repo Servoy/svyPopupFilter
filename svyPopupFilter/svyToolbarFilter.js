@@ -1645,8 +1645,11 @@ function initSvyGridFilters() {
 						
 						// set the provider alias
 						var alias = column.headerTitle ? getI18nText(column.headerTitle) : column.dataprovider;
-						provider.setAlias(alias);
-
+						if (alias) {
+							// TODO should also set lowercase ?
+							alias = alias.replace(/ /,'-');
+							provider.setAlias(alias);
+						}
 						// if is a date use explicit search
 						if (col.getType() === JSColumn.DATETIME) {
 							provider.setImpliedSearch(false);
