@@ -2788,6 +2788,9 @@ function initListComponentFilterRenderer() {
 		}
 		this.svyGridFilters.removeGridFilter(column);
 			
+		if(this.getElement().getEntriesCount() == 0) {
+			this._clearGridFilters();
+		}
 		// on filter removed event
 		if (this.onFilterRemovedEvent) {
 			scopes.svySystem.callMethod(this.onFilterRemovedEvent);
