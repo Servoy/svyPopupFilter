@@ -1327,6 +1327,10 @@ function initSvyGridFilters() {
 			}
 		}
 		
+		for(var k in this.additionalFilters) {
+			filters.concat(this.additionalFilters[k].getColumn())
+		}
+		
 		return filters;
 	}
 	
@@ -2331,7 +2335,7 @@ function initAbstractToolbarFilterUX() {
 	 * @return {AdditionalFilters}
 	 */
 	AbstractToolbarFilterUX.prototype.addAdditionalFilter = function(titleText, dataProvider) {
-		var newFilter = new AdditionalFilters(titleText,dataProvider)
+		var newFilter = new AdditionalFilters(titleText,dataProvider, this.svyGridFilters.getFoundSet())
 		this.svyGridFilters.addAdditionalFilter(newFilter);
 		return newFilter;
 	}
@@ -2922,10 +2926,11 @@ function initListComponentFilterRenderer() {
  * @constructor 
  * @param {String} titleText Display text to show for filter popup
  * @param {String} dataprovider Dataprovider to use for filtering the data
+ * @param {JSFoundSet} foundset of the form where the additionalFilter is added on
  *
  * @properties={typeid:24,uuid:"803ED7DC-5206-4561-914C-3DE613DCA0EC"}
  */
-function AdditionalFilters(titleText, dataprovider) {
+function AdditionalFilters(titleText, dataprovider, foundset) {
 	/**
 	 * @type {String} 
 	 */
@@ -2983,14 +2988,27 @@ function AdditionalFilters(titleText, dataprovider) {
 	 * @type {String} 
 	 * Type of filter can be (TEXT, DATE, NUMBER)
 	 */
-	this.filterType =  'TEXT'
+	this.filterType =  function() {
+		var relationName = scopes.svyDataUtils.getDataProviderRelationName(dataprovider)
+		var dataSource = relationName ? scopes.svyDataUtils.getRelationForeignDataSource(relationName) : foundset.getDataSource();
+		var jstable = databaseManager.getTable(dataSource);
+		var jscol = jstable.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(dataprovider));
+		
+		if(jscol.getType() == JSColumn.NUMBER || jscol.getType() == JSColumn.INTEGER) {
+			return 'NUMBER';
+		} else if(jscol.getType() == JSColumn.DATETIME) {
+			return 'DATE';
+		} else {
+			return 'TEXT';
+		}
+	}();
 	
 	/**
 	 * @return {CustomType<aggrid-groupingtable.column>}
 	 */
 	this.getColumn = function() {
 		/**@type {CustomType<aggrid-groupingtable.column>} */
-		var column = {dataprovider: this.dataprovider, headerTitle: getI18nText(this.text), text: this.text, visible: true, valuelist: this.valuelist};
+		var column = {dataprovider: this.dataprovider, headerTitle: getI18nText(this.text), text: this.text, visible: true, valuelist: this.valuelist, filterType: this.filterType};
 		return column;
 	}
 	
