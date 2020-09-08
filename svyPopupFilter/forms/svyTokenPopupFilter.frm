@@ -54,12 +54,13 @@ size:{
 height:25,
 width:25
 },
+styleClass:"pull-right btn-close text-tertiary clickable",
 styleclass:"pull-right btn-close text-tertiary clickable"
 },
 location:"2,2",
 name:"faClose",
 size:"25,25",
-styleClass:"fa fa-close pull-right btn-close text-tertiary clickable",
+styleClass:"pull-right btn-close text-tertiary clickable",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"1916976D-2F8A-41FA-890C-48B91A3DAED0"
@@ -146,12 +147,13 @@ onActionMethodID:"69A13409-C425-4D4D-ADF9-29148E922AF0",
 size:{
 height:25,
 width:25
-}
+},
+styleClass:"text-danger clickable svy-popup-filter-token-icon"
 },
 location:"1,1",
 name:"iconRemoveAll",
 size:"25,25",
-styleClass:"fa fa-trash text-danger clickable svy-popup-filter-token-icon",
+styleClass:"text-danger clickable svy-popup-filter-token-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"9A163BB7-51AB-4844-9461-A4FB0A44894F"

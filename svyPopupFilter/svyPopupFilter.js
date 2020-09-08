@@ -28,6 +28,22 @@ var OPERATOR = {
 };
 
 /**
+ * @public 
+ * @enum
+ * @properties={typeid:35,uuid:"9526B2AE-E202-4A50-B60E-5F6A61A6A4DE",variableType:-4}
+ */
+var STYLING = {
+	MUTLI_SELECT_ICON_COLUMN_WIDTH: '50',
+	MULTI_SELECT_SHOW_TILE_HEADERS: true,
+	CLOSE_ICON: 'fa fa-close',
+	REMOVE_ICON: 'fa fa-trash',
+	EXCLUDE_ICON: 'fas fa-minus-circle',
+	INCLUDE_ICON: 'fas fa-check-circle',
+	OPEN_FILTER_ICON: 'fas fa-angle-down',
+	REMOVE_FILTER_ICON: 'fas fa-times'
+}
+
+/**
  *
  * @public
  * @return {SvyDateFilter}

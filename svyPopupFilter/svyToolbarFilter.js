@@ -2695,10 +2695,10 @@ function initListComponentFilterRenderer() {
 				'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
 				'<span class=\"toolbar-filter-tag-operator\">' + entry.operator + '</span>' + \n\
 				'<span class=\"toolbar-filter-tag-value\"> ' + valuesArr.join(', ') + ' </span>' + \n\
-				'<span class=\"toolbar-filter-tag-icon fas fa-angle-down\">' + '</span>' + \n\
+				'<span class=\"toolbar-filter-tag-icon " + scopes.svyPopupFilter.STYLING.OPEN_FILTER_ICON +"\">' + '</span>' + \n\
 			'</button>' + \n\
 			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"close\">' + \n\
-			'<span class=\"fas fa-times text-danger\">' + '</span>' + '</button>' + '</div>'; \n\
+			'<span class=\"" + scopes.svyPopupFilter.STYLING.REMOVE_FILTER_ICON +" text-danger\">' + '</span>' + '</button>' + '</div>'; \n\
 			return template; \n\
 		})";
 	}

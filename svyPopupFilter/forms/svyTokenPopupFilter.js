@@ -13,11 +13,11 @@ var searchText = null;
  * @override
  */
 function onLoad(event) {
-	var renderFunction = "(" + scopes.svySystem.printMethodCode(renderFilterEntry).join("") + ")";
-
-	elements.listTags.entryRendererFunction = renderFunction;
+	elements.listTags.entryRendererFunction = renderFilterEntry();
 	
 	_super.onLoad(event);
+	elements.faClose.addStyleClass(scopes.svyPopupFilter.STYLING.CLOSE_ICON);
+	elements.iconRemoveAll.addStyleClass(scopes.svyPopupFilter.STYLING.REMOVE_ICON);
 }
 
 /**
@@ -50,54 +50,45 @@ function onShow(firstShow,event) {
  */
 function setSelectedFilterValues(selectedValues) {
 	_super.setSelectedFilterValues(selectedValues);
-
-	// clear tags
-	elements.listTags.clear();
-
-	// set all values
-	for (var i = 0; i < values.length; i++) {
-		addTag(values[i]);
-	}
-	
 }
 
 /**
- * @param {{text: String}} entry
- *
  * @protected
  * @properties={typeid:24,uuid:"41DCC810-7BC6-4D8F-BD4B-251DA79704E2"}
  */
 function renderFilterEntry(entry) {
-	var entryText = entry.text;
-	
-	if (!(entryText instanceof String)) {
-		entryText = entryText.toString();
-	}
-	
-	var isExcluded = false;
-	if (entryText.indexOf('!=') === 0) {
-		entryText = entryText.substring(2);
-		isExcluded = true;
-	} else if (entryText.indexOf('!') === 0) {
-		entryText = entryText.substring(1);
-		isExcluded = true;
-	} else if (entryText.indexOf('%!=') === 0) {
-		entryText = entryText.substring(3);
-		isExcluded = true;
-	}
-	
-	var template = '';
-	template += '<div class="row">' + 
-	'<div class="col-md-12 svy-popup-filter-token">' + 
-		'<span class="fa fa-trash svy-popup-filter-token-icon margin-right-10" data-target="close"></span>' + 
-		'<span class="fas ' + (isExcluded ? 'fa-minus-circle' : 'fa-check-circle') + ' svy-popup-filter-token-icon' + (isExcluded ? ' text-warning' : ' text-success') + '" data-target="exclude"></span>' + 
-		'<span class="svy-popup-filter-token-text">' + 
-			entryText + 
-		'</span>' +
-	'</div>' + 
-	'</div>';
-
-	return template;
+	return "(function renderFilterEntry(entry) {  \n\
+		var entryText = entry.text;\n\
+		\n\
+		if (!(entryText instanceof String)) {\n\
+			entryText = entryText.toString();\n\
+		}\n\
+		\n\
+		var isExcluded = false;\n\
+		if (entryText.indexOf('!=') === 0) {\n\
+			entryText = entryText.substring(2);\n\
+			isExcluded = true;\n\
+		} else if (entryText.indexOf('!') === 0) {\n\
+			entryText = entryText.substring(1);\n\
+			isExcluded = true;\n\
+		} else if (entryText.indexOf('%!=') === 0) {\n\
+			entryText = entryText.substring(3);\n\
+			isExcluded = true;\n\
+		}\n\
+		\n\
+		var template = '';\n\
+		template += '<div class=\"row\">' + \n\
+		'<div class=\"col-md-12 svy-popup-filter-token\">' + \n\
+			'<span class=\"" + scopes.svyPopupFilter.STYLING.REMOVE_ICON +" svy-popup-filter-token-icon margin-right-10\" data-target=\"close\"></span>' + \n\
+			'<span class=\"' + (isExcluded ? '" + scopes.svyPopupFilter.STYLING.EXCLUDE_ICON +"' : '" + scopes.svyPopupFilter.STYLING.INCLUDE_ICON +"') + ' svy-popup-filter-token-icon' + (isExcluded ? ' text-warning' : ' text-success') + '\" data-target=\"exclude\"></span>' +\n\
+			'<span class=\"svy-popup-filter-token-text\">' + \n\
+				entryText + \n\
+			'</span>' +\n\
+		'</div>' + \n\
+		'</div>';\n\
+		\n\
+		return template;\n\
+	})";
 }
 
 /**
