@@ -32,6 +32,7 @@ function defaultWidth() {
  * @override
  */
 function onShow(firstShow,event) {
+	_super.onShow(firstShow,event)
 	elements.table.columns[0].width = scopes.svyPopupFilter.STYLING.MUTLI_SELECT_ICON_COLUMN_WIDTH;
 	elements.table.columns.forEach(function(column) {
 		column.headerStyleClass = (scopes.svyPopupFilter.STYLING.MULTI_SELECT_SHOW_TILE_HEADERS ? '' : 'display-none')
