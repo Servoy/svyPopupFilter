@@ -64,6 +64,7 @@ items:[
 {
 json:{
 faclass:"fa fa-close",
+imageStyleClass:"fa fa-close",
 location:{
 x:1,
 y:1
@@ -73,13 +74,13 @@ size:{
 height:25,
 width:25
 },
-styleClass:"fa fa-close pull-right btn-close text-tertiary clickable",
+styleClass:"pull-right btn-close text-tertiary clickable",
 styleclass:"fa fa-close pull-right btn-close text-tertiary clickable"
 },
 location:"1,1",
 name:"faClose",
 size:"25,25",
-styleClass:"fa fa-close pull-right btn-close text-tertiary clickable",
+styleClass:"pull-right btn-close text-tertiary clickable",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"9FB676D0-7DA3-4635-AEC9-BADAD9F5BD56"

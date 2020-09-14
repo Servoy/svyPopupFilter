@@ -185,16 +185,18 @@ top:"0",
 width:"25"
 },
 faclass:"fa fa-close",
+imageStyleClass:"fa fa-close",
 onActionMethodID:"F18750A2-44A6-4CC0-B6A9-C973F0569851",
 size:{
 height:25,
 width:25
 },
+styleClass:"default-align text-tertiary clickable",
 styleclass:"fa fa-close text-tertiary clickable"
 },
 name:"faClose",
 size:"25,25",
-styleClass:"fa fa-close text-tertiary clickable",
+styleClass:"default-align text-tertiary clickable",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"A159D254-8C83-4D01-A915-08C5927D10CC"
