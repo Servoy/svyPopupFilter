@@ -70,6 +70,7 @@ uuid:"007BC9DB-CAE3-473A-B54B-4CE6A4C50158"
 {
 json:{
 alignment:null,
+imageStyleClass:"fas fa-dot-circle",
 location:{
 x:1,
 y:1
@@ -79,12 +80,14 @@ size:{
 height:25,
 width:25
 },
+styleClass:"text-primary clickable",
 styleclass:"fas fa-dot-circle text-primary clickable"
 },
 location:"1,1",
 name:"radioChecked",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"text-primary clickable",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"F2968EC8-08E2-444E-A288-9CE3D8709585"
 }
@@ -202,6 +205,7 @@ items:[
 {
 json:{
 faclass:"fa fa-close",
+imageStyleClass:"fa fa-close",
 location:{
 x:1,
 y:1
@@ -211,12 +215,14 @@ size:{
 height:25,
 width:25
 },
+styleClass:"pull-right btn-close text-tertiary clickable",
 styleclass:"pull-right btn-close text-tertiary clickable"
 },
 location:"1,1",
 name:"faClose",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"pull-right btn-close text-tertiary clickable",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"636EB405-3A21-4DC3-B08F-84A13A06182D"
 }
@@ -305,6 +311,7 @@ items:[
 {
 json:{
 alignment:null,
+imageStyleClass:"fa fa-circle-o",
 location:{
 x:1,
 y:1
@@ -314,12 +321,14 @@ size:{
 height:25,
 width:25
 },
+styleClass:"text-tertiary clickable",
 styleclass:"fa fa-circle-o text-tertiary clickable"
 },
 location:"1,1",
 name:"radioUnchecked",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"text-tertiary clickable",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"63D429BC-AB9C-448A-9045-AD20ECDA4C54"
 },
