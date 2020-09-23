@@ -2501,8 +2501,11 @@ function initAbstractToolbarFilterUX() {
 			}
 		});
 
-		// format dates
+		// format dates / checks
 		displayValues = displayValues.map(function(v) {
+			if(filter instanceof scopes.svyPopupFilter.SvyCheckFilter){
+				return !v ? '(NO)' : '(YES)' // TODO enable i18N
+			}
 			if (v instanceof Date) {
 				return utils.dateFormat(v, globalFilterConfig.globalDateDisplayFormat);
 			} else {
