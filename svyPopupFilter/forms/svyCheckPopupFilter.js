@@ -59,21 +59,25 @@ function updateUI() {
 	if (value) {		
 		elements.radioChecked.removeStyleClass("text-tertiary");
 		elements.radioChecked.addStyleClass("text-primary");
+		elements.radioChecked.imageStyleClass = "fas fa-dot-circle";
 		elements.labelChecked.removeStyleClass("text-tertiary");
 		elements.labelChecked.addStyleClass("text-primary");
 		
 		elements.radioUnchecked.removeStyleClass("text-primary");
 		elements.radioUnchecked.addStyleClass("text-tertiary");
+		elements.radioUnchecked.imageStyleClass = "fa fa-circle-o";
 		elements.labelUnchecked.removeStyleClass("text-primary");
 		elements.labelUnchecked.addStyleClass("text-tertiary");
 	} else {
 		elements.radioChecked.removeStyleClass("text-primary");
 		elements.radioChecked.addStyleClass("text-tertiary");
+		elements.radioChecked.imageStyleClass = "fa fa-circle-o";
 		elements.labelChecked.removeStyleClass("text-primary");
 		elements.labelChecked.addStyleClass("text-tertiary");
 		
 		elements.radioUnchecked.removeStyleClass("text-tertiary");
 		elements.radioUnchecked.addStyleClass("text-primary");
+		elements.radioUnchecked.imageStyleClass = "fas fa-dot-circle";
 		elements.labelUnchecked.removeStyleClass("text-tertiary");
 		elements.labelUnchecked.addStyleClass("text-primary");
 	}
