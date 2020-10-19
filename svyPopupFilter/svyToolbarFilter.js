@@ -682,18 +682,25 @@ function SvyGridFilters(table) {
 	 * @type {function}
 	 */
 	this.onSearchCommand = null;
+	
+	/**
+	 * @protected
+	 * @type {String}
+	 */
+	this.onFilterApplyQueryCondition = null;
 }
 
 /**
  * @private 
  * @param {Array<scopes.svyPopupFilter.AbstractPopupFilter>} filters
  * @param {JSFoundSet} foundset
+ * @param {function(QBSelect, String, String, Array, scopes.svyPopupFilter.AbstractPopupFilter)} [onFilterApplyQueryCondition]
  * 
  * @return {QBSelect}
  *
  * @properties={typeid:24,uuid:"5B04853F-1A4F-4752-83E9-B332D697F935"}
  */
-function getFilterQuery(filters, foundset) {
+function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 	var isFilterSet = false;
 
 	var query = databaseManager.createSelect(foundset.getDataSource());
@@ -843,6 +850,18 @@ function getFilterQuery(filters, foundset) {
 			break;
 		default:
 			break;
+		}
+		
+		// apply callback
+		if (onFilterApplyQueryCondition) {
+			/** @type {Array} */
+			var callbackValues = value instanceof Array ? value : [value];
+			var callbackOperator = op;
+			// TODO should pass values or parsed qValues ?
+			if (onFilterApplyQueryCondition.call(this, query, filter.getDataProvider(), callbackOperator, callbackValues, filter) === false) {
+				// don't apply query if custom query has been applied
+				continue;
+			}
 		}
 
 		/** @type {QBSelect} */
@@ -1127,7 +1146,9 @@ function initSvyGridFilters() {
 		// get the filter query
 		var filterQuery;
 		if (filters.length) {
-			filterQuery = getFilterQuery(filters, foundset);
+			var onFilterApplyQueryFunction = this.onFilterApplyQueryCondition ? scopes.svySystem.convertQualifiedNameToServoyMethod(this.onFilterApplyQueryCondition) : null;
+			
+			filterQuery = getFilterQuery(filters, foundset, onFilterApplyQueryFunction);
 			
 			// apply the query as filter
 			// DO NOTHING if onSearchCommand is set
@@ -1177,6 +1198,18 @@ function initSvyGridFilters() {
 		this.onSearchCommand = callback;
 		return this;
 	}
+	
+	/**
+	 * @public
+	 * @param {function(QBSelect, String, String, Array, scopes.svyPopupFilter.AbstractPopupFilter)} callback
+	 * @return {SvyGridFilters}
+	 *
+	 * @this {SvyGridFilters}
+	 */
+	SvyGridFilters.prototype.setOnFilterApplyQueryCondition = function(callback) {
+		this.onFilterApplyQueryCondition = scopes.svySystem.convertServoyMethodToQualifiedName(callback);
+		return this;
+	}	
 	
 	/**
 	 * @public
@@ -1897,6 +1930,33 @@ function initAbstractToolbarFilterUX() {
 		this.svyGridFilters.setOnSearchCommand(callback);
 		return this;
 	}
+	
+	/**
+	 * Sets a callback method that is fired whenever a query for a given filter is applied<p>
+	 * This can be used to either modify the filter before the query is created
+	 * or to enhance the provided QBSelect yourself<p>
+	 * To prevent the filter from adding criteria to the query as it would normally do, the method being
+	 * called can return <code>false</code><p>
+	 * The method called receives these parameters<ul>
+	 * 
+	 * <li>param {QBSelect} qbSelect the query to enhance</li>
+	 * <li>param {String} dataprovider the column/dataprovider of this filter</li>
+	 * <li>param {String} operator the operator used</li>
+	 * <li>param {Array} values the filter's values</li>
+	 * <li>param {scopes.svyPopupFilter.AbstractPopupFilter} filter the filter object</li></ul>
+	 * 
+	 * @param {function(QBSelect, String, String, Array, scopes.svyPopupFilter.AbstractPopupFilter)} callback
+	 * 
+	 * @return {AbstractToolbarFilterUX}
+	 *
+	 * @public
+	 * 
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.setOnFilterApplyQueryCondition = function(callback) {
+		this.svyGridFilters.setOnFilterApplyQueryCondition(callback);
+		return this;
+	}	
 	
 	/**
 	 * Adds a filter for the given column
