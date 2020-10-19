@@ -2670,7 +2670,6 @@ function initListComponentFilterRenderer() {
 					valuesArr[i] = '-' + valuesArr[i].substring(3, valuesArr[i].length); \n\
 				} \n\
 			}\n\
-			console.log(entry.text + entry.strDivider + entry.value);\n\
 			template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \n\
 			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + entry.operator + \\' \\' + entry.value\">' + \n\
 				'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
