@@ -7,7 +7,7 @@
 function onLoad(event) {
 	_super.onLoad(event);
 	updateUI();
-	elements.faClose.addStyleClass(scopes.svyPopupFilter.STYLING.CLOSE_ICON);
+	elements.faClose.imageStyleClass = scopes.svyPopupFilter.STYLING.CLOSE_ICON;
 }
 
 /**

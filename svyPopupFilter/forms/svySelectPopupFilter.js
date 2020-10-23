@@ -48,7 +48,7 @@ function onShow(firstShow,event) {
  * @properties={typeid:24,uuid:"B17E53E3-BF3D-4090-B921-5D9E4469EAD3"}
  */
 function onLoad(event) {
-	elements.faClose.addStyleClass(scopes.svyPopupFilter.STYLING.CLOSE_ICON);
+	elements.faClose.imageStyleClass = scopes.svyPopupFilter.STYLING.CLOSE_ICON;
 }
 
 /**

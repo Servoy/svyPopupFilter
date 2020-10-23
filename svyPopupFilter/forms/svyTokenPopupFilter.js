@@ -16,8 +16,8 @@ function onLoad(event) {
 	elements.listTags.entryRendererFunction = renderFilterEntry();
 	
 	_super.onLoad(event);
-	elements.faClose.addStyleClass(scopes.svyPopupFilter.STYLING.CLOSE_ICON);
-	elements.iconRemoveAll.addStyleClass(scopes.svyPopupFilter.STYLING.REMOVE_ICON);
+	elements.faClose.imageStyleClass = scopes.svyPopupFilter.STYLING.CLOSE_ICON;
+	elements.iconRemoveAll.imageStyleClass = scopes.svyPopupFilter.STYLING.REMOVE_ICON;
 }
 
 /**

@@ -97,6 +97,7 @@ function defaultWidth() {
  * @properties={typeid:24,uuid:"ECFE906A-F8FD-4469-AE71-AE4C6BF530C2"}
  */
 function onLoad(event) {
-	_super.onLoad(event)
-	elements.faClose.addStyleClass(scopes.svyPopupFilter.STYLING.CLOSE_ICON);
+	_super.onLoad(event);
+	
+	elements.faClose.imageStyleClass = scopes.svyPopupFilter.STYLING.CLOSE_ICON;
 }
