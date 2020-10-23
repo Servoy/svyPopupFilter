@@ -49,6 +49,8 @@ function onShow(firstShow,event) {
  */
 function onLoad(event) {
 	elements.faClose.imageStyleClass = scopes.svyPopupFilter.STYLING.CLOSE_ICON;
+	
+	scopes.svyPopupFilter.applyLocaleStrings(controller.getName(), 'svySelectPopupFilter');
 }
 
 /**

@@ -1929,7 +1929,7 @@ function initAbstractToolbarFilterUX() {
 		var filterPopupMenu = plugins.window.createPopupMenu();
 		var menuItem = filterPopupMenu.addMenuItem("title");
 		menuItem.enabled = false;
-		menuItem.text = "Add filter";
+		menuItem.text = scopes.svyPopupFilter.LOCALE.filterPopupMenu.addFilter;
 
 		var columnFilters = this.getFilters();
 		for (var index = 0; index < columnFilters.length; index++) {
@@ -2818,7 +2818,7 @@ function getFilterUiDisplayValues(filterUI, filter, values) {
 	// format dates / checks
 	displayValues = displayValues.map(function(v) {
 		if (filterUI instanceof scopes.svyPopupFilter.SvyCheckFilter) {
-			return !v ? '(NO)' : '(YES)' // TODO enable i18N
+			return !v ? '(' + scopes.svyPopupFilter.LOCALE.svyCheckPopupFilter.labelUnchecked + ')' : '(' + scopes.svyPopupFilter.LOCALE.svyCheckPopupFilter.labelChecked + ')'
 		}
 		if (v instanceof Date) {
 			return utils.dateFormat(v, globalFilterConfig.globalDateDisplayFormat);

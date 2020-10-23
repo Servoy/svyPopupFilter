@@ -18,6 +18,8 @@ function onLoad(event) {
 	_super.onLoad(event);
 	elements.faClose.imageStyleClass = scopes.svyPopupFilter.STYLING.CLOSE_ICON;
 	elements.iconRemoveAll.imageStyleClass = scopes.svyPopupFilter.STYLING.REMOVE_ICON;
+	
+	scopes.svyPopupFilter.applyLocaleStrings(controller.getName(), 'svyTokenPopupFilter');
 }
 
 /**
@@ -54,7 +56,7 @@ function setSelectedFilterValues(selectedValues) {
  * @protected
  * @properties={typeid:24,uuid:"41DCC810-7BC6-4D8F-BD4B-251DA79704E2"}
  */
-function renderFilterEntry(entry) {
+function renderFilterEntry() {
 	return "(function renderFilterEntry(entry) {  \n\
 		var entryText = entry.text;\n\
 		\n\
