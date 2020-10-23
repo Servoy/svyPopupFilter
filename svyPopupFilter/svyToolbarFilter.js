@@ -1598,7 +1598,8 @@ function initAbstractToolbarFilterUX() {
 		// create a simple search
 		var simpleSearch = scopes.svySearch.createSimpleSearch(tableDataSource);
 		simpleSearch.setSearchText(this.searchText);
-		simpleSearch.setDateFormat("dd-MM-yyyy");
+		var simpleSearchDateFormat = globalFilterConfig.globalDateDisplayFormat ? globalFilterConfig.globalDateDisplayFormat : "dd-MM-yyyy";
+		simpleSearch.setDateFormat(simpleSearchDateFormat);
 
 		for (var i = 0; filters && i < filters.length; i++) {
 			addSearchProvider(simpleSearch, filters[i]);
