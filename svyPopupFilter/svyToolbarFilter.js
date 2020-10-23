@@ -2286,7 +2286,7 @@ function initListComponentFilterRenderer() {
 					// show val1...val2
 					if (operator == OPERATOR.BETWEEN && displayValues.length) {
 						var displayValue1 = displayValues[0] ? displayValues[0] : "";
-						var displayValue2 = displayValues[0] ? displayValues[0] : "";
+						var displayValue2 = displayValues[1] ? displayValues[1] : "";
 						entry.value =  displayValue1 + "..." + displayValue2;
 						entry.operator = "";
 					} else {
