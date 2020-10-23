@@ -1579,7 +1579,8 @@ function initSvyGridFilters() {
 		// create a simple search
 		var simpleSearch = scopes.svySearch.createSimpleSearch(tableDataSource);
 		simpleSearch.setSearchText(this.searchText);
-		simpleSearch.setDateFormat("dd-MM-yyyy");
+		var simpleSearchDateFormat = globalFilterConfig.globalDateDisplayFormat ? globalFilterConfig.globalDateDisplayFormat : "dd-MM-yyyy";
+		simpleSearch.setDateFormat(simpleSearchDateFormat);
 
 		for (var i = 0; tableDataSource && columns && i < columns.length; i++) {
 			var column = columns[i];
