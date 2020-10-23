@@ -1452,7 +1452,7 @@ function initAbstractToolbarFilterUX() {
 				this.addFilterUI(filter);
 			}
 			
-			var displayValues = getFilterUIDisplayValues(popupFilter, filter, values);
+			var displayValues = getFilterUiDisplayValues(popupFilter, filter, values);
 			this.updateFilterUI(filter.dataprovider, displayValues, obj.operator);
 		}
 		
@@ -2043,7 +2043,7 @@ function initAbstractToolbarFilterUX() {
 		popupFilter.setOperator(operator);
 		popupFilter.setValues(values);
 		
-		var displayValues = getFilterUIDisplayValues(popupFilter, thisIntance.getFilter(popupFilter.getDataProvider()), values);
+		var displayValues = getFilterUiDisplayValues(popupFilter, thisIntance.getFilter(popupFilter.getDataProvider()), values);
 		
 		// update the UI
 		thisIntance.updateFilterUI(popupFilter.getDataProvider(), displayValues, popupFilter.getOperator());
@@ -2795,7 +2795,7 @@ function addSearchProvider(search, filter) {
  *
  * @properties={typeid:24,uuid:"14F18D0E-0B6A-4E8E-BBA5-C8E7CB83B5B2"}
  */
-function getFilterUIDisplayValues(filterUI, filter, values) {
+function getFilterUiDisplayValues(filterUI, filter, values) {
 	var displayValues = values ? values : [];
 
 	// resolve valuelist real values
