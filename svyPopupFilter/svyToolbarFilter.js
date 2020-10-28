@@ -72,6 +72,7 @@ function FilterConfig() {
 	
 	this.useNonVisibleColumns = true;
 	this.globalDateDisplayFormat = "dd-MM-yyyy";
+	this.sortPickerAlphabetically = false;
 }
 
 /**
@@ -97,6 +98,34 @@ function setConfigUseNonVisibleColumns(useNonVisibleColumns) {
 	 // TODO can i make it an UI property
 	 globalFilterConfig.useNonVisibleColumns = useNonVisibleColumns;
 }
+
+/**
+ * Sort the the filter picker alphabetically.
+ * Default sort is based on column's position in grid.
+ * 
+ * @since v1.3.0
+ * @public 
+ * @param {Boolean} sortAlphabetically Default false.
+ *
+ * @properties={typeid:24,uuid:"A3FC9A77-CE20-40CB-A3BE-FEE796EFCBEB"}
+ */
+function setConfigSortPickerAlphabetically(sortAlphabetically) {
+	 globalFilterConfig.sortPickerAlphabetically = sortAlphabetically;
+}
+
+/**
+ * Returns true if the filter picker is sorted alphabetically
+ * 
+ * @since v1.3.0
+ * @public 
+ * @return {Boolean} 
+ *
+ * @properties={typeid:24,uuid:"D6F1DA49-0A25-48C6-8B6B-5769E33D8402"}
+ */
+function getConfigSortPickerAlphabetically(sortAlphabetically) {
+	 return globalFilterConfig.sortPickerAlphabetically;
+}
+
 
 /**
  * Sets global display date format to be used
@@ -2500,9 +2529,27 @@ function initNgGridListComponentFilterRenderer() {
 	NgGridListComponentFilterRenderer.prototype.getFilters = function() {
 		var column;
 		var filter;
+		/** Array<Filter> */
 		var filters = [];
 
 		var table = this.tableComponent;
+		var sortByName = globalFilterConfig.sortPickerAlphabetically;
+
+		
+		function addFilterInner(filterObj) {
+			if (sortByName && filterObj.text && filters.length) {
+				
+				for (var sortIndex = 0; sortIndex < filters.length; sortIndex++) {
+					if (filterObj.text < filters[sortIndex].text) {
+						scopes.svyJSUtils.arrayInsert(filters, sortIndex, filterObj);
+						return;
+					}
+				}
+				
+			} 
+			// push filter at the end
+			filters.push(filterObj);
+		}
 		
 		//add all visible columns of the table
 		if (table) {
@@ -2515,7 +2562,7 @@ function initNgGridListComponentFilterRenderer() {
 					column = columns[index];
 					if (column.filterType && column.filterType != 'NONE') {
 						filter = createFilterFromGridColumn(column);
-						filters.push(filter);
+						addFilterInner(filter);
 					}
 				}
 			} else if (table) {
@@ -2535,7 +2582,7 @@ function initNgGridListComponentFilterRenderer() {
 							if (column && column.filterType && column.filterType != 'NONE') {
 								//visibleColumns.push(col.dataprovider);
 								filter = createFilterFromGridColumn(column);
-								filters.push(filter);
+								addFilterInner(filter);
 							}
 						}
 					}
@@ -2544,7 +2591,7 @@ function initNgGridListComponentFilterRenderer() {
 						column = columns[i];
 						if (column.filterType && column.filterType != 'NONE' && column.visible) {
 							filter = createFilterFromGridColumn(column);
-							filters.push(filter);
+							addFilterInner(filter);
 						}
 					}
 				}
@@ -2552,7 +2599,14 @@ function initNgGridListComponentFilterRenderer() {
 		}
 		
 		//add filters added by API
-		filters = filters.concat(this.filters);
+		if (sortByName) {
+			// add filters sorted by name
+			for (i = 0; i < this.filters.length; i++) {
+				addFilterInner(this.filters[i]);
+			}
+		} else {
+			filters = filters.concat(this.filters);
+		}
 		
 		return filters;
 	}
