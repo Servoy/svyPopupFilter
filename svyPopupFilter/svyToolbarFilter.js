@@ -2756,6 +2756,7 @@ function initFilter() {
 	/**
 	 * @param {String} valueListName
 	 * @return {Filter}
+	 * @public 
 	 * @this {Filter}
 	 */
 	Filter.prototype.setValueList = function(valueListName) {
@@ -2767,6 +2768,7 @@ function initFilter() {
 	 * Sets whether this filter should be used in search as well (default is false)
 	 * @param {Boolean} useInSearch
 	 * @return {Filter}
+	 * @public 
 	 * @this {Filter}
 	 */
 	Filter.prototype.setUseInSearch = function(useInSearch) {
@@ -2776,11 +2778,15 @@ function initFilter() {
 			addSearchProvider(toolbar.getSimpleSearch(), this);
 		} else {
 			//search providers cannot be removed currently
+			if (toolbar.getSimpleSearch().getSearchProvider(this.dataprovider)) {
+				application.output("Operation not supported. Search provider cannot be removed; " + this.dataprovider, LOGGINGLEVEL.WARNING)
+			}
 		}
 		return this;
 	}
 	
 	/**
+	 * @public 
 	 * Sets the search operator as one of the scopes.svyPopupFilter.OPERATOR enum values
 	 * @param {String} operator
 	 * @return {Filter}
