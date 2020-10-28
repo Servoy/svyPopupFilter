@@ -150,33 +150,33 @@ function PopupRendererForms() {
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.datePopupFilterTemplate = {template: "svyDatePopupFilter"};
+	this.datePopupFilterTemplate = {template: "svyDatePopupFilter", operator: scopes.svyPopupFilter.OPERATOR.BETWEEN};
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.integerPopupFilterTemplate = {template: "svyIntegerPopupFilter"};
+	this.integerPopupFilterTemplate = {template: "svyIntegerPopupFilter", operator: scopes.svyPopupFilter.OPERATOR.EQUALS};
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.numberPopupFilterTemplate = {template: "svyNumberPopupFilter"};
+	this.numberPopupFilterTemplate = {template: "svyNumberPopupFilter", operator: scopes.svyPopupFilter.OPERATOR.EQUALS};
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.tokenPopupFilterTemplate = {template: "svyTokenPopupFilter"};
+	this.tokenPopupFilterTemplate = {template: "svyTokenPopupFilter", operator: scopes.svyPopupFilter.OPERATOR.IS_IN};
 	/** 
 	 * @protected
 	 * @type {{template:String}} 
 	 * */
-	this.selectFilterTemplate = {template: "svySelectPopupFilter"};
+	this.selectFilterTemplate = {template: "svySelectPopupFilter", operator: scopes.svyPopupFilter.OPERATOR.IS_IN};
 	
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
-	this.checkPopupFilterTemplate = {template: "svyCheckPopupFilter"};
+	this.checkPopupFilterTemplate = {template: "svyCheckPopupFilter", operator: scopes.svyPopupFilter.OPERATOR.EQUALS_OR_NULL};
 }
 
 /**
@@ -236,6 +236,20 @@ function setPopupDefaultOperator(formType, operator) {
 }
 
 /**
+ * Returns the default operator for the given formType
+ * 
+ * @param {String} formType any of the FILTER_TYPES
+ * @private 
+ * @return {String}
+ *
+ * @properties={typeid:24,uuid:"B7653AA8-FE25-49C2-950E-501F1AD2A40B"}
+ */
+function getPopupDefaultOperator(formType) {
+	var popupTemplates = getPopupRendererForms();
+	return popupTemplates.getDefaultOperator(FILTER_TYPES[formType]);
+}
+
+/**
  * @constructor
  * @private
  * @properties={typeid:24,uuid:"37935D63-8170-4771-AB8E-B448458A08E5"}
@@ -285,7 +299,7 @@ function initPopupRendererForms() {
 	PopupRendererForms.prototype.getDefaultOperator = function(formType) {
 		/** @type {{template:RuntimeForm<AbstractPopupFilter>|RuntimeForm<AbstractLookup>, operator:String=}} */
 		var result = this[formType];
-		return result.operator;
+		return result ? result.operator : null;
 	}
 	
 	/** 
@@ -536,6 +550,12 @@ function NgGridListComponentFilterRenderer(listComponent, tableComponent) {
 	 * @type {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>}
 	 */
 	this.tableComponent = tableComponent;
+	
+	/**
+	 * @protected 
+	 * @type {Array<Filter>}
+	 */
+	this.innerColumnFiltersCache = [];
 	
 	//first set the table component as it is needed when creating default search
 	ListComponentFilterRenderer.call(this, listComponent, tableComponent.myFoundset.foundset);
@@ -1828,6 +1848,7 @@ function initAbstractToolbarFilterUX() {
 		}
 		newFilter.filterType = filterTypeInternal;
 		newFilter.id = dataProvider;
+		newFilter.setOperator(getPopupDefaultOperator(newFilter.filterType));
 		this.filters.push(newFilter);
 		return newFilter;
 	}
@@ -1942,6 +1963,10 @@ function initAbstractToolbarFilterUX() {
 				this.toolbarFilters[filter.dataprovider] = popupFilter;
 			}
 		}
+		
+		// cache popupFilter
+		this.getFilter(dataprovider).setFilterUI(popupFilter);
+		
 		return popupFilter;
 	}
 	
@@ -2072,6 +2097,8 @@ function initAbstractToolbarFilterUX() {
 		// persist the values & operator:
 		popupFilter.setOperator(operator);
 		popupFilter.setValues(values);
+		thisIntance.getFilter(popupFilter.getDataProvider()).setOperator(operator);
+		
 		
 		var displayValues = getFilterUiDisplayValues(popupFilter, thisIntance.getFilter(popupFilter.getDataProvider()), values);
 		
@@ -2252,6 +2279,9 @@ function initListComponentFilterRenderer() {
 		
 		// remove the filter from cache
 		delete this.toolbarFilters[filter.dataprovider];
+		
+		// TODO should remove the filter UI !?!?
+		// filter.setFilterUI(null)
 		
 		//filter had values -> search again
 		if (hasValues) {
@@ -2531,11 +2561,31 @@ function initNgGridListComponentFilterRenderer() {
 		var filter;
 		/** Array<Filter> */
 		var filters = [];
+		var innerColumnFiltersCache = this.innerColumnFiltersCache;
 
 		var table = this.tableComponent;
 		var sortByName = globalFilterConfig.sortPickerAlphabetically;
 
+		/**
+		 * @param {CustomType<aggrid-groupingtable.column>} col
+		 * @private
+		 * @return {Filter}
+		 *  */
+		function innerGetOrFreateFilterFromGridColumn(col) {
+			for (var cacheIndex = 0; cacheIndex < innerColumnFiltersCache.length; cacheIndex++) {
+				if ((col.id && col.id == innerColumnFiltersCache[cacheIndex].id) || (!col.id && col.dataprovider == innerColumnFiltersCache[cacheIndex].id)) {
+					return innerColumnFiltersCache[cacheIndex];
+				}
+			}
+			var innerColFilter = createFilterFromGridColumn(col);
+			innerColumnFiltersCache.push(innerColFilter);
+			return innerColFilter;
+		}
 		
+		/** 
+		 * @param {Filter} filterObj
+		 * @private 
+		 * */
 		function addFilterInner(filterObj) {
 			if (sortByName && filterObj.text && filters.length) {
 				
@@ -2561,7 +2611,7 @@ function initNgGridListComponentFilterRenderer() {
 				for (var index = 0; index < columns.length; index++) {
 					column = columns[index];
 					if (column.filterType && column.filterType != 'NONE') {
-						filter = createFilterFromGridColumn(column);
+						filter = innerGetOrFreateFilterFromGridColumn(column);
 						addFilterInner(filter);
 					}
 				}
@@ -2581,7 +2631,7 @@ function initNgGridListComponentFilterRenderer() {
 							column = columns[colIndex];
 							if (column && column.filterType && column.filterType != 'NONE') {
 								//visibleColumns.push(col.dataprovider);
-								filter = createFilterFromGridColumn(column);
+								filter = innerGetOrFreateFilterFromGridColumn(column);
 								addFilterInner(filter);
 							}
 						}
@@ -2590,7 +2640,7 @@ function initNgGridListComponentFilterRenderer() {
 					for (var i = 0; i < columns.length; i++) {
 						column = columns[i];
 						if (column.filterType && column.filterType != 'NONE' && column.visible) {
-							filter = createFilterFromGridColumn(column);
+							filter = innerGetOrFreateFilterFromGridColumn(column);
 							addFilterInner(filter);
 						}
 					}
@@ -2768,6 +2818,7 @@ function createFilterFromGridColumn(column) {
 	filter.filterType = column.filterType;
 	filter.valuelist = column.valuelist;
 	filter.useInSearch = column.visible;
+	filter.setOperator(getPopupDefaultOperator(filter.filterType));
 	return filter;
 }
 
