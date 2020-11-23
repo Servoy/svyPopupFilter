@@ -54,6 +54,7 @@ function setSelectedFilterValues(selectedValues) {
 
 /**
  * @protected
+ * @return {String}
  * @properties={typeid:24,uuid:"41DCC810-7BC6-4D8F-BD4B-251DA79704E2"}
  */
 function renderFilterEntry() {

@@ -18,6 +18,7 @@ function createPopUp(callback, initialValue) {
 
 /**
  * @protected 
+ * @return {Number}
  * @properties={typeid:24,uuid:"9AA4F775-56DD-44D3-B42F-105D1E7B775D"}
  */
 function defaultWidth() {

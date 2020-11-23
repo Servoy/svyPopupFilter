@@ -45,6 +45,7 @@ function updateUI() {
 
 /**
  * @protected 
+ * @return {Array}
  * @properties={typeid:24,uuid:"A9F72B69-F4CD-4C0A-9272-BC30DE13C23F"}
  * @override
  */
@@ -85,6 +86,7 @@ function getSelectedFilterValues() {
 /**
  * @protected 
  * @override 
+ * @return {Number}
  * @properties={typeid:24,uuid:"49D922DD-72BD-42A4-81B3-32CC58E46551"}
  */
 function defaultWidth() {

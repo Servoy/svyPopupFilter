@@ -77,6 +77,7 @@ function setSelectedFilterValues(selectedValues) {
 
 /**
  * @protected
+ * @return {Array}
  * @properties={typeid:24,uuid:"ED1DE8AD-B661-497D-94C7-1EF96575D3F9"}
  * @override
  */

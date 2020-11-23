@@ -921,6 +921,7 @@ function applyFilters(filters, foundset) {
 /**
  * @public
  * @param {JSFoundSet} foundset
+ * @return {Boolean}
  * 
  * @deprecated 
  *
@@ -2813,6 +2814,7 @@ function initFilter() {
 
 /**
  * Creates a Filter from the given NG Grid column
+ * @return {Filter}
  * 
  * @param {CustomType<aggrid-groupingtable.column>} column
  * @private 
