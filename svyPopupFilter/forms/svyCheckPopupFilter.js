@@ -7,6 +7,8 @@
 function onLoad(event) {
 	_super.onLoad(event);
 	updateUI();
+	
+	scopes.svyPopupFilter.applyLocaleStrings(controller.getName(), 'svyCheckPopupFilter');
 }
 
 /**

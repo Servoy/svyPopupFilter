@@ -4,6 +4,7 @@ Before than|%%scopes.svyPopupFilter.OPERATOR.SMALLER_EQUAL%%\r\
 Later than|%%scopes.svyPopupFilter.OPERATOR.GREATER_EQUAL%%\r\
 Between|%%scopes.svyPopupFilter.OPERATOR.BETWEEN%%",
 displayValueType:12,
+encapsulation:2,
 name:"svyDateSelectionTypes",
 realValueType:12,
 typeid:34,

@@ -7,6 +7,8 @@
 function onLoad(event) {
 	_super.onLoad(event);
 	updateUI();
+	elements.faClose.imageStyleClass = scopes.svyPopupFilter.STYLING.CLOSE_ICON;
+	scopes.svyPopupFilter.applyLocaleStrings(controller.getName(), 'svyIntegerPopupFilter')
 }
 
 /**

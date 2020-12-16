@@ -418,6 +418,7 @@ function onHide(event) {
 }
 
 /**
+ * @return {Number}
  * @protected 
  * @properties={typeid:24,uuid:"3C5B0CAD-4EBE-4991-91E8-07E298AB2B38"}
  */

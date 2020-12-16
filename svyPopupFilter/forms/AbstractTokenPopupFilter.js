@@ -21,6 +21,7 @@ function onLoad(event) {
 
 /**
  * @protected
+ * @return {Array}
  * @properties={typeid:24,uuid:"0FE3EADA-F2D5-404E-9F27-D8350601BFEB"}
  * @override
  */

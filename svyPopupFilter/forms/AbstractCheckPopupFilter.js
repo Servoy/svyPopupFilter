@@ -51,6 +51,8 @@ function setSelectedFilterValues(selectedValues) {
 /**
  * @protected
  * @properties={typeid:24,uuid:"A6082CF3-89FC-4E09-A435-3662393DC3A0"}
+ * 
+ * @return {Array}
  * @override
  */
 function getSelectedFilterValues() {

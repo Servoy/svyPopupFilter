@@ -29,6 +29,76 @@ var OPERATOR = {
 };
 
 /**
+ * @public 
+ * @enum
+ * @properties={typeid:35,uuid:"9526B2AE-E202-4A50-B60E-5F6A61A6A4DE",variableType:-4}
+ */
+var STYLING = {
+	MUTLI_SELECT_ICON_COLUMN_WIDTH: '50',
+	MULTI_SELECT_SHOW_TILE_HEADERS: true,
+	CLOSE_ICON: 'fa fa-close',
+	REMOVE_ICON: 'fa fa-trash',
+	EXCLUDE_ICON: 'fas fa-minus-circle',
+	INCLUDE_ICON: 'fas fa-check-circle',
+	OPEN_FILTER_ICON: 'fas fa-angle-down',
+	REMOVE_FILTER_ICON: 'fas fa-times'
+}
+
+/**
+ * @enum  
+ * @properties={typeid:35,uuid:"A96D6D86-BD86-4B5B-A522-ECC0717FF6B8",variableType:-4}
+ */
+var LOCALE = {
+	filterPopupMenu: {
+		addFilter: 'Add filter'
+	},
+	svyCheckPopupFilter : {
+		labelChecked: 'Yes',
+		labelUnchecked: 'No'
+	},
+	svyDatePopupFilter : {
+		labelTitle: 'Date',
+		labelToday: 'Today',
+		labelTomorrow: 'Tomorrow',
+		labelThisWeek: 'This week',
+		labelNextWeek: 'Next week',
+		labelThisMonth: 'This month',
+		labelNextMonth: 'Next month',
+		labelThisYear: 'This year',
+		labelLastYear: 'Last year',
+		operator: {
+			EQUALS: 'Specific Dates',
+			GREATER_EQUAL: 'Before than',
+			SMALLER_EQUAL: 'Later than',
+			BETWEEN: 'Between'
+		}
+	},
+	svyTokenPopupFilter : {
+		searchbox: {placeholderText: 'Type filter value...'},
+		labelRemoveAll: 'Remove all'
+	},
+	svySelectPopupFilter : {
+		searchText: { placeholderText: 'Search...' },
+		labelSelectAll: 'Select all',
+		labelDeselectAll: 'Deselect all'
+	},
+	svyIntegerPopupFilter : {
+		labelTitle: 'Type filter value...',
+		labelEqualTo: 'Equal to',
+		labelGreater: 'Bigger than',
+		labelSmaller: 'Smaller than',
+		labelBetween: 'Between'
+	},
+	svyNumberPopupFilter : {
+		labelTitle: 'Type filter value...',
+		labelEqualTo: 'Equal to',
+		labelGreater: 'Bigger than',
+		labelSmaller: 'Smaller than',
+		labelBetween: 'Between'
+	}
+}
+
+/**
  *
  * @public
  * @return {SvyDateFilter}
@@ -1005,6 +1075,34 @@ function initSvySelectFilter() {
 	 */
 	SvySelectFilter.prototype.createWindow = function(x, y, width, height, jsWindowType) {
 		return this.lookup.createWindow(x,y,width,height,jsWindowType);
+	}
+}
+
+/**
+ * Applies the locale strings set on svyToolbarFilter.TOOLBAR_LOCALE to the matching elements 
+ * for the given form identifier which is one of TOOLBAR_LOCALE's main properties
+ * 
+ * @param {String} formName
+ * @param {String} formType
+ *
+ * @properties={typeid:24,uuid:"C74D5888-4868-4880-8101-9F1BB1C97A9E"}
+ */
+function applyLocaleStrings(formName, formType) {
+	var formValues = LOCALE[formType];
+	if (formValues) {
+		for ( var p in formValues ) {
+			/** @type {RuntimeWebComponent<bootstrapcomponents-label>} */
+			var runtimeElement = forms[formName].elements[p];
+			if (runtimeElement) {
+				if (formValues[p] instanceof String) {
+					runtimeElement.text = formValues[p]
+				} else {
+					for ( var prop in formValues[p] ) {
+						runtimeElement[prop] = formValues[p][prop];
+					}
+				}
+			}
+		}
 	}
 }
 

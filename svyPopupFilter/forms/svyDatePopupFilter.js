@@ -45,6 +45,7 @@ function updateUI() {
 
 /**
  * @protected 
+ * @return {Array}
  * @properties={typeid:24,uuid:"A9F72B69-F4CD-4C0A-9272-BC30DE13C23F"}
  * @override
  */
@@ -85,8 +86,29 @@ function getSelectedFilterValues() {
 /**
  * @protected 
  * @override 
+ * @return {Number}
  * @properties={typeid:24,uuid:"49D922DD-72BD-42A4-81B3-32CC58E46551"}
  */
 function defaultWidth() {
 	return 580;
+}
+/**
+ * @param {JSEvent} event
+ * @override
+ *
+ * @properties={typeid:24,uuid:"ECFE906A-F8FD-4469-AE71-AE4C6BF530C2"}
+ */
+function onLoad(event) {
+	_super.onLoad(event);
+	
+	elements.faClose.imageStyleClass = scopes.svyPopupFilter.STYLING.CLOSE_ICON;
+	
+	scopes.svyPopupFilter.applyLocaleStrings(controller.getName(), 'svyDatePopupFilter');
+	
+	var valueListContent = databaseManager.createEmptyDataSet(0, 2);
+	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.EQUALS, scopes.svyPopupFilter.OPERATOR.EQUALS]);
+	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.SMALLER_EQUAL, scopes.svyPopupFilter.OPERATOR.SMALLER_EQUAL]);
+	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.GREATER_EQUAL, scopes.svyPopupFilter.OPERATOR.GREATER_EQUAL]);
+	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.BETWEEN, scopes.svyPopupFilter.OPERATOR.BETWEEN]);
+	application.setValueListItems('svyDateSelectionTypes', valueListContent);
 }
