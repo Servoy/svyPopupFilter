@@ -1344,6 +1344,20 @@ function initAbstractToolbarFilterUX() {
 	
 	/**
 	 * Clears all grid filters
+	 * 
+	 * @return {Boolean}
+	 * 
+	 * @deprecated use clearFilterUI
+	 * @protected 
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.clearGridFilters = function() {
+		return this.clearFilterUI();
+	}
+	
+	/**
+	 * Clears all grid filters
 	 * Internal implementation, will take care to clear the filters and update the UI
 	 * Will not trigger the event onFilterRemovedEvent
 	 * 
@@ -2374,6 +2388,7 @@ function initListComponentFilterRenderer() {
 	 * @this {ListComponentFilterRenderer}
 	 */
 	ListComponentFilterRenderer.prototype._clearFilterUI = function() {
+		AbstractToolbarFilterUX.prototype._clearFilterUI.call(this);
 		this.getElement().clear();
 		var element = this.getElement();
 		element.removeStyleClass('has-filter');
