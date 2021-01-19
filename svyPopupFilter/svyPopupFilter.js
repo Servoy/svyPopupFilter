@@ -36,11 +36,35 @@ var OPERATOR = {
 var STYLING = {
 	MUTLI_SELECT_ICON_COLUMN_WIDTH: '50',
 	MULTI_SELECT_SHOW_TILE_HEADERS: true,
+	/** 
+	 * Close the filter popup
+	 * Applies to all filter types.
+	 *  */ 
 	CLOSE_ICON: 'fa fa-close',
+	/**  
+	 * Remove the filter from toolbar.
+	 * Applies to the filter toolbar
+	 * */
 	REMOVE_ICON: 'fa fa-trash',
+	/**  
+	 * Indicates the filter value should be excluded from the search result.
+	 * Applies to the token filter type
+	 * */
 	EXCLUDE_ICON: 'fas fa-minus-circle',
+	/**  
+	 * Indicates the filter value should be included in the search result.
+	 * Applies to the token filter type
+	 * */
 	INCLUDE_ICON: 'fas fa-check-circle',
+	/**  
+	 * Show the filter popup clicking the toolbar filter.
+	 * Applies to the filter toolbar.
+	 * */
 	OPEN_FILTER_ICON: 'fas fa-angle-down',
+	/**  
+	 * Remove the single filter.
+	 * Applies to the token filter type
+	 * */
 	REMOVE_FILTER_ICON: 'fas fa-times'
 }
 
