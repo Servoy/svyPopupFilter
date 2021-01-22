@@ -1523,7 +1523,7 @@ function initAbstractToolbarFilterUX() {
 		
 		// update filter UI
 		var element = this.getElement();
-		if (this.hasFilters()) {
+		if (this.getActiveFilters().length > 0) {
 			element.addStyleClass('has-filter');
 		} else {
 			element.removeStyleClass('has-filter');
