@@ -92,8 +92,8 @@ var LOCALE = {
 		labelLastYear: 'Last year',
 		operator: {
 			EQUALS: 'Specific Dates',
-			GREATER_EQUAL: 'Later than',
-			SMALLER_EQUAL: 'Before than',
+			GREATER_EQUAL: 'On or After',
+			SMALLER_EQUAL: 'On or Before',
 			BETWEEN: 'Between'
 		}
 	},
