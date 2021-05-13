@@ -2545,7 +2545,7 @@ function initNgGridListComponentFilterRenderer() {
 		} else if (tableFoundset) {
 			tableDataSource = tableFoundset.getDataSource();
 		} else {
-			var form = forms[this.formName];
+			var form = forms[tableComponent.getFormName()];
 			tableDataSource = form ? form.foundset.getDataSource() : null;
 		}
 
