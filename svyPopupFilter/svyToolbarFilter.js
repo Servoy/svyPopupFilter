@@ -2883,7 +2883,7 @@ function addSearchProvider(search, filter) {
 			try {
 				// create the search provider
 				// TODO shall i remove all white spaces !?
-				var provider = search.addSearchProvider(filter.dataprovider);
+				var provider = search.addSearchProvider(filter.dataprovider.toLowerCase());
 
 				// set the provider alias
 				var alias = filter.text ? getI18nText(filter.text) : jsColumn.getDataProviderID();
