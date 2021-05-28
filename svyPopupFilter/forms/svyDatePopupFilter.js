@@ -128,3 +128,14 @@ function onShow(firstShow,event) {
 	
 	_super.onShow(firstShow,event);
 }
+
+/**
+ * @public  
+ * @param {String} defaultOperator
+ *
+ * @properties={typeid:24,uuid:"28CA78F8-87E0-4F78-AC37-9B75D480E180"}
+ */
+ function setOperator(defaultOperator) {
+	_super.setOperator(defaultOperator);
+	updateUI();
+}

@@ -37,6 +37,17 @@ function toggleOperator(newOperator) {
 }
 
 /**
+ * @public  
+ * @param {String} defaultOperator
+ *
+ * @properties={typeid:24,uuid:"2267BE96-A3C8-40B4-9BA4-066CF95CCF06"}
+ */
+ function setOperator(defaultOperator) {
+	_super.setOperator(defaultOperator);
+	updateUI();
+}
+
+/**
  * @param {JSEvent} event
  *
  * @protected
