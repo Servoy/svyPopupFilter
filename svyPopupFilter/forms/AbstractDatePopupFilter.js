@@ -37,8 +37,13 @@ function onLoad(event) {
  */
 function setSelectedFilterValues(selectedValues) {
 	if (selectedValues && selectedValues.length) {
-		dateFrom = selectedValues[0];
-		dateTo = selectedValues[1];
+		if(operator == scopes.svyPopupFilter.OPERATOR.SMALLER_THEN || operator == scopes.svyPopupFilter.OPERATOR.SMALLER_EQUAL) {
+			dateFrom = null;
+			dateTo = selectedValues[0];
+		} else {
+			dateFrom = selectedValues[0];
+			dateTo = selectedValues[1]||null;
+		}
 	} else {
 		dateFrom = null;
 		dateTo = null;
