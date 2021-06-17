@@ -1247,7 +1247,7 @@ function initAbstractToolbarFilterUX() {
 	 * <code>@param {Array} values the filter's values</code></br>
 	 * <code>@param {scopes.svyPopupFilter.AbstractPopupFilter} filter the filter object</code></br></ul>
 	 * 
-	 * @param {function(QBSelect, String, String, Array, scopes.svyPopupFilter.AbstractPopupFilter)} callback
+	 * @param {function(QBSelect, String, String, Array, scopes.svyPopupFilter.AbstractPopupFilter):Boolean} callback
 	 * 
 	 * @return {AbstractToolbarFilterUX}
 	 *
@@ -1831,7 +1831,7 @@ function initAbstractToolbarFilterUX() {
 	/**
 	 * @param {String} titleText
 	 * @param {String} dataProvider
-	 * @param {String} filterType any of the FILTER_TYPES enum values
+	 * @param {String} [filterType] any of the FILTER_TYPES enum values
 	 * 
 	 * @public 
 	 * 
