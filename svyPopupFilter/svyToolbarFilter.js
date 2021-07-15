@@ -591,6 +591,7 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 	for (var i = 0; i < filters.length; i++) {
 
 		var filter = filters[i];
+		/** @type {String} */
 		var dp = filter.getDataProvider();
 		if (!dp) {
 			throw "dataprovider unknown";
@@ -614,7 +615,19 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
         if(qValues.length && (qValues[0] instanceof Date || qValues[0] instanceof Number || qValues[0] instanceof UUID)) {
 			useIgnoreCase = false;
 		}
-		
+
+		// Don't use lower when column is not a text
+		var dpTable, 
+			dpColumn;
+		// TODO: Add support for related dataproviders
++		if (dp.indexOf('.') == -1) {
++			dpTable = databaseManager.getTable(foundset);
++			dpColumn = dpTable.getColumn(dp);
++			if (dpColumn.getType() != JSColumn.TEXT) {
++				useIgnoreCase = false;
++			}
++		}
+
 		if (useIgnoreCase != false) {
 			// Clean up values from empty values
 			qValues = qValues.map(function(qv) {
