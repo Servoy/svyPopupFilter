@@ -757,6 +757,11 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 
 		/** @type {QBColumn} */
 		var whereClause = querySource == null ? query.columns[aDP[aDP.length - 1]] : querySource.columns[aDP[aDP.length - 1]];
+		
+		// Don't use lower when column is not a text
+		if (whereClause && whereClause.getTypeAsString() != 'TEXT') {
+			useIgnoreCase = false;
+		}
 
 		// do not lower case Dates.
 		if (value instanceof Date) {
