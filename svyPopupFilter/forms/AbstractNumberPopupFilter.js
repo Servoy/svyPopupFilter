@@ -85,6 +85,9 @@ function setSelectedFilterValues(selectedValues) {
 function getSelectedFilterValues() {
 	var OPERATOR = scopes.svyPopupFilter.OPERATOR;
 	switch (operator) {
+	case OPERATOR.IS_NULL:
+	case OPERATOR.NOT_NULL:
+		return [null];
 	case OPERATOR.EQUALS:
 		return [exactValue];
 	case OPERATOR.GREATER_THEN:
