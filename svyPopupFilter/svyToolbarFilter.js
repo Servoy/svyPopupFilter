@@ -637,6 +637,7 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 
 		switch (op) {
 		case OPERATOR.NOT_NULL:
+				op = "isNull";
                 useNot = true;
                 break;
 		case OPERATOR.IS_NULL:

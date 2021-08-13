@@ -94,6 +94,10 @@ function getSelectedFilterValues() {
 		return [maxValue];
 	case OPERATOR.BETWEEN:
 		return [between1, between2];
+	case OPERATOR.IS_NULL:
+		return [null];
+	case OPERATOR.NOT_NULL:
+		return [null];
 	default:
 		return [];
 	}
