@@ -115,6 +115,11 @@ function onActionSearchText(event) {
  * @properties={typeid:24,uuid:"8663257D-6939-43F4-A748-873F81D0D52B"}
  */
 function onDataChange(oldValue, newValue, event) {
+	if(operator === scopes.svyPopupFilter.OPERATOR.IS_NULL || operator === scopes.svyPopupFilter.OPERATOR.NOT_NULL){
+		operator = scopes.svyPopupFilter.OPERATOR.IS_IN;
+		updateUI();
+		clear();
+	}
 	addTag(searchText);
 	return true
 }
@@ -148,6 +153,8 @@ function onClick(entry, index, dataTarget, event) {
  * @properties={typeid:24,uuid:"69A13409-C425-4D4D-ADF9-29148E922AF0"}
  */
 function onActionRemoveAll(event, dataTarget) {
+	operator = scopes.svyPopupFilter.OPERATOR.IS_IN;
+	updateUI();
 	clear();
 }
 
@@ -247,5 +254,56 @@ function toggleExcludeTag(text, index) {
 	for (var i = 0; i < values.length; i++) {
 		var tag = elements.listTags.newEntry();
 		tag.text = values[i];
+	}
+}
+
+/**
+ * TODO generated, please specify type and doc for the params
+ * @param event
+ *
+ * @properties={typeid:24,uuid:"C71EFF52-0BEF-41A8-98F1-6180452AA836"}
+ */
+function onActionToggleEmpty(event) {
+	toggleOperator(scopes.svyPopupFilter.OPERATOR.IS_NULL);
+}
+
+/**
+ * TODO generated, please specify type and doc for the params
+ * @param event
+ *
+ * @properties={typeid:24,uuid:"D600C386-1A32-4B49-B4F0-400E7015DE07"}
+ */
+function onActionToggleNotEmpty(event) {
+	toggleOperator(scopes.svyPopupFilter.OPERATOR.NOT_NULL);
+}
+
+/**
+ * TODO generated, please specify type and doc for the params
+ * @param newOperator
+ *
+ * @properties={typeid:24,uuid:"63051963-8A99-4FE7-A376-6C6BAA2774A3"}
+ */
+function toggleOperator(newOperator) {
+	operator = newOperator;
+	updateUI();
+	clear();
+}
+
+/**
+ * @properties={typeid:24,uuid:"9B46F462-A4C1-4DB1-9708-2E05F7541E12"}
+ */
+function updateUI() {
+	elements.labelEmpty.addStyleClass("text-tertiary");
+	elements.labelNotEmpty.addStyleClass("text-tertiary");
+
+	switch (operator) {
+	case scopes.svyPopupFilter.OPERATOR.IS_NULL:
+		elements.labelEmpty.removeStyleClass("text-tertiary");
+		break;
+	case scopes.svyPopupFilter.OPERATOR.NOT_NULL:
+		elements.labelNotEmpty.removeStyleClass("text-tertiary");
+		break;
+	default:
+		break;
 	}
 }

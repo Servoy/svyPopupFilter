@@ -27,6 +27,9 @@ function onLoad(event) {
  */
 function getSelectedFilterValues() {
 	
+	if(operator === scopes.svyPopupFilter.OPERATOR.IS_NULL || operator === scopes.svyPopupFilter.OPERATOR.NOT_NULL){
+		return [null];
+	}
 	// TODO verify that inline-calendar defaults to use localtimezone always
 	// return between start and end of the day
 	return values;

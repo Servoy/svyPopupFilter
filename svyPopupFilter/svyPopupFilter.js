@@ -111,6 +111,15 @@ var LOCALE = {
 		labelGreater: 'Bigger than',
 		labelSmaller: 'Smaller than',
 		labelBetween: 'Between'
+	},
+	svyNumberPopupFilterWithNull : {
+		labelTitle: 'Type filter value...',
+		labelEqualTo: 'Equal to',
+		labelGreater: 'Bigger than',
+		labelSmaller: 'Smaller than',
+		labelBetween: 'Between',
+		labelEmpty: 'Empty',
+		labelNotEmpty: 'Not Empty'
 	}
 }
 
