@@ -91,7 +91,9 @@ var LOCALE = {
 	},
 	svyTokenPopupFilter : {
 		searchbox: {placeholderText: 'Type filter value...'},
-		labelRemoveAll: 'Remove all'
+		labelRemoveAll: 'Remove all',
+		labelEmpty: 'Empty',
+		labelNotEmpty: 'Not Empty'
 	},
 	svySelectPopupFilter : {
 		searchText: { placeholderText: 'Search...' },
