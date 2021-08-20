@@ -1009,7 +1009,23 @@ function initSvySelectFilter() {
 		 *  */
 		function svySelectCallback(records, values, lookup) {
 			if (callback) {
-				callback.call(this, values, OPERATOR.IS_IN, thisInstance);
+				
+				var operator = OPERATOR.IS_IN;
+				// the lookup form is caching into the lookup params the used operator
+				if (lookup && lookup.getParams()) {
+					var params = lookup.getParams();
+					for (var i = 0; i < params.length; i++) {
+						var param = params[i];
+						if (param && param.svyOperator) {
+							if (param.svyOperator === OPERATOR.IS_NULL || param.svyOperator === OPERATOR.NOT_NULL) {
+								operator = param.svyOperator;
+								values = [null];
+							}
+						}
+					}
+				}
+				
+				callback.call(this, values, operator, thisInstance);
 			}
 		}
 		
