@@ -1,4 +1,10 @@
 /**
+ * @protected 
+ * @properties={typeid:35,uuid:"ECF898B5-1923-4FAC-94A8-B0C2AAEB08EE",variableType:-4}
+ */
+var operator = scopes.svyPopupFilter.OPERATOR.IS_IN;
+
+/**
  * @private 
  * Creates a form popup for this form and returns it
  * 

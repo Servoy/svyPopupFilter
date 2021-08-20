@@ -328,7 +328,7 @@ function selectEmptyValue() {
  * @protected 
  * @properties={typeid:24,uuid:"72534BFA-AF8D-4C12-A1D0-760F2B20EEA4"}
  */
-function getSelectedFilterValues() {
+function getSelectedFilterValues() {	
 	return [];
 }
 

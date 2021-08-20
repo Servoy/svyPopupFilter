@@ -163,7 +163,13 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 	border: 0;
 	color: transparent;
 }
-
+.empty-Item{
+	height: 40px;
+    border: none;
+    align-items: center;
+    justify-content: center;
+   
+}
 /**************************************
 *
 *  Check Filter 

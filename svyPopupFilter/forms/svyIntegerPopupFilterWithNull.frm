@@ -35,7 +35,8 @@ specname:\"flexcontainer\"\
 items:[
 {
 customProperties:"attributes:{\
-class:\"flex-item form-control\",\
+class:\"flex-item empty-Item\",\
+data-align-self:\"none\",\
 data-flex-basis:\"0\",\
 data-grow:\"1\"\
 },\
@@ -151,7 +152,7 @@ specname:\"flexcontainer\"\
 items:[
 {
 customProperties:"attributes:{\
-class:\"flex-item form-control\",\
+class:\"flex-item empty-Item\",\
 data-flex-basis:\"0\",\
 data-grow:\"1\"\
 },\
@@ -230,5 +231,6 @@ uuid:"E4C5FB06-3905-401B-9746-6D116AC5E78C"
 }
 ],
 name:"svyIntegerPopupFilterWithNull",
+styleClass:"svy-popup-filter svy-popup-filter-number svy-popup-filter-integer",
 typeid:3,
 uuid:"4BB31117-6D76-4B2D-94C2-A07274A19AD0"

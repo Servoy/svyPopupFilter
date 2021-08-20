@@ -111,15 +111,6 @@ var LOCALE = {
 		labelGreater: 'Bigger than',
 		labelSmaller: 'Smaller than',
 		labelBetween: 'Between'
-	},
-	svyNumberPopupFilterWithNull : {
-		labelTitle: 'Type filter value...',
-		labelEqualTo: 'Equal to',
-		labelGreater: 'Bigger than',
-		labelSmaller: 'Smaller than',
-		labelBetween: 'Between',
-		labelEmpty: 'Empty',
-		labelNotEmpty: 'Not Empty'
 	}
 }
 
@@ -1011,6 +1002,11 @@ function initSvySelectFilter() {
 	 */
 	SvySelectFilter.prototype.showPopUp = function(callback, target, width, height) {
 		var thisInstance = this;
+		/**
+		 * @param {Array<JSRecord>} records
+		 * @param {Array<String|Date|Number>} values
+		 * @param {scopes.svyLookup.Lookup} lookup
+		 *  */
 		function svySelectCallback(records, values, lookup) {
 			if (callback) {
 				callback.call(this, values, OPERATOR.IS_IN, thisInstance);
@@ -1030,12 +1026,33 @@ function initSvySelectFilter() {
 	 */
 	SvySelectFilter.prototype.createPopUp = function(callback) {
 		var thisInstance = this;
+		/**
+		 * @param {Array<JSRecord>} records
+		 * @param {Array<String|Date|Number>} values
+		 * @param {scopes.svyLookup.Lookup} lookup
+		 *  */
 		function svySelectCallback(records, values, lookup) {
 			if (callback) {
-				callback.call(this, values, OPERATOR.IS_IN, thisInstance);
+				
+				var operator = OPERATOR.IS_IN;
+				// the lookup form is caching into the lookup params the used operator
+				if (lookup && lookup.getParams()) {
+					var params = lookup.getParams();
+					for (var i = 0; i < params.length; i++) {
+						var param = params[i];
+						if (param && param.svyOperator) {
+							if (param.svyOperator === OPERATOR.IS_NULL || param.svyOperator === OPERATOR.NOT_NULL) {
+								operator = param.svyOperator;
+								values = [null];
+							}
+						}
+					}
+				}
+				
+				callback.call(this, values, operator, thisInstance);
 			}
 		}
-		this.lookup.setSelectedValues(thisInstance.getValues())
+		this.lookup.setSelectedValues(thisInstance.getValues());
 		return this.lookup.createPopUp(svySelectCallback);
 	}
 
@@ -1054,9 +1071,30 @@ function initSvySelectFilter() {
 	 */
 	SvySelectFilter.prototype.showModalWindow = function(callback, x, y, width, height) {
 		var thisInstance = this;
+		/**
+		 * @param {Array<JSRecord>} records
+		 * @param {Array<String|Date|Number>} values
+		 * @param {scopes.svyLookup.Lookup} lookup
+		 *  */
 		function svySelectCallback(records, values, lookup) {
 			if (callback) {
-				callback.call(this, values, OPERATOR.IS_IN, thisInstance);
+				
+				var operator = OPERATOR.IS_IN;
+				// the lookup form is caching into the lookup params the used operator
+				if (lookup && lookup.getParams()) {
+					var params = lookup.getParams();
+					for (var i = 0; i < params.length; i++) {
+						var param = params[i];
+						if (param && param.svyOperator) {
+							if (param.svyOperator === OPERATOR.IS_NULL || param.svyOperator === OPERATOR.NOT_NULL) {
+								operator = param.svyOperator;
+								values = [null];
+							}
+						}
+					}
+				}
+				
+				callback.call(this, values, operator, thisInstance);
 			}
 		}
 		
@@ -1076,9 +1114,30 @@ function initSvySelectFilter() {
 	 */
 	SvySelectFilter.prototype.showWindow = function(win, callback) {
 		var thisInstance = this;
+		/**
+		 * @param {Array<JSRecord>} records
+		 * @param {Array<String|Date|Number>} values
+		 * @param {scopes.svyLookup.Lookup} lookup
+		 *  */
 		function svySelectCallback(records, values, lookup) {
 			if (callback) {
-				callback.call(this, values, OPERATOR.IS_IN, thisInstance);
+				
+				var operator = OPERATOR.IS_IN;
+				// the lookup form is caching into the lookup params the used operator
+				if (lookup && lookup.getParams()) {
+					var params = lookup.getParams();
+					for (var i = 0; i < params.length; i++) {
+						var param = params[i];
+						if (param && param.svyOperator) {
+							if (param.svyOperator === OPERATOR.IS_NULL || param.svyOperator === OPERATOR.NOT_NULL) {
+								operator = param.svyOperator;
+								values = [null];
+							}
+						}
+					}
+				}
+				
+				callback.call(this, values, operator, thisInstance);
 			}
 		}
 		
