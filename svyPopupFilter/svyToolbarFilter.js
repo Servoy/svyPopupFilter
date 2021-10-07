@@ -1368,9 +1368,11 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype._clearFilterUI = function() {
-		// remove the filter from cache
+		var hadFilters = Object.keys(this.toolbarFilters).length > 0;
 		this.toolbarFilters = new Object();
-		this.executeSearch();
+		if (hadFilters) {
+			this.executeSearch();
+		}
 		return true;
 	}
 	
@@ -1543,6 +1545,7 @@ function initAbstractToolbarFilterUX() {
 	 */
 	AbstractToolbarFilterUX.prototype.getQuery = function() {
 		//apply foundset filters and force when the search text has been changed
+		//TODO: filter restore (initially) applies filters once too often
 		var filterQuery = this._applyFilters(this.searchText !== this.simpleSearch.getSearchText() ? true : false);
 
 		var query;
