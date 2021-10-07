@@ -112,3 +112,30 @@ function onLoad(event) {
 	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.BETWEEN, scopes.svyPopupFilter.OPERATOR.BETWEEN]);
 	application.setValueListItems('svyDateSelectionTypes', valueListContent);
 }
+
+/**
+ * @protected 
+ * @param firstShow
+ * @param event
+ *
+ * @properties={typeid:24,uuid:"D8AA44D8-8EBF-4A24-A902-6FB6013C5398"}
+ * @override
+ */
+function onShow(firstShow,event) {
+	if (filter.getText()) {
+		elements.labelTitle.text = filter.getText();
+	}
+	
+	_super.onShow(firstShow,event);
+}
+
+/**
+ * @public  
+ * @param {String} defaultOperator
+ *
+ * @properties={typeid:24,uuid:"28CA78F8-87E0-4F78-AC37-9B75D480E180"}
+ */
+ function setOperator(defaultOperator) {
+	_super.setOperator(defaultOperator);
+	updateUI();
+}

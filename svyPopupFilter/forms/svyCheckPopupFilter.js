@@ -27,6 +27,17 @@ function onShow(firstShow,event) {
 }
 
 /**
+ * @public  
+ * @param {String} defaultOperator
+ *
+ * @properties={typeid:24,uuid:"E642ACDE-12CD-466F-8E3F-C76403267FDF"}
+ */
+ function setOperator(defaultOperator) {
+	_super.setOperator(defaultOperator);
+	updateUI();
+}
+
+/**
  * @param {JSEvent} event
  *
  * @protected

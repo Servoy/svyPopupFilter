@@ -231,6 +231,7 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 	max-width: 220px;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	white-space: nowrap; /* Needed in NG2 because .btn is not forced to nowrap anymore */
 }
 
 .svy-toolbar-filter .toolbar-filter-tag-text {

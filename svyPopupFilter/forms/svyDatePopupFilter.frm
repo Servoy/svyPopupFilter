@@ -24,7 +24,7 @@ typeid:47,
 uuid:"10A19D79-8673-473D-8D14-EF00D52DF9C3"
 },
 {
-cssPosition:"11,-1,-1,14,50,26",
+cssPosition:"11,-1,-1,14,84,26",
 json:{
 cssPosition:{
 bottom:"-1",
@@ -32,7 +32,7 @@ height:"26",
 left:"14",
 right:"-1",
 top:"11",
-width:"50"
+width:"84"
 },
 styleClass:"text-tertiary",
 text:"DATE"
@@ -241,7 +241,7 @@ typeid:47,
 uuid:"C6365AF8-9908-4B2C-9F8B-FF7F475AD4BB"
 },
 {
-cssPosition:"7,-1,-1,89,131,32",
+cssPosition:"7,-1,-1,101,131,32",
 dataProviderID:"operator",
 displayType:2,
 editable:false,

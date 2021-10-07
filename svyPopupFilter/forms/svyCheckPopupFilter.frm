@@ -107,7 +107,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-imageStyleClass:"glyphicon glyphicon-check",
+imageStyleClass:"far fa-check-square",
 location:{
 x:1,
 y:1
@@ -276,7 +276,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-imageStyleClass:"glyphicon glyphicon-unchecked",
+imageStyleClass:"far fa-square",
 location:{
 x:1,
 y:1

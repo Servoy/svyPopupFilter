@@ -1,12 +1,4 @@
 /**
- * @private 
- * @type {String}
- *
- * @properties={typeid:35,uuid:"988201FA-4992-4215-9C01-758AA36D2E01"}
- */
-var SVY_POPUP_FILTER_VERSION = '2.0.0';
-
-/**
  * @public
  * @enum 
  * @properties={typeid:35,uuid:"39D1503E-471D-4DFC-A6EC-B8EF46289CF3",variableType:-4}
@@ -92,8 +84,8 @@ var LOCALE = {
 		labelLastYear: 'Last year',
 		operator: {
 			EQUALS: 'Specific Dates',
-			GREATER_EQUAL: 'Before than',
-			SMALLER_EQUAL: 'Later than',
+			GREATER_EQUAL: 'On or After',
+			SMALLER_EQUAL: 'On or Before',
 			BETWEEN: 'Between'
 		}
 	},
@@ -1137,7 +1129,7 @@ function applyLocaleStrings(formName, formType) {
  * @properties={typeid:24,uuid:"41B693FE-B16A-475C-BB1C-E80485B711C0"}
  */
 function getVersion() {
-    return SVY_POPUP_FILTER_VERSION;
+    return application.getVersionInfo()['svyPopupFilter'];
 }
 
 /**
