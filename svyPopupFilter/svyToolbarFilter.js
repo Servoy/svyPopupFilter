@@ -1911,7 +1911,7 @@ function initAbstractToolbarFilterUX() {
 				// will be a lookup form
 				// number picker
 				// calendar picker
-				var lookup = scopes.svyLookup.createValueListLookup(filter.valuelist);
+				var lookup = scopes.svyLookup.createValueListLookup(filter.valuelist, scopes.svyPopupFilter.LOCALE.svySelectPopupFilter.titleText);
 				/** @type {RuntimeForm<AbstractLookup>} */
 				var lookupForm = popupTemplates.getRendererForm(FILTER_TYPES.SELECT);
 				lookup.setLookupForm(lookupForm);

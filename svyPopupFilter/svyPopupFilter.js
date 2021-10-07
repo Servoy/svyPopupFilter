@@ -96,7 +96,8 @@ var LOCALE = {
 	svySelectPopupFilter : {
 		searchText: { placeholderText: 'Search...' },
 		labelSelectAll: 'Select all',
-		labelDeselectAll: 'Deselect all'
+		labelDeselectAll: 'Deselect all',
+		titleText: 'Value'
 	},
 	svyIntegerPopupFilter : {
 		labelTitle: 'Type filter value...',
