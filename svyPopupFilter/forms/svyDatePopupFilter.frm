@@ -15,7 +15,7 @@ width:"78"
 },
 onActionMethodID:"C30C5704-306C-48BC-9B46-E7DF7ECBCF68",
 styleClass:"text-tertiary text-center text-center-vertical clickable",
-text:"Next Month"
+text:"This Month"
 },
 name:"labelNextMonth",
 styleClass:"text-tertiary text-center text-center-vertical clickable",
