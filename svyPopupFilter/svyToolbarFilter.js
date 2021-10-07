@@ -1772,6 +1772,7 @@ function initAbstractToolbarFilterUX() {
 		popup.x(event.getX());
 		popup.y(event.getY());
 		// popup.width(300);
+		popup.showBackdrop(true);
 		popup.show();
 	}
 	
