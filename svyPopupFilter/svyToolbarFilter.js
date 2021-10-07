@@ -28,6 +28,7 @@ var FILTER_TYPES = {
 	 * Check filter
 	 * */
 	CHECK: 'checkPopupFilterTemplate'
+	
 };
 
 /**
@@ -151,6 +152,7 @@ function PopupRendererForms() {
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
 	 * */
 	this.datePopupFilterTemplate = {template: "svyDatePopupFilter", operator: scopes.svyPopupFilter.OPERATOR.BETWEEN};
+	
 	/** 
 	 * @protected
 	 * @type {RuntimeForm<AbstractPopupFilter>} 
