@@ -1994,15 +1994,15 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
-	 * Shows the filter picker popup
+	 * Creates the filter picker popup that can be further added to before shown
 	 * 
-	 * @param {RuntimeComponent} target
+	 * @return {plugins.window.Popup}
 	 * 
 	 * @public
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 */
-	AbstractToolbarFilterUX.prototype.showPopupFilterPicker = function(target) {
+	AbstractToolbarFilterUX.prototype.createPopupFilterPicker = function() {
 
 		var filterPopupMenu = plugins.window.createPopupMenu();
 		var menuItem = filterPopupMenu.addMenuItem("title");
@@ -2023,6 +2023,22 @@ function initAbstractToolbarFilterUX() {
 
 		// cache the latest menu so it can be used in callback
 		latestToolbarFilter = this;
+		
+		return filterPopupMenu;
+	}	
+	
+	/**
+	 * Shows the filter picker popup
+	 * 
+	 * @param {RuntimeComponent} target
+	 * 
+	 * @public
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.showPopupFilterPicker = function(target) {
+
+		var filterPopupMenu = this.createPopupFilterPicker();
 		
 		filterPopupMenu.show(target);
 	}
