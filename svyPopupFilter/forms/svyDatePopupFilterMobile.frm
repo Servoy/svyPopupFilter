@@ -23,7 +23,7 @@ width:140
 },
 valuelistID:"AB7E5251-B609-47A3-BE05-B8F9302656C5"
 },
-name:"choicegroup_1",
+name:"selectSelectionType",
 size:"140,80",
 typeName:"bootstrapcomponents-choicegroup",
 typeid:47,

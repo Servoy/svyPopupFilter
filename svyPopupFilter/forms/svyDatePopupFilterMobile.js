@@ -93,26 +93,26 @@ function setOperator(defaultOperator) {
 	updateUI();
 }
 
-///**
-// * @param {JSEvent} event
-// * @override
-// *
-// * @properties={typeid:24,uuid:"C6F06F26-FDD8-45BF-BD1E-D33FDA887AC2"}
-// */
-//function onLoad(event) {
-//	_super.onLoad(event);
-//	
-//	//elements.faClose.imageStyleClass = scopes.svyPopupFilter.STYLING.CLOSE_ICON;
-//	
-//	scopes.svyPopupFilter.applyLocaleStrings(controller.getName(), 'svyDatePopupFilterMobile');
-//	
-//	var valueListContent = databaseManager.createEmptyDataSet(0, 2);
-//	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilterMobile.operator.EQUALS, scopes.svyPopupFilter.OPERATOR.EQUALS]);
-//	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilterMobile.operator.SMALLER_EQUAL, scopes.svyPopupFilter.OPERATOR.SMALLER_EQUAL]);
-//	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilterMobile.operator.GREATER_EQUAL, scopes.svyPopupFilter.OPERATOR.GREATER_EQUAL]);
-//	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilterMobile.operator.BETWEEN, scopes.svyPopupFilter.OPERATOR.BETWEEN]);
-//	application.setValueListItems('svyDateSelectionTypes', valueListContent);
-//}
+/**
+ * @param {JSEvent} event
+ * @override
+ *
+ * @properties={typeid:24,uuid:"C6F06F26-FDD8-45BF-BD1E-D33FDA887AC2"}
+ */
+function onLoad(event) {
+	_super.onLoad(event);
+	
+	//elements.faClose.imageStyleClass = scopes.svyPopupFilter.STYLING.CLOSE_ICON;
+	
+	scopes.svyPopupFilter.applyLocaleStrings(controller.getName(), 'svyDatePopupFilter');
+	
+	var valueListContent = databaseManager.createEmptyDataSet(0, 2);
+	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.EQUALS, scopes.svyPopupFilter.OPERATOR.EQUALS]);
+	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.SMALLER_EQUAL, scopes.svyPopupFilter.OPERATOR.SMALLER_EQUAL]);
+	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.GREATER_EQUAL, scopes.svyPopupFilter.OPERATOR.GREATER_EQUAL]);
+	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.BETWEEN, scopes.svyPopupFilter.OPERATOR.BETWEEN]);
+	application.setValueListItems('svyDateSelectionTypes', valueListContent);
+}
 
 ///**
 // * @protected 
