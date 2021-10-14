@@ -142,7 +142,7 @@ location:{
 x:2,
 y:2
 },
-onActionMethodID:"5EB67AD7-847E-4F74-9A1C-B9B8AD102C80",
+onActionMethodID:"D600C386-1A32-4B49-B4F0-400E7015DE07",
 size:{
 height:100,
 width:200
@@ -212,7 +212,7 @@ location:{
 x:2,
 y:2
 },
-onActionMethodID:"508CC1E9-C51F-4938-8660-0DCDB623A4F3",
+onActionMethodID:"C71EFF52-0BEF-41A8-98F1-6180452AA836",
 size:{
 height:100,
 width:200
