@@ -315,6 +315,12 @@ function AbstractPopupFilter(){
 	this.text = null;
 	
 	/** 
+	 * @protected    
+	 * @type {Boolean}
+	 * */
+	this.useLocalDateTime = false;
+	
+	/** 
 	 * @protected 
 	 * @type {Array<FilterParam>} */
 	this.filterParams = [];
@@ -567,6 +573,29 @@ function initAbstractPopupFilter() {
 	 */
 	AbstractPopupFilter.prototype.getText = function() {
 		return this.text;
+	}
+	
+	/**
+	 * Sets the popupFilter useLocalDateTime
+	 * @public 
+	 * @param {Boolean} useLocalDateTime
+	 * @return {AbstractPopupFilter}
+	 * @this {AbstractPopupFilter}
+	 */
+	AbstractPopupFilter.prototype.setUseLocalDateTime = function(useLocalDateTime) {
+		// intentionally left empty.
+		application.output("PopupFilter setUseLocalDateTime ignored. It can be set only for Date PopupFilter ", LOGGINGLEVEL.WARNING)
+		return this;
+	}	
+
+	/**
+	 * Gets the popupFilter useLocalDateTime
+	 * @public 
+	 * @return {Boolean}
+	 * @this {AbstractPopupFilter}
+	 */
+	AbstractPopupFilter.prototype.getUseLocalDateTime = function() {
+		return this.useLocalDateTime;
 	}
 	
 	/**
@@ -871,6 +900,65 @@ function initAbstractPopupFilter() {
 function initSvyDateFilter() {
 	SvyDateFilter.prototype = Object.create(AbstractPopupFilter.prototype);
 	SvyDateFilter.prototype.constructor = SvyDateFilter;
+	
+	/**
+	 * Sets the popupFilter useLocalDateTime
+	 * 
+	 * @public 
+	 * @param {Boolean} useLocalDateTime
+	 * @return {AbstractPopupFilter}
+	 * @override 
+	 * @this {SvyDateFilter}
+	 */
+	SvyDateFilter.prototype.setUseLocalDateTime = function(useLocalDateTime) {
+		this.useLocalDateTime = useLocalDateTime;
+		return this;
+	}
+	
+	/**
+	 * @public 
+	 * @return {{
+				id: String,
+				dataprovider: String,
+				operator: String,
+				params: Object,
+				text: String,
+				values: Array,
+				useLocalDateTime:Boolean}}
+	 * @override 
+	 * @this {SvyDateFilter}
+	 */
+	SvyDateFilter.prototype.getState = function() {
+
+		// store the useLocalDateTime setting
+		var jsonState = AbstractPopupFilter.prototype.getState.call(this);
+		jsonState.useLocalDateTime = this.getUseLocalDateTime();
+		return jsonState;
+	}
+	
+	
+	/**
+	 * @public 
+	 * @param {{
+				id: String,
+				dataprovider: String,
+				operator: String,
+				params: Object,
+				text: String,
+				values: Array,
+				useLocalDateTime: Boolean,
+				lookupSelectedRecords: Array}} jsonState
+	 * @return {AbstractPopupFilter}
+	 * @override 
+	 * @this {SvyDateFilter}
+	 */
+	SvyDateFilter.prototype.restoreState = function(jsonState) {
+
+		// restore the useLocalDateTime setting
+		AbstractPopupFilter.prototype.restoreState.call(this, jsonState);
+		this.setUseLocalDateTime(jsonState.useLocalDateTime);
+		return this;
+	}
 }
 
 /**

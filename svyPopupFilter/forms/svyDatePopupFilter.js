@@ -50,6 +50,13 @@ function updateUI() {
  * @override
  */
 function getSelectedFilterValues() {
+	
+	var dateFromValue = dateFrom;
+	var dateToValue = dateTo;
+	if (filter.getUseLocalDateTime() == false) {
+		dateFromValue = dateFrom ? scopes.svyDateUtils.getLocalDateTime(dateFrom) : null;
+		dateToValue = dateTo ? scopes.svyDateUtils.getLocalDateTime(dateTo) : null;
+	}
 
 	var OPERATOR = scopes.svyPopupFilter.OPERATOR;
 	switch (operator) {
@@ -57,7 +64,8 @@ function getSelectedFilterValues() {
 	case OPERATOR.GREATER_THEN:
 	case OPERATOR.GREATER_EQUAL:
 		if (dateFrom){
-			return [scopes.svyDateUtils.toStartOfDay(dateFrom)];
+			// return [dateFrom]
+			return [scopes.svyDateUtils.toStartOfDay(dateFromValue)];
 		}
 		else {
 			return [];
@@ -65,14 +73,16 @@ function getSelectedFilterValues() {
 	case OPERATOR.SMALLER_THEN:
 	case OPERATOR.SMALLER_EQUAL:
 		if (dateTo){
-			return [scopes.svyDateUtils.toEndOfDay(dateTo)];
+			//return [dateTo];
+			return [scopes.svyDateUtils.toEndOfDay(dateToValue)];
 		}
 		else {
 			return [];
 		}	
 	case OPERATOR.BETWEEN:
 		if (dateFrom && dateTo) {
-			return [scopes.svyDateUtils.toStartOfDay(dateFrom), scopes.svyDateUtils.toEndOfDay(dateTo)];
+			// return [dateFrom, dateTo]
+			return [scopes.svyDateUtils.toStartOfDay(dateFromValue), scopes.svyDateUtils.toEndOfDay(dateToValue)];
 		} else {
 			// TODO should handle scenario where not selected !?
 			return [];
@@ -80,6 +90,22 @@ function getSelectedFilterValues() {
 	
 	default:
 		return [];
+	}
+}
+
+/**
+ * @protected 
+ * @param {Array<Date>} selectedValues
+ *
+ * @properties={typeid:24,uuid:"86525312-EC3B-407E-8D63-64B8C73D41E8"}
+ * @override
+ */
+function setSelectedFilterValues(selectedValues) {
+	_super.setSelectedFilterValues(selectedValues);
+	
+	if (filter.getUseLocalDateTime() == false) {
+		dateFrom = dateFrom ? scopes.svyDateUtils.getServerDateTime(dateFrom) : null;
+		dateTo = dateTo ? scopes.svyDateUtils.getServerDateTime(dateTo) : null;
 	}
 }
 

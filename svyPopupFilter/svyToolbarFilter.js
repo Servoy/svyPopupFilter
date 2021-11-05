@@ -610,6 +610,17 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 			}
 		});
 		
+        // Is filter uses useLocalDateTime format, handle Timezone offset between client and server for the given date
+        if (filter.getUseLocalDateTime() != true) {
+        	qValues = qValues.map(function(qv) {
+                if (qv && qv instanceof Date) {
+                   	return scopes.svyDateUtils.getServerDateTime(qv);
+                } else {
+                    return qv;
+                }
+            });
+        }
+		
 		//Dont use lower on date
         if(qValues.length && (qValues[0] instanceof Date || qValues[0] instanceof Number || qValues[0] instanceof UUID)) {
 			useIgnoreCase = false;
@@ -651,7 +662,20 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 				op = "between";
 				/** @type {String} */
 				var qDateValue = qValues[0];
-				value = [scopes.svyDateUtils.toStartOfDay(new Date(qDateValue)), scopes.svyDateUtils.toEndOfDay(new Date(qDateValue))];
+				// Search between start of the day and end of the day
+				value = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getLocalDateTime(new Date(qDateValue))), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLocalDateTime(new Date(qDateValue)))];
+                
+                // Is filter uses useLocalDateTime format, handle TimeZone offset between client and server for the given date
+                if (filter.getUseLocalDateTime() != true) {
+	                value = value.map(function(qv) {
+	                    if (qv && qv instanceof Date) {
+	                       	return scopes.svyDateUtils.getServerDateTime(qv);
+	                    } else {
+	                        return qv;
+	                    }
+	                });
+                }
+				
 			} else {
 				op = "eq";
 				value = qValues[0];
@@ -1519,6 +1543,7 @@ function initAbstractToolbarFilterUX() {
 //			this.setFilterValue(filter, values, obj.operator);
 			var popupFilter = this.getOrCreateToolbarFilter(filter.dataprovider);
 			popupFilter.restoreState(obj);
+			// TODO store restore useLocalDateTime
 			
 			if (!this.isFilterActive(filter)) {
 				this.addFilterUI(filter);
@@ -1954,6 +1979,7 @@ function initAbstractToolbarFilterUX() {
 					filterType = FILTER_TYPES.DATE;
 					popupFilter = scopes.svyPopupFilter.createDateFilter();
 					popupFilter.setRendererForm(popupTemplates.getRendererForm(FILTER_TYPES.DATE));
+					popupFilter.setUseLocalDateTime(filter.useLocalDateTime);
 					break;
 				case 'RADIO':
 					// TODO shall i check the check type ?
@@ -2058,9 +2084,11 @@ function initAbstractToolbarFilterUX() {
 		if (!this.isFilterActive(filter)) {
 			this.addFilterUI(filter);
 		}
+		
 		var popupFilter = this.getOrCreateToolbarFilter(filter.dataprovider);
 		popupFilter.setValues(values);
 		popupFilter.setOperator(operator);
+		popupFilter.setUseLocalDateTime(filter.useLocalDateTime);
 		this.onFilterApply(values, operator, popupFilter, true);
 	}
 	
@@ -2747,6 +2775,12 @@ function Filter(titleText, dataprovider, toolbar) {
 	this.useInSearch = false;
 	
 	/**
+	 * applicable to Date filters only; true if the Date uses the format useLocalDateTime
+	 * @type {Boolean}
+	 */
+	this.useLocalDateTime = false;
+	
+	/**
 	 * The filter type of this filter
 	 * @type {String}
 	 */
@@ -2866,6 +2900,12 @@ function createFilterFromGridColumn(column) {
 	filter.valuelist = column.valuelist;
 	filter.useInSearch = column.visible;
 	filter.setOperator(getPopupDefaultOperator(filter.filterType));
+	
+	// TODO look also at the default JSColumn
+	if (filter.filterType === 'DATE') {
+		if (column.format) filter.useLocalDateTime = scopes.svyDateUtils.formatUsesLocalDateTime(column.format);
+	}
+	
 	return filter;
 }
 
@@ -2919,6 +2959,7 @@ function addSearchProvider(search, filter) {
 				// if is a date use explicit search
 				if (jsColumn.getType() === JSColumn.DATETIME) {
 					provider.setImpliedSearch(false);
+                    provider.setUseLocalDateTime(filter.useLocalDateTime);
 				}
 
 				// add valuelist substitutions
@@ -2974,7 +3015,11 @@ function getFilterUiDisplayValues(filterUI, filter, values) {
 			return !v ? '(' + scopes.svyPopupFilter.LOCALE.svyCheckPopupFilter.labelUnchecked + ')' : '(' + scopes.svyPopupFilter.LOCALE.svyCheckPopupFilter.labelChecked + ')'
 		}
 		if (v instanceof Date) {
-			return utils.dateFormat(v, globalFilterConfig.globalDateDisplayFormat);
+			if (filter.useLocalDateTime == true) {
+				return utils.dateFormat(v, globalFilterConfig.globalDateDisplayFormat)//, scopes.svyDateUtils.getServerTimeZone());
+			} else {
+				return utils.dateFormat(v, globalFilterConfig.globalDateDisplayFormat, scopes.svyDateUtils.getServerTimeZone());
+			}
 		} else {
 			return v;
 		}
