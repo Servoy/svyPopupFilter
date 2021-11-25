@@ -76,11 +76,15 @@ var LOCALE = {
 		labelTitle: 'Date',
 		labelToday: 'Today',
 		labelTomorrow: 'Tomorrow',
+		labelYesterday: 'Yesterday',
 		labelThisWeek: 'This week',
 		labelNextWeek: 'Next week',
+		labelLastWeek: 'Last week',
 		labelThisMonth: 'This month',
 		labelNextMonth: 'Next month',
+		labelLastMonth: 'Last month',
 		labelThisYear: 'This year',
+		labelNextYear: 'Next year',
 		labelLastYear: 'Last year',
 		operator: {
 			EQUALS: 'Specific Dates',
@@ -113,6 +117,26 @@ var LOCALE = {
 		labelSmaller: 'Smaller than',
 		labelBetween: 'Between'
 	}
+}
+
+/**
+ * @public 
+ * @enum 
+ * @properties={typeid:35,uuid:"AE4D04C5-0A7C-4B97-BF6C-D90C2683AF58",variableType:-4}
+ */
+var SELECTED_DATES = {
+	YESTERDAY: LOCALE.svyDatePopupFilter.labelYesterday,
+	LAST_WEEK: LOCALE.svyDatePopupFilter.labelLastWeek,
+	LAST_MONTH: LOCALE.svyDatePopupFilter.labelLastMonth,
+	LAST_YEAR: LOCALE.svyDatePopupFilter.labelLastYear,
+	TODAY: LOCALE.svyDatePopupFilter.labelToday,
+	THIS_WEEK: LOCALE.svyDatePopupFilter.labelThisWeek,
+	THIS_MONTH: LOCALE.svyDatePopupFilter.labelThisMonth,
+	THIS_YEAR: LOCALE.svyDatePopupFilter.labelThisYear,
+	TOMORROW: LOCALE.svyDatePopupFilter.labelTomorrow,
+	NEXT_WEEK: LOCALE.svyDatePopupFilter.labelNextWeek,
+	NEXT_MONTH: LOCALE.svyDatePopupFilter.labelNextMonth,
+	NEXT_YEAR: LOCALE.svyDatePopupFilter.labelNextYear
 }
 
 /**

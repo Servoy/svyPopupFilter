@@ -1,4 +1,9 @@
 /**
+ * @type {Array}
+ * @properties={typeid:35,uuid:"CB751314-B059-46D1-9AF4-35B2EA6BB4DA",variableType:-4}
+ */
+var labels = ['labelToday', 'labelTomorrow', 'labelYesterday', 'labelThisYear', 'labelThisWeek', 'labelThisMonth', 'labelNextYear', 'labelNextWeek', 'labelNextMonth', 'labelLastYear', 'labelLastWeek', 'labelLastMonth'];
+/**
  * Handle changed data, return false if the value should not be accepted. In NGClient you can return also a (i18n) string, instead of false, which will be shown as a tooltip.
  *
  * @param {String} oldValue old value
@@ -12,6 +17,7 @@
  * @properties={typeid:24,uuid:"5F50F324-FFA8-4B4B-9C78-F010DE4CC94F"}
  */
 function onDataChange(oldValue, newValue, event) {
+	selectedDate = 'custom';
 	updateUI();
 	return true;
 }
@@ -21,6 +27,61 @@ function onDataChange(oldValue, newValue, event) {
  * @override
  */
 function updateUI() {
+	clearLabels();
+	var DATE = scopes.svyPopupFilter.SELECTED_DATES;
+	switch (selectedDate) {
+	case DATE.TODAY:
+		elements[labels[0]].removeStyleClass('text-tertiary');
+		elements[labels[0]].addStyleClass('bg-primary');
+		break;
+	case DATE.TOMORROW:
+		elements[labels[1]].removeStyleClass('text-tertiary');
+		elements[labels[1]].addStyleClass('bg-primary');
+		break;
+	case DATE.YESTERDAY:
+		elements[labels[2]].removeStyleClass('text-tertiary');
+		elements[labels[2]].addStyleClass('bg-primary');
+		break;
+	case DATE.THIS_YEAR:
+		elements[labels[3]].removeStyleClass('text-tertiary');
+		elements[labels[3]].addStyleClass('bg-primary');
+		break;
+	case DATE.THIS_WEEK:
+		elements[labels[4]].removeStyleClass('text-tertiary');
+		elements[labels[4]].addStyleClass('bg-primary');
+		break;
+	case DATE.THIS_MONTH:
+		elements[labels[5]].removeStyleClass('text-tertiary');
+		elements[labels[5]].addStyleClass('bg-primary');
+		break;
+	case DATE.NEXT_YEAR:
+		elements[labels[6]].removeStyleClass('text-tertiary');
+		elements[labels[6]].addStyleClass('bg-primary');
+		break;
+	case DATE.NEXT_WEEK:
+		elements[labels[7]].removeStyleClass('text-tertiary');
+		elements[labels[7]].addStyleClass('bg-primary');
+		break;
+	case DATE.NEXT_MONTH:
+		elements[labels[8]].removeStyleClass('text-tertiary');
+		elements[labels[8]].addStyleClass('bg-primary');
+		break;
+	case DATE.LAST_YEAR:
+		elements[labels[9]].removeStyleClass('text-tertiary');
+		elements[labels[9]].addStyleClass('bg-primary');
+		break;
+	case DATE.LAST_WEEK:
+		elements[labels[10]].removeStyleClass('text-tertiary');
+		elements[labels[10]].addStyleClass('bg-primary');
+		break;
+	case DATE.LAST_MONTH:
+		elements[labels[11]].removeStyleClass('text-tertiary');
+		elements[labels[11]].addStyleClass('bg-primary');
+		break;
+	default:
+		break;
+	}
+	
 	var OPERATOR = scopes.svyPopupFilter.OPERATOR;
 	switch (operator) {
 	case OPERATOR.EQUALS:
@@ -58,6 +119,25 @@ function getSelectedFilterValues() {
 		dateToValue = dateTo ? scopes.svyDateUtils.getLocalDateTime(dateTo) : null;
 	}
 
+	var DATE = scopes.svyPopupFilter.SELECTED_DATES;
+	switch (selectedDate) {
+	case DATE.TODAY:
+	case DATE.TOMORROW:
+	case DATE.YESTERDAY:
+	case DATE.THIS_MONTH:
+	case DATE.THIS_WEEK:
+	case DATE.THIS_YEAR:
+	case DATE.NEXT_MONTH:
+	case DATE.NEXT_WEEK:
+	case DATE.NEXT_YEAR:
+	case DATE.LAST_MONTH:
+	case DATE.LAST_WEEK:
+	case DATE.LAST_YEAR:
+		return [selectedDate];
+	default:
+		break;
+	}
+	
 	var OPERATOR = scopes.svyPopupFilter.OPERATOR;
 	switch (operator) {
 	case OPERATOR.EQUALS:
@@ -102,7 +182,9 @@ function getSelectedFilterValues() {
  */
 function setSelectedFilterValues(selectedValues) {
 	_super.setSelectedFilterValues(selectedValues);
-	
+	if (selectedValues[0] instanceof String){
+		selectedDate = selectedValues[0];
+	}
 	if (filter.getUseLocalDateTime() == false) {
 		dateFrom = dateFrom ? scopes.svyDateUtils.getServerDateTime(dateFrom) : null;
 		dateTo = dateTo ? scopes.svyDateUtils.getServerDateTime(dateTo) : null;
@@ -164,4 +246,55 @@ function onShow(firstShow,event) {
  function setOperator(defaultOperator) {
 	_super.setOperator(defaultOperator);
 	updateUI();
+}
+ 
+/**
+ * @protected 
+ * @properties={typeid:24,uuid:"21A5D195-3FE0-4351-829B-572829C0E6CB"}
+ */
+function clearLabels(){
+	labels.forEach(function(itm){
+		elements[itm].removeStyleClass('bg-primary');
+		elements[itm].addStyleClass('text-tertiary');
+	});
+}
+/**
+ * Handle changed data, return false if the value should not be accepted.
+ * JSEvent.data will contain extra information about dataproviderid, its scope and the scope id (record datasource or form/global variable scope)
+ *
+ * @param oldValue
+ * @param newValue
+ * @param {JSEvent} event
+ *
+ * @return {boolean}
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"59139663-F4F2-4D7D-A51D-DCA5A1E422C8"}
+ */
+function onDataChangeDate1(oldValue, newValue, event) {
+	//selectedDate = 'custom';
+	//updateUI();
+	return true;
+}
+
+/**
+ * Handle changed data, return false if the value should not be accepted.
+ * JSEvent.data will contain extra information about dataproviderid, its scope and the scope id (record datasource or form/global variable scope)
+ *
+ * @param oldValue
+ * @param newValue
+ * @param {JSEvent} event
+ *
+ * @return {boolean}
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"BA432016-861E-4B93-B436-C315E42A5B13"}
+ */
+function onDataChangeDate2(oldValue, newValue, event) {
+	//application.output('onDataChange from ' + event.getElementName(), LOGGINGLEVEL.WARNING)
+	//selectedDate = 'custom';
+	//updateUI();
+	return true;
 }
