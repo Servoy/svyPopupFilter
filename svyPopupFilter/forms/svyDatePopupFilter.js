@@ -273,8 +273,8 @@ function clearLabels(){
  * @properties={typeid:24,uuid:"59139663-F4F2-4D7D-A51D-DCA5A1E422C8"}
  */
 function onDataChangeDate1(oldValue, newValue, event) {
-	//selectedDate = 'custom';
-	//updateUI();
+	selectedDate = 'custom';
+	updateUI();
 	return true;
 }
 
@@ -293,8 +293,7 @@ function onDataChangeDate1(oldValue, newValue, event) {
  * @properties={typeid:24,uuid:"BA432016-861E-4B93-B436-C315E42A5B13"}
  */
 function onDataChangeDate2(oldValue, newValue, event) {
-	//application.output('onDataChange from ' + event.getElementName(), LOGGINGLEVEL.WARNING)
-	//selectedDate = 'custom';
-	//updateUI();
+	selectedDate = 'custom';
+	updateUI();
 	return true;
 }

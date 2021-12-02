@@ -125,18 +125,18 @@ var LOCALE = {
  * @properties={typeid:35,uuid:"AE4D04C5-0A7C-4B97-BF6C-D90C2683AF58",variableType:-4}
  */
 var SELECTED_DATES = {
-	YESTERDAY: LOCALE.svyDatePopupFilter.labelYesterday,
-	LAST_WEEK: LOCALE.svyDatePopupFilter.labelLastWeek,
-	LAST_MONTH: LOCALE.svyDatePopupFilter.labelLastMonth,
-	LAST_YEAR: LOCALE.svyDatePopupFilter.labelLastYear,
-	TODAY: LOCALE.svyDatePopupFilter.labelToday,
-	THIS_WEEK: LOCALE.svyDatePopupFilter.labelThisWeek,
-	THIS_MONTH: LOCALE.svyDatePopupFilter.labelThisMonth,
-	THIS_YEAR: LOCALE.svyDatePopupFilter.labelThisYear,
-	TOMORROW: LOCALE.svyDatePopupFilter.labelTomorrow,
-	NEXT_WEEK: LOCALE.svyDatePopupFilter.labelNextWeek,
-	NEXT_MONTH: LOCALE.svyDatePopupFilter.labelNextMonth,
-	NEXT_YEAR: LOCALE.svyDatePopupFilter.labelNextYear
+	YESTERDAY: 'svy-dateselected-yesterday',
+	LAST_WEEK: 'svy-dateselected-lastweek',
+	LAST_MONTH: 'svy-dateselected-lastmonth',
+	LAST_YEAR: 'svy-dateselected-lastyear',
+	TODAY: 'svy-dateselected-today',
+	THIS_WEEK: 'svy-dateselected-thisweek',
+	THIS_MONTH: 'svy-dateselected-thismonth',
+	THIS_YEAR: 'svy-dateselected-thisyear',
+	TOMORROW: 'svy-dateselected-tomorrow',
+	NEXT_WEEK: 'svy-dateselected-nextweek',
+	NEXT_MONTH: 'svy-dateselected-nextmonth',
+	NEXT_YEAR: 'svy-dateselected-nextyear'
 }
 
 /**

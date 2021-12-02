@@ -3075,6 +3075,53 @@ function getFilterUiDisplayValues(filterUI, filter, values) {
 			} else {
 				return utils.dateFormat(v, globalFilterConfig.globalDateDisplayFormat, scopes.svyDateUtils.getServerTimeZone());
 			}
+		} else if (v instanceof String) {
+			var val = '';
+			var DATE = scopes.svyPopupFilter.SELECTED_DATES;
+			switch (v) {
+			case DATE.TODAY:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelToday;
+				break;
+			case DATE.TOMORROW:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelTomorrow;
+				break;
+			case DATE.YESTERDAY:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelYesterday;
+				break;
+			case DATE.LAST_MONTH:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelLastMonth;
+				break;
+			case DATE.LAST_WEEK:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelLastWeek;
+				break;
+			case DATE.LAST_YEAR:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelLastYear;
+				break;
+			case DATE.NEXT_MONTH:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelNextMonth;
+				break;
+			case DATE.NEXT_WEEK:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelNextWeek;
+				break;
+			case DATE.NEXT_YEAR:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelNextYear;
+				break;
+			case DATE.THIS_MONTH:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelThisMonth;
+				break;
+			case DATE.THIS_WEEK:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelThisWeek;
+				break;
+			case DATE.THIS_YEAR:
+				val = scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.labelThisYear;
+				break;
+			default:
+				break;
+			}
+			if (val) {
+				return val;
+			}
+			return v;
 		} else {
 			return v;
 		}

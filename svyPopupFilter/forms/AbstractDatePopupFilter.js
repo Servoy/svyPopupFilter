@@ -22,13 +22,7 @@ var dateTo;
 var selectedDate = null;
 
 /**
- * @type {Array}
  * @protected 
- * @properties={typeid:35,uuid:"8B90EF20-05F7-45EF-A700-ED2D62431E1E",variableType:-4}
- */
-var click = [0,0,0,0,0,0,0,0,0,0,0,0];
-
-/**
  * @param {JSEvent} event
  *
  * @properties={typeid:24,uuid:"0B8B503C-329D-4924-A924-0137E86BB291"}
@@ -90,45 +84,45 @@ function setSelectedFilterValues(selectedValues) {
 			break;
 		case DATE.LAST_MONTH:
 			date = scopes.svyDateUtils.addMonths(today, -1);
-			dateTo = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
-			dateFrom = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
 			break;
 		case DATE.LAST_WEEK:
 			date = scopes.svyDateUtils.addDays(today, -7);
-			dateTo = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
-			dateFrom = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
 			break;
 		case DATE.LAST_YEAR:
 			date = scopes.svyDateUtils.addYears(today, -1);
-			dateTo = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
-			dateFrom = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
 			break;
 		case DATE.NEXT_MONTH:
 			date = scopes.svyDateUtils.addMonths(today, 1);
-			dateTo = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
-			dateFrom = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
 			break;
 		case DATE.NEXT_WEEK:
 			date = scopes.svyDateUtils.addDays(today, 7);
-			dateTo = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
-			dateFrom = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
 			break;
 		case DATE.NEXT_YEAR:
 			date = scopes.svyDateUtils.addYears(today, 1);
-			dateTo = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
-			dateFrom = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
 			break;
 		case DATE.THIS_MONTH:
-			dateTo = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
-			dateFrom = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(today));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(today));
 			break;
 		case DATE.THIS_WEEK:
-			dateTo = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
-			dateFrom = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(today));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(today));
 			break;
 		case DATE.THIS_YEAR:
-			dateTo = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
-			dateFrom = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(today));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(today));
 			break;
 		default:
 			break;
@@ -190,8 +184,8 @@ function setSelectionToday() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(today);
 	dateTo = scopes.svyDateUtils.toEndOfDay(today);
 	operator = scopes.svyPopupFilter.OPERATOR.EQUALS;
-	handleCLick(0, scopes.svyPopupFilter.SELECTED_DATES.TODAY);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.TODAY);
+	//updateUI();
 }
 
 /**
@@ -203,8 +197,8 @@ function setSelectionTomorrow() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(tomorrow);
 	dateTo = scopes.svyDateUtils.toEndOfDay(tomorrow);
 	operator = scopes.svyPopupFilter.OPERATOR.EQUALS;
-	handleCLick(1, scopes.svyPopupFilter.SELECTED_DATES.TOMORROW);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.TOMORROW);
+	//updateUI();
 }
 
 /**
@@ -216,8 +210,8 @@ function setSelectionThisWeek() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(today));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(today));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	handleCLick(2, scopes.svyPopupFilter.SELECTED_DATES.THIS_WEEK);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.THIS_WEEK);
+	//updateUI();
 }
 
 /**
@@ -229,8 +223,8 @@ function setSelectionThisMonth() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(today));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(today));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	handleCLick(3, scopes.svyPopupFilter.SELECTED_DATES.THIS_MONTH);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.THIS_MONTH);
+	//updateUI();
 }
 
 /**
@@ -242,8 +236,8 @@ function setSelectionThisYear() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(today));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(today));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	handleCLick(4, scopes.svyPopupFilter.SELECTED_DATES.THIS_YEAR);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.THIS_YEAR);
+	//updateUI();
 }
 
 /**
@@ -255,8 +249,8 @@ function setSelectionNextWeek() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	handleCLick(5, scopes.svyPopupFilter.SELECTED_DATES.NEXT_WEEK);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.NEXT_WEEK);
+	//updateUI();
 }
 
 /**
@@ -268,8 +262,8 @@ function setSelectionNextMonth() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	handleCLick(6, scopes.svyPopupFilter.SELECTED_DATES.NEXT_MONTH);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.NEXT_MONTH);
+	//updateUI();
 }
 
 /**
@@ -281,8 +275,8 @@ function setSelectionLastYear() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	handleCLick(7, scopes.svyPopupFilter.SELECTED_DATES.LAST_YEAR);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.LAST_YEAR);
+	//updateUI();
 }
 
 /**
@@ -294,8 +288,8 @@ function setSelectionLastMonth() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	handleCLick(8, scopes.svyPopupFilter.SELECTED_DATES.LAST_MONTH);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.LAST_MONTH);
+	//updateUI();
 }
 
 /**
@@ -307,8 +301,8 @@ function setSelectionLastWeek() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	handleCLick(9, scopes.svyPopupFilter.SELECTED_DATES.LAST_WEEK);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.LAST_WEEK);
+	//updateUI();
 }
 
 /**
@@ -320,8 +314,8 @@ function setSelectionNextYear() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	handleCLick(10, scopes.svyPopupFilter.SELECTED_DATES.NEXT_YEAR);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.NEXT_YEAR);
+	//updateUI();
 }
 
 /**
@@ -333,24 +327,35 @@ function setSelectionYesterday() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(yesterday);
 	dateTo = scopes.svyDateUtils.toEndOfDay(yesterday);
 	operator = scopes.svyPopupFilter.OPERATOR.EQUALS;
-	handleCLick(11, scopes.svyPopupFilter.SELECTED_DATES.YESTERDAY);
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.YESTERDAY);
+	//updateUI();
 }
 
 /**
  * TODO generated, please specify type and doc for the params
- * @param {Number} index
  * @param {String} sDate
  * @protected
  * @properties={typeid:24,uuid:"B4D76703-759C-48D5-A982-B9402796D66B"}
  */
-function handleCLick(index, sDate) {
-	if (click[index] == 0) {
-		click = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-		selectedDate = sDate;
-		click[index]++;
-	} else {
+function setSelectedDate(sDate) {
+	if (selectedDate == sDate) {
 		selectedDate = null;
-		click[index] = 0;
+	} else {
+		selectedDate = sDate;
 	}
+	var startDate = new Date();
+	startDate.setTime(startDate.getTime() + 200);
+	plugins.scheduler.addJob('updateUI', startDate, jobSelectedDate, [selectedDate]);
+}
+
+/**
+ * @private
+ * @param sDate
+ *
+ * @properties={typeid:24,uuid:"034B28C0-D89F-480C-947B-2179243E43D4"}
+ */
+function jobSelectedDate(sDate) {
+	//restore the selection overruling the onDataChange. Workaround for issue SVYX-383
+	selectedDate = sDate;
+	updateUI();
 }
