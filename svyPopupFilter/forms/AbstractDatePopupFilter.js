@@ -127,6 +127,10 @@ function setSelectedFilterValues(selectedValues) {
 		default:
 			break;
 		}
+		selectedDate = selectedValues[0];
+		var startDate = new Date();
+		startDate.setTime(startDate.getTime() + 200);
+		plugins.scheduler.addJob('updateUI', startDate, jobSelectedDate, [selectedDate]);
 	} else if (selectedValues && selectedValues.length) {
 		if(operator == scopes.svyPopupFilter.OPERATOR.SMALLER_THEN || operator == scopes.svyPopupFilter.OPERATOR.SMALLER_EQUAL) {
 			dateFrom = null;
