@@ -127,10 +127,9 @@ function setSelectedFilterValues(selectedValues) {
 		default:
 			break;
 		}
+		
 		selectedDate = selectedValues[0];
-		var startDate = new Date();
-		startDate.setTime(startDate.getTime() + 200);
-		plugins.scheduler.addJob('updateUI', startDate, jobSelectedDate, [selectedDate]);
+		
 	} else if (selectedValues && selectedValues.length) {
 		if(operator == scopes.svyPopupFilter.OPERATOR.SMALLER_THEN || operator == scopes.svyPopupFilter.OPERATOR.SMALLER_EQUAL) {
 			dateFrom = null;
@@ -189,7 +188,6 @@ function setSelectionToday() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(today);
 	operator = scopes.svyPopupFilter.OPERATOR.EQUALS;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.TODAY);
-	//updateUI();
 }
 
 /**
@@ -202,7 +200,6 @@ function setSelectionTomorrow() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(tomorrow);
 	operator = scopes.svyPopupFilter.OPERATOR.EQUALS;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.TOMORROW);
-	//updateUI();
 }
 
 /**
@@ -215,7 +212,6 @@ function setSelectionThisWeek() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(today));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.THIS_WEEK);
-	//updateUI();
 }
 
 /**
@@ -228,7 +224,6 @@ function setSelectionThisMonth() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(today));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.THIS_MONTH);
-	//updateUI();
 }
 
 /**
@@ -241,7 +236,6 @@ function setSelectionThisYear() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(today));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.THIS_YEAR);
-	//updateUI();
 }
 
 /**
@@ -254,7 +248,6 @@ function setSelectionNextWeek() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.NEXT_WEEK);
-	//updateUI();
 }
 
 /**
@@ -267,7 +260,6 @@ function setSelectionNextMonth() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.NEXT_MONTH);
-	//updateUI();
 }
 
 /**
@@ -280,7 +272,6 @@ function setSelectionLastYear() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.LAST_YEAR);
-	//updateUI();
 }
 
 /**
@@ -293,7 +284,6 @@ function setSelectionLastMonth() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.LAST_MONTH);
-	//updateUI();
 }
 
 /**
@@ -306,7 +296,6 @@ function setSelectionLastWeek() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.LAST_WEEK);
-	//updateUI();
 }
 
 /**
@@ -319,7 +308,6 @@ function setSelectionNextYear() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.NEXT_YEAR);
-	//updateUI();
 }
 
 /**
@@ -332,11 +320,9 @@ function setSelectionYesterday() {
 	dateTo = scopes.svyDateUtils.toEndOfDay(yesterday);
 	operator = scopes.svyPopupFilter.OPERATOR.EQUALS;
 	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.YESTERDAY);
-	//updateUI();
 }
 
 /**
- * TODO generated, please specify type and doc for the params
  * @param {String} sDate
  * @protected
  * @properties={typeid:24,uuid:"B4D76703-759C-48D5-A982-B9402796D66B"}
@@ -347,18 +333,7 @@ function setSelectedDate(sDate) {
 	} else {
 		selectedDate = sDate;
 	}
-	var startDate = new Date();
-	startDate.setTime(startDate.getTime() + 200);
-	plugins.scheduler.addJob('updateUI', startDate, jobSelectedDate, [selectedDate]);
-}
 
-/**
- * @private
- * @param sDate
- *
- * @properties={typeid:24,uuid:"034B28C0-D89F-480C-947B-2179243E43D4"}
- */
-function jobSelectedDate(sDate) {
 	//restore the selection overruling the onDataChange. Workaround for issue SVYX-383
 	selectedDate = sDate;
 	updateUI();
