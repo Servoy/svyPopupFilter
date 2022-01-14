@@ -3,6 +3,7 @@
  * @properties={typeid:35,uuid:"CB751314-B059-46D1-9AF4-35B2EA6BB4DA",variableType:-4}
  */
 var labels = ['labelToday', 'labelTomorrow', 'labelYesterday', 'labelThisYear', 'labelThisWeek', 'labelThisMonth', 'labelNextYear', 'labelNextWeek', 'labelNextMonth', 'labelLastYear', 'labelLastWeek', 'labelLastMonth'];
+
 /**
  * Handle changed data, return false if the value should not be accepted. In NGClient you can return also a (i18n) string, instead of false, which will be shown as a tooltip.
  *
@@ -84,6 +85,11 @@ function updateUI() {
 	
 	var OPERATOR = scopes.svyPopupFilter.OPERATOR;
 	switch (operator) {
+	case OPERATOR.NOT_NULL:
+	case OPERATOR.IS_NULL:
+		elements.calendarDateFrom.enabled = false;
+		elements.calendarDateTo.enabled = false;
+		break;
 	case OPERATOR.EQUALS:
 	case OPERATOR.GREATER_THEN:
 	case OPERATOR.GREATER_EQUAL:
@@ -140,6 +146,9 @@ function getSelectedFilterValues() {
 	
 	var OPERATOR = scopes.svyPopupFilter.OPERATOR;
 	switch (operator) {
+	case OPERATOR.NOT_NULL:
+	case OPERATOR.IS_NULL:
+		return [null];
 	case OPERATOR.EQUALS:
 	case OPERATOR.GREATER_THEN:
 	case OPERATOR.GREATER_EQUAL:
@@ -235,6 +244,7 @@ function onShow(firstShow,event) {
 	}
 	
 	_super.onShow(firstShow,event);
+	updateUI();
 }
 
 /**
