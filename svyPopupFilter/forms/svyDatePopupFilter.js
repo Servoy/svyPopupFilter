@@ -1,17 +1,4 @@
 /**
- * @protected
- * @param {Boolean} firstShow
- * @param {JSEvent} event
- *
- * @properties={typeid:24,uuid:"BB66FE55-1740-40BF-A686-F8341E469315"}
- * @override
- */
-function onShow(firstShow,event) {
-	_super.onShow(firstShow,event);
-	updateUI();
-}
-
-/**
  * Handle changed data, return false if the value should not be accepted. In NGClient you can return also a (i18n) string, instead of false, which will be shown as a tooltip.
  *
  * @param {String} oldValue old value
@@ -135,11 +122,11 @@ function onLoad(event) {
 }
 
 /**
- * @protected 
- * @param firstShow
- * @param event
+ * @protected
+ * @param {Boolean} firstShow
+ * @param {JSEvent} event
  *
- * @properties={typeid:24,uuid:"D8AA44D8-8EBF-4A24-A902-6FB6013C5398"}
+ * @properties={typeid:24,uuid:"BB66FE55-1740-40BF-A686-F8341E469315"}
  * @override
  */
 function onShow(firstShow,event) {
@@ -148,6 +135,8 @@ function onShow(firstShow,event) {
 	}
 	
 	_super.onShow(firstShow,event);
+	
+	updateUI();
 }
 
 /**
