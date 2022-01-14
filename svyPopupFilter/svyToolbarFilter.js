@@ -1582,8 +1582,10 @@ function initAbstractToolbarFilterUX() {
 				obj.values = obj.values.map(function(value) {
 					if (value instanceof String){
 						return value;
-					}
-					return new Date(value);
+					} else if (value) {
+						return new Date(value);
+					} 
+					return value;
 				});
 
 				break;
