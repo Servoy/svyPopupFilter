@@ -15,6 +15,14 @@ var dateFrom;
 var dateTo;
 
 /**
+ * @type {String}
+ * @protected 
+ * @properties={typeid:35,uuid:"B124F840-9635-4072-9BEF-B9EA093CAF78"}
+ */
+var selectedDate = null;
+
+/**
+ * @protected 
  * @param {JSEvent} event
  *
  * @properties={typeid:24,uuid:"0B8B503C-329D-4924-A924-0137E86BB291"}
@@ -36,7 +44,93 @@ function onLoad(event) {
  * @override
  */
 function setSelectedFilterValues(selectedValues) {
-	if (selectedValues && selectedValues.length) {
+	var DATE = scopes.svyPopupFilter.SELECTED_DATES;
+	var isEnum = false;
+	switch (selectedValues[0]) {
+	case DATE.TODAY:
+	case DATE.TOMORROW:
+	case DATE.YESTERDAY:
+	case DATE.THIS_MONTH:
+	case DATE.THIS_WEEK:
+	case DATE.THIS_YEAR:
+	case DATE.NEXT_MONTH:
+	case DATE.NEXT_WEEK:
+	case DATE.NEXT_YEAR:
+	case DATE.LAST_MONTH:
+	case DATE.LAST_WEEK:
+	case DATE.LAST_YEAR:
+		isEnum = true;
+	default:
+		break;
+	}
+
+	if (isEnum) {
+		var today = new Date();
+		var tomorrow, yesterday, date;
+		switch (selectedValues[0]) {
+		case DATE.TODAY:
+			dateTo = null;
+			dateFrom = scopes.svyDateUtils.toStartOfDay(today);
+			break;
+		case DATE.TOMORROW:
+			tomorrow = scopes.svyDateUtils.addDays(today, 1);
+			dateTo = null;
+			dateFrom = scopes.svyDateUtils.toStartOfDay(tomorrow);
+			break;
+		case DATE.YESTERDAY:
+			yesterday = scopes.svyDateUtils.addDays(today, -1);
+			dateTo = null;
+			dateFrom = scopes.svyDateUtils.toStartOfDay(yesterday);
+			break;
+		case DATE.LAST_MONTH:
+			date = scopes.svyDateUtils.addMonths(today, -1);
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
+			break;
+		case DATE.LAST_WEEK:
+			date = scopes.svyDateUtils.addDays(today, -7);
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
+			break;
+		case DATE.LAST_YEAR:
+			date = scopes.svyDateUtils.addYears(today, -1);
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
+			break;
+		case DATE.NEXT_MONTH:
+			date = scopes.svyDateUtils.addMonths(today, 1);
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
+			break;
+		case DATE.NEXT_WEEK:
+			date = scopes.svyDateUtils.addDays(today, 7);
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
+			break;
+		case DATE.NEXT_YEAR:
+			date = scopes.svyDateUtils.addYears(today, 1);
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
+			break;
+		case DATE.THIS_MONTH:
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(today));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(today));
+			break;
+		case DATE.THIS_WEEK:
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(today));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(today));
+			break;
+		case DATE.THIS_YEAR:
+			dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(today));
+			dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(today));
+			break;
+		default:
+			break;
+		}
+		
+		selectedDate = selectedValues[0];
+		
+	} else if (selectedValues && selectedValues.length) {
 		if(operator == scopes.svyPopupFilter.OPERATOR.SMALLER_THEN || operator == scopes.svyPopupFilter.OPERATOR.SMALLER_EQUAL) {
 			dateFrom = null;
 			dateTo = selectedValues[0];
@@ -57,8 +151,9 @@ function setSelectedFilterValues(selectedValues) {
  * @override
  */
 function getSelectedFilterValues() {
-	
-	if (dateFrom && dateTo) {
+	if (selectedDate) {
+		return [selectedDate];
+	} else if (dateFrom && dateTo) {
 		operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
 		return [scopes.svyDateUtils.toStartOfDay(dateFrom), scopes.svyDateUtils.toEndOfDay(dateTo)];
 	} else if (dateFrom) {
@@ -84,7 +179,7 @@ function updateUI() {
 }
 
 /**
- * @protected 
+ * @protected
  * @properties={typeid:24,uuid:"28611948-0EA9-4818-8386-9FEB4BFE36AE"}
  */
 function setSelectionToday() {
@@ -92,11 +187,11 @@ function setSelectionToday() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(today);
 	dateTo = scopes.svyDateUtils.toEndOfDay(today);
 	operator = scopes.svyPopupFilter.OPERATOR.EQUALS;
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.TODAY);
 }
 
 /**
- * @protected 
+ * @protected
  * @properties={typeid:24,uuid:"C7DBF849-C71C-4404-898F-398F9B703E12"}
  */
 function setSelectionTomorrow() {
@@ -104,11 +199,11 @@ function setSelectionTomorrow() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(tomorrow);
 	dateTo = scopes.svyDateUtils.toEndOfDay(tomorrow);
 	operator = scopes.svyPopupFilter.OPERATOR.EQUALS;
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.TOMORROW);
 }
 
 /**
- * @protected 
+ * @protected
  * @properties={typeid:24,uuid:"3BA53559-058F-404B-8661-F406A18E34B1"}
  */
 function setSelectionThisWeek() {
@@ -116,11 +211,11 @@ function setSelectionThisWeek() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(today));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(today));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.THIS_WEEK);
 }
 
 /**
- * @protected 
+ * @protected
  * @properties={typeid:24,uuid:"0383EF7C-9B17-46A5-AFFE-6B02F1D7FD8C"}
  */
 function setSelectionThisMonth() {
@@ -128,11 +223,11 @@ function setSelectionThisMonth() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(today));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(today));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.THIS_MONTH);
 }
 
 /**
- * @protected 
+ * @protected
  * @properties={typeid:24,uuid:"B7AAD534-BAA8-4F35-BDB1-4B71EB9EBB87"}
  */
 function setSelectionThisYear() {
@@ -140,11 +235,11 @@ function setSelectionThisYear() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(today));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(today));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.THIS_YEAR);
 }
 
 /**
- * @protected 
+ * @protected
  * @properties={typeid:24,uuid:"D67CCAF0-67F8-4BF3-B942-8D680A60931F"}
  */
 function setSelectionNextWeek() {
@@ -152,12 +247,11 @@ function setSelectionNextWeek() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.NEXT_WEEK);
 }
 
-
 /**
- * @protected 
+ * @protected
  * @properties={typeid:24,uuid:"C30C5704-306C-48BC-9B46-E7DF7ECBCF68"}
  */
 function setSelectionNextMonth() {
@@ -165,11 +259,11 @@ function setSelectionNextMonth() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
-	updateUI();
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.NEXT_MONTH);
 }
 
 /**
- * @protected 
+ * @protected
  * @properties={typeid:24,uuid:"D34FEE7C-1E68-40B5-A487-C6F715E9C9B6"}
  */
 function setSelectionLastYear() {
@@ -177,5 +271,70 @@ function setSelectionLastYear() {
 	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
 	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
 	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.LAST_YEAR);
+}
+
+/**
+ * @protected
+ * @properties={typeid:24,uuid:"8F94F593-E5C0-403B-8411-79E00537F6E3"}
+ */
+function setSelectionLastMonth() {
+	var date = scopes.svyDateUtils.addMonths(new Date(), -1);
+	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date));
+	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date));
+	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.LAST_MONTH);
+}
+
+/**
+ * @protected
+ * @properties={typeid:24,uuid:"D94FF145-4628-4A7C-A160-B156D237212D"}
+ */
+function setSelectionLastWeek() {
+	var date = scopes.svyDateUtils.addDays(new Date(), -7);
+	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date));
+	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date));
+	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.LAST_WEEK);
+}
+
+/**
+ * @protected
+ * @properties={typeid:24,uuid:"88339A3C-D584-4ABA-BF91-0C022014AAFA"}
+ */
+function setSelectionNextYear() {
+	var date = scopes.svyDateUtils.addYears(new Date(), 1);
+	dateFrom = scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date));
+	dateTo = scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date));
+	operator = scopes.svyPopupFilter.OPERATOR.BETWEEN;
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.NEXT_YEAR);
+}
+
+/**
+ * @protected
+ * @properties={typeid:24,uuid:"C94EF6DD-F7E5-4BDF-AE1E-65CB812B8CC1"}
+ */
+function setSelectionYesterday() {
+	var yesterday = scopes.svyDateUtils.addDays(new Date(), -1);
+	dateFrom = scopes.svyDateUtils.toStartOfDay(yesterday);
+	dateTo = scopes.svyDateUtils.toEndOfDay(yesterday);
+	operator = scopes.svyPopupFilter.OPERATOR.EQUALS;
+	setSelectedDate(scopes.svyPopupFilter.SELECTED_DATES.YESTERDAY);
+}
+
+/**
+ * @param {String} sDate
+ * @protected
+ * @properties={typeid:24,uuid:"B4D76703-759C-48D5-A982-B9402796D66B"}
+ */
+function setSelectedDate(sDate) {
+	if (selectedDate == sDate) {
+		selectedDate = null;
+	} else {
+		selectedDate = sDate;
+	}
+
+	//restore the selection overruling the onDataChange. Workaround for issue SVYX-383
+	selectedDate = sDate;
 	updateUI();
 }

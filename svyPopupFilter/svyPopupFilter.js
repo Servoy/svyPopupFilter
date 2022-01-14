@@ -76,11 +76,15 @@ var LOCALE = {
 		labelTitle: 'Date',
 		labelToday: 'Today',
 		labelTomorrow: 'Tomorrow',
+		labelYesterday: 'Yesterday',
 		labelThisWeek: 'This week',
 		labelNextWeek: 'Next week',
+		labelLastWeek: 'Last week',
 		labelThisMonth: 'This month',
 		labelNextMonth: 'Next month',
+		labelLastMonth: 'Last month',
 		labelThisYear: 'This year',
+		labelNextYear: 'Next year',
 		labelLastYear: 'Last year',
 		operator: {
 			EQUALS: 'Specific Dates',
@@ -113,6 +117,26 @@ var LOCALE = {
 		labelSmaller: 'Smaller than',
 		labelBetween: 'Between'
 	}
+}
+
+/**
+ * @public 
+ * @enum 
+ * @properties={typeid:35,uuid:"AE4D04C5-0A7C-4B97-BF6C-D90C2683AF58",variableType:-4}
+ */
+var SELECTED_DATES = {
+	YESTERDAY: 'svy-dateselected-yesterday',
+	LAST_WEEK: 'svy-dateselected-lastweek',
+	LAST_MONTH: 'svy-dateselected-lastmonth',
+	LAST_YEAR: 'svy-dateselected-lastyear',
+	TODAY: 'svy-dateselected-today',
+	THIS_WEEK: 'svy-dateselected-thisweek',
+	THIS_MONTH: 'svy-dateselected-thismonth',
+	THIS_YEAR: 'svy-dateselected-thisyear',
+	TOMORROW: 'svy-dateselected-tomorrow',
+	NEXT_WEEK: 'svy-dateselected-nextweek',
+	NEXT_MONTH: 'svy-dateselected-nextmonth',
+	NEXT_YEAR: 'svy-dateselected-nextyear'
 }
 
 /**
