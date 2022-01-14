@@ -65,6 +65,12 @@ var STYLING = {
  * @properties={typeid:35,uuid:"A96D6D86-BD86-4B5B-A522-ECC0717FF6B8",variableType:-4}
  */
 var LOCALE = {
+	filterToolbar: {
+		operator: {
+			IS_NULL: 'Empty',
+			NOT_NULL: 'Not Empty'
+		} 
+	},
 	filterPopupMenu: {
 		addFilter: 'Add filter'
 	},

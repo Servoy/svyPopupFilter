@@ -2581,10 +2581,10 @@ function initListComponentFilterRenderer() {
 			operatorText = "...";
 			break;
 		case OPERATOR.IS_NULL:
-			operatorText = "Empty";
+			operatorText = scopes.svyPopupFilter.LOCALE.filterToolbar.operator.IS_NULL;
 			break;
 		case OPERATOR.NOT_NULL:
-			operatorText = "Not Empty";
+			operatorText = scopes.svyPopupFilter.LOCALE.filterToolbar.operator.NOT_NULL;
 			break;
 		case OPERATOR.EQUALS:
 		case OPERATOR.LIKE:
