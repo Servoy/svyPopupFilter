@@ -24,6 +24,7 @@ function onDataChange(oldValue, newValue, event) {
 }
 
 /**
+ * @protected 
  * @properties={typeid:24,uuid:"1AE71264-9439-48B2-947D-44A2C6F1DE27"}
  * @override
  */
@@ -209,7 +210,9 @@ function setSelectedFilterValues(selectedValues) {
 function defaultWidth() {
 	return 580;
 }
+
 /**
+ * @protected 
  * @param {JSEvent} event
  * @override
  *
@@ -227,6 +230,9 @@ function onLoad(event) {
 	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.SMALLER_EQUAL, scopes.svyPopupFilter.OPERATOR.SMALLER_EQUAL]);
 	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.GREATER_EQUAL, scopes.svyPopupFilter.OPERATOR.GREATER_EQUAL]);
 	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.BETWEEN, scopes.svyPopupFilter.OPERATOR.BETWEEN]);
+	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.DATE_NULL, scopes.svyPopupFilter.OPERATOR.IS_NULL]);
+	valueListContent.addRow([scopes.svyPopupFilter.LOCALE.svyDatePopupFilter.operator.DATE_NOT_NULL, scopes.svyPopupFilter.OPERATOR.NOT_NULL]);
+
 	application.setValueListItems('svyDateSelectionTypes', valueListContent);
 }
 

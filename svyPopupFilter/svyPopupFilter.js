@@ -90,7 +90,9 @@ var LOCALE = {
 			EQUALS: 'Specific Dates',
 			GREATER_EQUAL: 'On or After',
 			SMALLER_EQUAL: 'On or Before',
-			BETWEEN: 'Between'
+			BETWEEN: 'Between',
+			DATE_NULL: 'Empty Date',
+			DATE_NOT_NULL: 'Any Date'
 		}
 	},
 	svyTokenPopupFilter : {
