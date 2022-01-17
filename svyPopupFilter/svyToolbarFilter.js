@@ -2146,7 +2146,12 @@ function initAbstractToolbarFilterUX() {
 		var popupFilter = this.getOrCreateToolbarFilter(filter.dataprovider);
 		popupFilter.setValues(values);
 		popupFilter.setOperator(operator);
-		popupFilter.setUseLocalDateTime(filter.useLocalDateTime);
+		
+		// for date filter set localDateTime
+		if (filter.filterType == FILTER_TYPES.DATE) { 
+			popupFilter.setUseLocalDateTime(filter.useLocalDateTime);
+		}
+		
 		this.onFilterApply(values, operator, popupFilter, true);
 	}
 	
