@@ -1164,6 +1164,11 @@ function initAbstractToolbarFilterUX() {
 		
 		var filters = this.getActiveFilters();
 		
+		// this needs to be done before filters are removed, because it will lead to a 
+		// forms[formName] when creating the function reference and that makes the form 
+		// load the foundset because filters were removed
+		var onFilterApplyQueryFunction = this.onFilterApplyQueryCondition ? scopes.svySystem.convertQualifiedNameToServoyMethod(this.onFilterApplyQueryCondition) : null;
+		
 		// remove previous filter
 		if ((this.autoApply === true || forceApply === true) && !this.onSearchCommand) {
 			foundset.removeFoundSetFilterParam(TOOLBAR_FILTER_NAME);
@@ -1172,7 +1177,6 @@ function initAbstractToolbarFilterUX() {
 		// get the filter query
 		var filterQuery;
 		if (filters.length) {
-			var onFilterApplyQueryFunction = this.onFilterApplyQueryCondition ? scopes.svySystem.convertQualifiedNameToServoyMethod(this.onFilterApplyQueryCondition) : null;
 			filterQuery = getFilterQuery(filters, foundset, onFilterApplyQueryFunction);
 			
 			// apply the query as filter
