@@ -1585,7 +1585,7 @@ function initAbstractToolbarFilterUX() {
 			case 'DATE':
 				obj.values = obj.values.map(function(value) {
 					if (value instanceof String){
-						return value;
+						return new Date(value);
 					} else if (value) {
 						return new Date(value);
 					} 
