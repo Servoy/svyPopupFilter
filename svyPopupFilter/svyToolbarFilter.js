@@ -1182,7 +1182,12 @@ function initAbstractToolbarFilterUX() {
 			// apply the query as filter
 			// DO NOTHING if onSearchCommand is set
 			if ((this.autoApply === true || forceApply === true) && !this.onSearchCommand) {
-				foundset.addFoundSetFilterParam(filterQuery, TOOLBAR_FILTER_NAME);
+				if (foundset.getRelationName()) {
+					// since 2022.3 addFoundSetFilterParam(filterQuery) is not allowed anymore
+					foundset.loadRecords(filterQuery);
+				} else {
+					foundset.addFoundSetFilterParam(filterQuery, TOOLBAR_FILTER_NAME);
+				}
 			}
 		} else {
 			// refresh foundset since filters have been removed
@@ -1199,7 +1204,10 @@ function initAbstractToolbarFilterUX() {
 		// DO NOTHING if onSearchCommand is set
 		//if ((forceApply === true || this.autoApply === true) && !this.searchText) {
 		if ((forceApply === true || this.autoApply === true) && !this.onSearchCommand && !this.searchText) {
-			foundset.loadRecords();
+			// not needed if is related foundset, since is using loadRecords instead of addFoundSetFilterParam
+			if (!foundset.getRelationName()) {
+				foundset.loadRecords();
+			}
 		}
 		
 		return filterQuery;
@@ -1636,9 +1644,24 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.getQuery = function() {
+		return this._getQuery();
+	}
+	
+	/**
+	 * Applies all filters and returns the query for this toolbar
+	 *
+	 * @return {QBSelect}
+	 * 
+	 * @param {Boolean} [forceApply]
+	 *
+	 * @protected  
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype._getQuery = function(forceApply) {
 		//apply foundset filters and force when the search text has been changed
 		//TODO: filter restore (initially) applies filters once too often
-		var filterQuery = this._applyFilters(this.searchText !== this.simpleSearch.getSearchText() ? true : false);
+		var filterQuery = this._applyFilters(forceApply == true || this.searchText !== this.simpleSearch.getSearchText() ? true : false);
 
 		var query;
 		//quick search?
@@ -1781,8 +1804,8 @@ function initAbstractToolbarFilterUX() {
 			this.setSearchText(searchText);
 		}
 		
-		this._applyFilters(true);
-		this.executeSearch(searchText);
+		// this._applyFilters(true);
+		this._executeSearch(searchText, true);
 	}
 	
 	/**
@@ -1793,6 +1816,19 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.executeSearch = function(searchText) {
+		this._executeSearch(searchText)
+	}
+	
+	/**
+	 * Executes the search
+	 * 
+	 * @param {String} [searchText] optional searchText to search for; if not provided here, call setSearchText() to set the search criteria before performing the search
+	 * @param {Boolean} [forceApply]
+	 * @protected 
+	 * 
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype._executeSearch = function(searchText, forceApply) {
 		var searchTextChanged = this.searchText !== this.simpleSearch.getSearchText() ? true : false;
 		var foundset = this.getFoundSet();
 		if (!foundset) {
@@ -1804,7 +1840,7 @@ function initAbstractToolbarFilterUX() {
 		var sortString = foundset.getCurrentSort();
 
 		// quick search
-		var searchQuery = this.getQuery();
+		var searchQuery = this._getQuery(forceApply);
 		
 		// keep the sort
 		if (sortString) {
