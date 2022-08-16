@@ -1591,9 +1591,28 @@ function initAbstractToolbarFilterUX() {
 
 				break;
 			case 'DATE':
+				var DATE = scopes.svyPopupFilter.SELECTED_DATES;
 				obj.values = obj.values.map(function(value) {
 					if (value instanceof String){
-						return new Date(value);
+						//if is a default value(today, tomorrow...) will return value like a string
+						switch (value) {
+						case DATE.TODAY:
+						case DATE.TOMORROW:
+						case DATE.YESTERDAY:
+						case DATE.THIS_MONTH:
+						case DATE.THIS_WEEK:
+						case DATE.THIS_YEAR:
+						case DATE.NEXT_MONTH:
+						case DATE.NEXT_WEEK:
+						case DATE.NEXT_YEAR:
+						case DATE.LAST_MONTH:
+						case DATE.LAST_WEEK:
+						case DATE.LAST_YEAR:
+							return value;
+						default:
+						//if is not a default value will return new Date(value) like a date
+							return new Date(value);
+						}	
 					} else if (value) {
 						return new Date(value);
 					} 
