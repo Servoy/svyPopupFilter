@@ -116,6 +116,7 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 
 /* TODO should be a component property instead ?
  hide the time picker */
+.svy-popup-filter-date .bts-calendar-inline .tempus-dominus-widget .toolbar,
 .svy-popup-filter-date .bts-calendar-inline li.picker-switch {
 	display: none;
 }
