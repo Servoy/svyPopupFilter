@@ -3018,8 +3018,8 @@ function initFilter() {
 function createFilterFromGridColumn(column) {
 	var filter = new Filter(getI18nText(column.headerTitle), column.dataprovider);
 	filter.id = column.id || column.dataprovider;
+	filter.filterType  = column.filterType;
 	filter.valuelist = ( column.valuelist && column.valuelist.name ) ? column.valuelist.name : column.valuelist;
-	filter.valuelist = column.valuelist;
 	filter.useInSearch = column.visible;
 	filter.setOperator(getPopupDefaultOperator(filter.filterType));
 	
