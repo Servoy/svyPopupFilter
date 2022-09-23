@@ -388,8 +388,12 @@ function SvyDateFilter(){
 	
 	AbstractPopupFilter.call(this);
 	
-	// TODO set the default date filter
-	this.setRendererForm(forms.svyDatePopupFilter);
+	if (scopes.svySystem.isTINGClient()) {
+		this.setRendererForm(forms.svyDatePopupFilterTiNG);
+	} else {
+		// TODO set the default date filter
+		this.setRendererForm(forms.svyDatePopupFilter);
+	}
 }
 
 /**
