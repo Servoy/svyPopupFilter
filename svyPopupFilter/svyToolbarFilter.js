@@ -3211,7 +3211,7 @@ var init = (function() {
 	initNgGridListComponentFilterRenderer();
 	initFilter();
 	
-	// different default for TiNG
+	// Use different Popup Form for TiNG
 	if (scopes.svySystem.isTINGClient()) {
 		setPopupRendererForm(FILTER_TYPES.DATE, forms.svyDatePopupFilterTiNG);
 	}
