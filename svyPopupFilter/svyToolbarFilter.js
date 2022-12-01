@@ -31,6 +31,14 @@ var FILTER_TYPES = {
 };
 
 /**
+ * The default value for case sensitivity 
+ * @private 
+ * @type {Boolean}
+ * @properties={typeid:35,uuid:"F1FBC320-45AF-4BEB-8AD2-269BA93B5F67",variableType:-4}
+ */
+var defaultCaseSensitivity = application.getUserProperty('search.defaultCaseSensitivity') ? true : false;
+
+/**
  * @type {String}
  * @private
  *
@@ -599,7 +607,7 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 		var op = filter.getOperator();
 		var values = filter.getValues();
 		var useNot = false;
-		var useIgnoreCase = true; // default to case -insensitive
+		var useIgnoreCase = !defaultCaseSensitivity; // default to case -insensitive
 		
 		var today = new Date();
 		var tomorrow, yesterday, date;
