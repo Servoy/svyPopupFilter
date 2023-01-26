@@ -1658,7 +1658,9 @@ function initAbstractToolbarFilterUX() {
 			element.removeStyleClass('has-filter');
 		}
 		
-		this.search(this.searchText);
+		if (this.autoApply !== false) {
+			this.search(this.searchText);
+		}
 	}
 	
 	/**
