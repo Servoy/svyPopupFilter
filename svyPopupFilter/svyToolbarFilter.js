@@ -1534,6 +1534,20 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype.hasFilters = function() {
 		return this.getFilters().length > 0 ? true : false;
 	}
+
+	/**
+     * Returns whether filters are automatically applied each time they were changed (defaults to true)
+	 * When set to false via setAutoApplyFilters(), filters can be applied via applyFilters() of this ToolbarFilter
+	 * 
+	 * @return {Boolean}
+	 * 
+	 * @public
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.isAutoApply = function() {
+		return this.autoApply;
+	}	
 	
 	/**
 	 * Returns the filters' state of the toolbar
