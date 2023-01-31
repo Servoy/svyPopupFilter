@@ -1556,7 +1556,7 @@ function initAbstractToolbarFilterUX() {
 				id: String,
 				dataprovider: String,
 				operator: String,
-				params: Object,
+				customProperties: Object,
 				text: String,
 				values: Array}>} jsonState
 				
@@ -1569,7 +1569,6 @@ function initAbstractToolbarFilterUX() {
 		for (var dp in this.toolbarFilters) {
 			var filter = this.toolbarFilters[dp];
 			var filterState = filter.getState();
-			delete filterState.params;
 			jsonState.push(filterState);
 		}
 		return jsonState;
@@ -1582,7 +1581,7 @@ function initAbstractToolbarFilterUX() {
 	 *			id: String,
 	 *			dataprovider: String,
 	 *			operator: String,
-	 *			params: Object,
+	 *			customProperties: Object,
 	 *			text: String,
 	 *			values: Array}>} jsonState
 	 *
@@ -2058,8 +2057,8 @@ function initAbstractToolbarFilterUX() {
 		if (!popupFilter && this.onFilterCreate) {
 			popupFilter = scopes.svySystem.callMethod(this.onFilterCreate, [filter]);
 			if (popupFilter) {
-				// include this as param
-				popupFilter.addParam(this);
+				// include this as property
+				popupFilter.addCustomProperty('toolbarFilterUX', this);
 				// set filter's dataprovider
 				popupFilter.setDataProvider(dataprovider);
 				// persist the filter in memory
@@ -2146,8 +2145,8 @@ function initAbstractToolbarFilterUX() {
 					popupFilter.setOperator(operator);
 				}
 				
-				// include this as param
-				popupFilter.addParam(this);
+				// include this as a property
+				popupFilter.addCustomProperty('toolbarFilterUX', this);
 
 				// persist the filter in memory
 				this.toolbarFilters[filter.dataprovider] = popupFilter;
@@ -2296,7 +2295,7 @@ function initAbstractToolbarFilterUX() {
 	 */
 	AbstractToolbarFilterUX.prototype.onFilterApply = function(values, operator, popupFilter, forceApply) {
 		/** @type {AbstractToolbarFilterUX} */
-		var thisIntance = popupFilter.getParams()[0];
+		var thisIntance = popupFilter.getCustomProperty('toolbarFilterUX')
 		
 		// check if values or operator have changed
 		var currentValues = popupFilter.getValues();

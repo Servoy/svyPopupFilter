@@ -359,9 +359,16 @@ function AbstractPopupFilter(){
 	
 	/** 
 	 * @protected 
+	 * @deprecated 
 	 * @type {Array}
 	 * */	
 	this.params = [];
+	
+	/**
+	 * @protected 
+	 * @type {Object}
+	 */
+	this.customProperties = {};
 	
 	/** 
 	 * @type {String} 
@@ -723,6 +730,7 @@ function initAbstractPopupFilter() {
 	 * Add a params to be added into the onSelect callback arguments
 	 * @param {Object} param
 	 * @public
+	 * @deprecated use addCustomProperty instead
 	 * @this {AbstractPopupFilter}
 	 * */
 	AbstractPopupFilter.prototype.addParam = function(param) {
@@ -730,18 +738,67 @@ function initAbstractPopupFilter() {
 	}
 
 	/**
+	 * Adds a custom property
+	 * @param {String} propertyName
+	 * @param {*} propertyValue
+	 * @public
+	 * @this {AbstractPopupFilter}
+	 * */
+	AbstractPopupFilter.prototype.addCustomProperty = function(propertyName, propertyValue) {
+		if (!this.customProperties) {
+			this.customProperties = {};
+		}
+		this.customProperties[propertyName] = propertyValue;
+	}	
+
+	/**
 	 * @public
 	 * @return {Array}
+	 * @deprecated use getCustomProperties instead
 	 * @this {AbstractPopupFilter}
 	 * */
 	AbstractPopupFilter.prototype.getParams = function() {
 		return this.params;
+	}	
+
+	/**
+	 * Returns the custom property added with the given property name
+	 * @param {String} propertyName
+	 * @public
+	 * @return {Object}
+	 * @this {AbstractPopupFilter}
+	 * */
+	AbstractPopupFilter.prototype.getCustomProperty = function(propertyName) {
+		return this.customProperties ? this.customProperties[propertyName] : null;
+	}	
+
+	/**
+	 * Returns the custom properties added
+	 * @public
+	 * @return {Object}
+	 * @this {AbstractPopupFilter}
+	 * */
+	AbstractPopupFilter.prototype.getCustomProperties = function() {
+		return this.customProperties;
+	}	
+
+	/**
+	 * Returns the custom properties added omitting the toolbarFilterUX property to prevent cyclic values
+	 * @protected 
+	 * @return {Object}
+	 * @this {AbstractPopupFilter}
+	 * */
+	AbstractPopupFilter.prototype.getCustomPropertiesState = function() {
+		var filterProps = Object.assign({}, this.customProperties);
+		delete filterProps['toolbarFilterUX'];
+		return filterProps;
 	}
 
 	/**
 	 * Removes a param at the specified index
 	 * @public
 	 * @param {Number} index
+	 * @deprecated 
 	 * @this {AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.removeParam = function(index) {
@@ -751,6 +808,7 @@ function initAbstractPopupFilter() {
 	/**
 	 * Clear the params
 	 * @public
+	 * @deprecated 
 	 * @this {AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.clearParams = function() {
@@ -763,7 +821,7 @@ function initAbstractPopupFilter() {
 				id: String,
 				dataprovider: String,
 				operator: String,
-				params: Object,
+				customProperties: Object,
 				text: String,
 				values: Array,
 				constructor: Object}}
@@ -775,7 +833,7 @@ function initAbstractPopupFilter() {
 			id: this.getID(),
 			dataprovider: this.getDataProvider(),
 			operator: this.getOperator(),
-			params: this.getParams(),
+			customProperties: this.getCustomPropertiesState(),
 			text: this.getText(),
 			values: this.getValues(),
 			constructor: this.constructor
@@ -788,7 +846,7 @@ function initAbstractPopupFilter() {
 				id: String,
 				dataprovider: String,
 				operator: String,
-				params: Object,
+				customProperties: Object,
 				text: String,
 				values: Array}} jsonState
 	 * @return {AbstractPopupFilter}
@@ -801,6 +859,11 @@ function initAbstractPopupFilter() {
 		filter.setOperator(jsonState.operator);
 		filter.setText(jsonState.text);
 		filter.setValues(jsonState.values);
+		if (jsonState.customProperties) {
+			for (var c in jsonState.customProperties) {
+				filter.addCustomProperty(c, jsonState.customProperties[c]);
+			}
+		}
 		return this;
 	}
 	
@@ -957,7 +1020,7 @@ function initSvyDateFilter() {
 				id: String,
 				dataprovider: String,
 				operator: String,
-				params: Object,
+				customProperties: Object,
 				text: String,
 				values: Array,
 				useLocalDateTime:Boolean}}
@@ -979,7 +1042,7 @@ function initSvyDateFilter() {
 				id: String,
 				dataprovider: String,
 				operator: String,
-				params: Object,
+				customProperties: Object,
 				text: String,
 				values: Array,
 				useLocalDateTime: Boolean,
@@ -1066,7 +1129,7 @@ function initSvySelectFilter() {
 				id: String,
 				dataprovider: String,
 				operator: String,
-				params: Object,
+				customProperties: Object,
 				text: String,
 				values: Array}}
 	 *
@@ -1088,7 +1151,7 @@ function initSvySelectFilter() {
 				id: String,
 				dataprovider: String,
 				operator: String,
-				params: Object,
+				customProperties: Object,
 				text: String,
 				values: Array,
 				lookupSelectedRecords: Array}} jsonState
