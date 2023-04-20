@@ -2776,6 +2776,8 @@ function initNgGridListComponentFilterRenderer() {
 		var filters = [];
 		var innerColumnFiltersCache = this.innerColumnFiltersCache;
 
+		/** @type {AbstractToolbarFilterUX} */
+		var thisInstance = this;
 		var table = this.tableComponent;
 		var sortByName = globalFilterConfig.sortPickerAlphabetically;
 
@@ -2790,7 +2792,7 @@ function initNgGridListComponentFilterRenderer() {
 					return innerColumnFiltersCache[cacheIndex];
 				}
 			}
-			var innerColFilter = createFilterFromGridColumn(col);
+			var innerColFilter = createFilterFromGridColumn(col, thisInstance);
 			innerColumnFiltersCache.push(innerColFilter);
 			return innerColFilter;
 		}
@@ -3035,11 +3037,12 @@ function initFilter() {
  * @return {Filter}
  * 
  * @param {CustomType<aggrid-groupingtable.column>} column
+ * @param {AbstractToolbarFilterUX} toolbar
  * @private 
  * @properties={typeid:24,uuid:"0D4C4ECF-973A-4F02-85A0-02E96B5E49C9"}
  */
-function createFilterFromGridColumn(column) {
-	var filter = new Filter(getI18nText(column.headerTitle), column.dataprovider);
+function createFilterFromGridColumn(column, toolbar) {
+	var filter = new Filter(getI18nText(column.headerTitle), column.dataprovider, toolbar);
 	filter.id = column.id || column.dataprovider;
 	filter.filterType  = column.filterType;
 	filter.valuelist = ( column.valuelist && column.valuelist.name ) ? column.valuelist.name : column.valuelist;
