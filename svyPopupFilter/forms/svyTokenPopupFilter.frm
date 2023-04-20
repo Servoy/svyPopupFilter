@@ -55,13 +55,13 @@ size:{
 height:25,
 width:25
 },
-styleClass:"pull-right btn-close text-tertiary clickable",
-styleclass:"pull-right btn-close text-tertiary clickable"
+styleClass:"pull-right close-button text-tertiary clickable",
+styleclass:"pull-right close-button text-tertiary clickable"
 },
 location:"2,2",
 name:"faClose",
 size:"25,25",
-styleClass:"pull-right btn-close text-tertiary clickable",
+styleClass:"pull-right close-button text-tertiary clickable",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"1916976D-2F8A-41FA-890C-48B91A3DAED0"

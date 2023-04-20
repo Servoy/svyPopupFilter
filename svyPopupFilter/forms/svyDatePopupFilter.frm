@@ -258,15 +258,15 @@ typeid:47,
 uuid:"9B061B95-CAAD-479E-996E-282E817B8FEE"
 },
 {
-cssPosition:"0,0,-1,-1,25,25",
+cssPosition:"8,10,-1,-1,25,25",
 json:{
 alignment:"center",
 cssPosition:{
 bottom:"-1",
 height:"25",
 left:"-1",
-right:"0",
-top:"0",
+right:"10",
+top:"8",
 width:"25"
 },
 faclass:"fa fa-close",
@@ -276,12 +276,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"default-align text-tertiary clickable",
+styleClass:"pull-right close-button text-tertiary clickable",
 styleclass:"fa fa-close text-tertiary clickable"
 },
 name:"faClose",
 size:"25,25",
-styleClass:"default-align text-tertiary clickable",
+styleClass:"pull-right close-button text-tertiary clickable",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"A159D254-8C83-4D01-A915-08C5927D10CC"

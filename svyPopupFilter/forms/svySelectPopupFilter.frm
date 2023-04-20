@@ -13,9 +13,8 @@ items:[
 {
 extendsID:"1F48624E-2692-4AB4-8C1E-1C458CED8440",
 json:{
-styleClass:"pull-right btn-close"
+imageStyleClass:"fa fa-close"
 },
-styleClass:"pull-right btn-close",
 typeid:47,
 uuid:"185F30B7-985B-4279-A49E-0425182BD9FA"
 }
