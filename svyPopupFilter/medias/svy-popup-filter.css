@@ -49,7 +49,7 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 	cursor: pointer;
 }
 
-.svy-popup-filter .svy-layoutcontainer .btn-close {
+.svy-popup-filter .svy-layoutcontainer .close-button {
     position: absolute;
     line-height: 24px;
     top: 8px;
