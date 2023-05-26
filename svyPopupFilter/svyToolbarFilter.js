@@ -1184,12 +1184,12 @@ function initAbstractToolbarFilterUX() {
 		
 		// get the filter query
 		var filterQuery;
-		if (filters.length) {
-			filterQuery = getFilterQuery(filters, foundset, onFilterApplyQueryFunction);
-			
+		if (filters.length) {			
 			// apply the query as filter
 			// DO NOTHING if onSearchCommand is set
 			if ((this.autoApply === true || forceApply === true) && !this.onSearchCommand) {
+				filterQuery = getFilterQuery(filters, foundset, onFilterApplyQueryFunction);
+				
 				if (foundset.getRelationName()) {
 					// since 2022.3 addFoundSetFilterParam(filterQuery) is not allowed anymore
 					foundset.loadRecords(filterQuery);
