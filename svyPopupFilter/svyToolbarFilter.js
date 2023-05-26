@@ -1885,7 +1885,7 @@ function initAbstractToolbarFilterUX() {
 		var searchQuery = this._getQuery(forceApply);
 		
 		// keep the sort
-		if (sortString) {
+		if (searchQuery && sortString) {
 			var sorts = sortString.split(",");
 			
 			// it can handle joins
