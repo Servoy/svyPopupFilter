@@ -1198,7 +1198,7 @@ function initAbstractToolbarFilterUX() {
 	 * That method then can create and return any filter that will then be used for this column
 	 * 
 	 * @public
-	 * @param {function(Filter): scopes.svyPopupFilter.AbstractPopupFilter} callback function that receives the Filter object as argument and must return a scopes.svyPopupFilter.AbstractPopupFilter
+	 * @param {function(scopes.svyToolbarFilter.Filter): scopes.svyPopupFilter.AbstractPopupFilter} callback function that receives the Filter object as argument and must return a scopes.svyPopupFilter.AbstractPopupFilter
 	 * @return {AbstractToolbarFilterUX}
 	 *
 	 * @this {AbstractToolbarFilterUX}
