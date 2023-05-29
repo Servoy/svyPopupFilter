@@ -605,61 +605,9 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 		}
 
 		var op = filter.getOperator();
-		var values = filter.getValues();
+		var values = filter.getValuesForQuery();
 		var useNot = false;
 		var useIgnoreCase = !defaultCaseSensitivity; // default to case -insensitive
-		
-		var today = new Date();
-		var tomorrow, yesterday, date;
-		var DATE = scopes.svyPopupFilter.SELECTED_DATES;
-		switch (values[0]) {
-		case DATE.TODAY:
-			values = [scopes.svyDateUtils.toStartOfDay(today)];
-			break;
-		case DATE.TOMORROW:
-			tomorrow = scopes.svyDateUtils.addDays(today, 1);
-			values = [scopes.svyDateUtils.toStartOfDay(tomorrow)];
-			break;
-		case DATE.YESTERDAY:
-			yesterday = scopes.svyDateUtils.addDays(today, -1);
-			values = [scopes.svyDateUtils.toStartOfDay(yesterday)];
-			break;
-		case DATE.LAST_MONTH:
-			date = scopes.svyDateUtils.addMonths(today, -1);
-			values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date))];
-			break;
-		case DATE.LAST_WEEK:
-			date = scopes.svyDateUtils.addDays(today, -7);
-			values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date))];
-			break;
-		case DATE.LAST_YEAR:
-			date = scopes.svyDateUtils.addYears(today, -1);
-			values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date))];
-			break;
-		case DATE.NEXT_MONTH:
-			date = scopes.svyDateUtils.addMonths(today, 1);
-			values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(date)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(date))];
-			break;
-		case DATE.NEXT_WEEK:
-			date = scopes.svyDateUtils.addDays(today, 7);
-			values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(date)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(date))];
-			break;
-		case DATE.NEXT_YEAR:
-			date = scopes.svyDateUtils.addYears(today, 1);
-			values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(date)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(date))];
-			break;
-		case DATE.THIS_MONTH:
-			values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(today)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(today))];
-			break;
-		case DATE.THIS_WEEK:
-			values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(today)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(today))];
-			break;
-		case DATE.THIS_YEAR:
-			values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(today)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(today))];
-			break;
-		default:
-			break;
-		}
 
 		// Clean up values from empty values
 		var qValues = values.filter(function(qv) {

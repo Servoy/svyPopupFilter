@@ -563,17 +563,82 @@ function initAbstractPopupFilter() {
 	}
 	
 	/**
+	 * Returns the values of this filter
 	 * @public 
 	 * @return {Array}
 	 * @this {AbstractPopupFilter}
 	 */
-	AbstractPopupFilter.prototype.getValues = function(){
+	AbstractPopupFilter.prototype.getValues = function() {
 		if (this.filterValues) {
 			return this.filterValues.concat([]);
 		} else {
 			return [];
 		}
 	}
+	
+	/**
+	 * Returns the values of this filter possibly resolving placeholder values (e.g. any of the SELECTED_DATES enum values) with their actual query values
+	 * @public 
+	 * @return {Array}
+	 * @this {AbstractPopupFilter}
+	 */
+	AbstractPopupFilter.prototype.getValuesForQuery = function() {
+		if (this.filterValues) {
+			var values = this.filterValues;
+			var dateValue = new Date();
+			switch (values[0]) {
+				case SELECTED_DATES.TODAY:
+					values = [scopes.svyDateUtils.toStartOfDay(dateValue)];
+					break;
+				case SELECTED_DATES.TOMORROW:
+					dateValue = scopes.svyDateUtils.addDays(dateValue, 1);
+					values = [scopes.svyDateUtils.toStartOfDay(dateValue)];
+					break;
+				case SELECTED_DATES.YESTERDAY:
+					dateValue = scopes.svyDateUtils.addDays(dateValue, -1);
+					values = [scopes.svyDateUtils.toStartOfDay(dateValue)];
+					break;
+				case SELECTED_DATES.LAST_MONTH:
+					dateValue = scopes.svyDateUtils.addMonths(dateValue, -1);
+					values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(dateValue)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(dateValue))];
+					break;
+				case SELECTED_DATES.LAST_WEEK:
+					dateValue = scopes.svyDateUtils.addDays(dateValue, -7);
+					values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(dateValue)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(dateValue))];
+					break;
+				case SELECTED_DATES.LAST_YEAR:
+					dateValue = scopes.svyDateUtils.addYears(dateValue, -1);
+					values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(dateValue)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(dateValue))];
+					break;
+				case SELECTED_DATES.NEXT_MONTH:
+					dateValue = scopes.svyDateUtils.addMonths(dateValue, 1);
+					values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(dateValue)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(dateValue))];
+					break;
+				case SELECTED_DATES.NEXT_WEEK:
+					dateValue = scopes.svyDateUtils.addDays(dateValue, 7);
+					values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(dateValue)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(dateValue))];
+					break;
+				case SELECTED_DATES.NEXT_YEAR:
+					dateValue = scopes.svyDateUtils.addYears(dateValue, 1);
+					values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(dateValue)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(dateValue))];
+					break;
+				case SELECTED_DATES.THIS_MONTH:
+					values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfMonth(dateValue)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfMonth(dateValue))];
+					break;
+				case SELECTED_DATES.THIS_WEEK:
+					values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfWeek(dateValue)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfWeek(dateValue))];
+					break;
+				case SELECTED_DATES.THIS_YEAR:
+					values = [scopes.svyDateUtils.toStartOfDay(scopes.svyDateUtils.getFirstDayOfYear(dateValue)), scopes.svyDateUtils.toEndOfDay(scopes.svyDateUtils.getLastDayOfYear(dateValue))];
+					break;
+				default:
+					break;
+			}
+			return values.concat([]);
+		} else {
+			return [];
+		}
+	}	
 	
 	/**
 	 * Sets the popupFilter dataprovider
