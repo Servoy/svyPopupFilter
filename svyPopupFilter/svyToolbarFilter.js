@@ -81,6 +81,7 @@ function FilterConfig() {
 	this.useNonVisibleColumns = true;
 	this.globalDateDisplayFormat = "dd-MM-yyyy";
 	this.sortPickerAlphabetically = false;
+	this.treatEmptyStringsAsNull = true;
 }
 
 /**
@@ -119,6 +120,20 @@ function setConfigUseNonVisibleColumns(useNonVisibleColumns) {
  */
 function setConfigSortPickerAlphabetically(sortAlphabetically) {
 	 globalFilterConfig.sortPickerAlphabetically = sortAlphabetically;
+}
+
+/**
+ * When set to true, filtering for Strings using IS_NULL or NOT_NULL 
+ * operators will treat empty strings as NULL
+ * 
+ * @since v2023.06
+ * @public 
+ * @param {Boolean} treatEmptyStringsAsNull Default true.
+ *
+ * @properties={typeid:24,uuid:"0C8ADE60-6D51-4412-9790-D72911F48239"}
+ */
+function setConfigTreatEmptyStringsAsNull(treatEmptyStringsAsNull) {
+	 globalFilterConfig.treatEmptyStringsAsNull = treatEmptyStringsAsNull;
 }
 
 /**
@@ -795,6 +810,12 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 		if (whereClause && whereClause.getTypeAsString() != 'TEXT') {
 			useIgnoreCase = false;
 		}
+		
+		if (whereClause.getTypeAsString() == 'TEXT' && op == "isNull" && globalFilterConfig.treatEmptyStringsAsNull === true) {
+			op = 'isin';
+			value = ['', null];
+			useIgnoreCase = false;
+		}
 
 		// do not lower case Dates.
 		if (value instanceof Date) {
@@ -874,7 +895,7 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 			} else if (value[v] instanceof String && value.indexOf("%!=") === 0 ) {
 				whereClause = whereClause.not[op]("%" + value.substr(3));
 			} else {
-			whereClause = whereClause[op](value);
+				whereClause = whereClause[op](value);
 			}
 			break;
 		case "isin":
