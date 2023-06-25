@@ -260,7 +260,6 @@ uuid:"9B061B95-CAAD-479E-996E-282E817B8FEE"
 {
 cssPosition:"8,10,-1,-1,25,25",
 json:{
-alignment:"center",
 cssPosition:{
 bottom:"-1",
 height:"25",
@@ -269,15 +268,13 @@ right:"10",
 top:"8",
 width:"25"
 },
-faclass:"fa fa-close",
-imageStyleClass:"fa fa-close",
+imageStyleClass:"fa-solid fa-xmark",
 onActionMethodID:"F18750A2-44A6-4CC0-B6A9-C973F0569851",
 size:{
 height:25,
 width:25
 },
-styleClass:"pull-right close-button text-tertiary clickable",
-styleclass:"fa fa-close text-tertiary clickable"
+styleClass:"pull-right close-button text-tertiary clickable"
 },
 name:"faClose",
 size:"25,25",

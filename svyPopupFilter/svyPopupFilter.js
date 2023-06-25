@@ -32,32 +32,32 @@ var STYLING = {
 	 * Close the filter popup
 	 * Applies to all filter types.
 	 *  */ 
-	CLOSE_ICON: 'fa fa-close',
+	CLOSE_ICON: 'fa-solid fa-xmark',
 	/**  
 	 * Remove the filter from toolbar.
 	 * Applies to the filter toolbar
 	 * */
-	REMOVE_ICON: 'fa fa-trash',
+	REMOVE_ICON: 'fa-solid fa-trash',
 	/**  
 	 * Indicates the filter value should be excluded from the search result.
 	 * Applies to the token filter type
 	 * */
-	EXCLUDE_ICON: 'fas fa-minus-circle',
+	EXCLUDE_ICON: 'fa-solid fa-circle-minus',
 	/**  
 	 * Indicates the filter value should be included in the search result.
 	 * Applies to the token filter type
 	 * */
-	INCLUDE_ICON: 'fas fa-check-circle',
+	INCLUDE_ICON: 'fa-solid fa-circle-check',
 	/**  
 	 * Show the filter popup clicking the toolbar filter.
 	 * Applies to the filter toolbar.
 	 * */
-	OPEN_FILTER_ICON: 'fas fa-angle-down',
+	OPEN_FILTER_ICON: 'fa-solid fa-angle-down',
 	/**  
 	 * Remove the single filter.
 	 * Applies to the token filter type
 	 * */
-	REMOVE_FILTER_ICON: 'fas fa-times'
+	REMOVE_FILTER_ICON: 'fa-solid fa-xmark'
 }
 
 /**
@@ -398,7 +398,6 @@ function SvyDateFilter(){
 	if (scopes.svySystem.isTINGClient()) {
 		this.setRendererForm(forms.svyDatePopupFilterTiNG);
 	} else {
-		// TODO set the default date filter
 		this.setRendererForm(forms.svyDatePopupFilter);
 	}
 }

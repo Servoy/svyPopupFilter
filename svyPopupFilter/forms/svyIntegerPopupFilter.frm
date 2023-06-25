@@ -69,7 +69,7 @@ uuid:"11F09BCB-5F41-44C9-BC7D-AF06681FD0EF"
 },
 {
 json:{
-alignment:null,
+imageStyleClass:"fa-solid fa-circle-dot",
 location:{
 x:1,
 y:1
@@ -79,13 +79,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"fa fa-dot-circle text-primary clickable",
-styleclass:"fas fa-dot-circle text-primary clickable"
+styleClass:"text-primary clickable select-icon"
 },
 location:"1,1",
 name:"iconEqualTo",
 size:"25,25",
-styleClass:"fa fa-dot-circle text-primary clickable",
+styleClass:"text-primary clickable select-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"F700139E-4CF5-4D85-8779-8CD0C5D20116"
@@ -213,7 +212,7 @@ uuid:"983F721F-1386-4D4A-957F-604EB71ECCEE"
 },
 {
 json:{
-alignment:null,
+imageStyleClass:"fa-regular fa-circle",
 location:{
 x:1,
 y:1
@@ -223,13 +222,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"fa fa-circle-o text-tertiary clickable",
-styleclass:"fa fa-circle-o text-tertiary clickable"
+styleClass:"text-primary clickable select-icon"
 },
 location:"1,1",
 name:"iconGreater",
 size:"25,25",
-styleClass:"fa fa-circle-o text-tertiary clickable",
+styleClass:"text-primary clickable select-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"D4D642BB-F956-42A2-8FEA-B44E952B614C"
@@ -405,7 +403,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-alignment:null,
+imageStyleClass:"fa-regular fa-circle",
 location:{
 x:1,
 y:1
@@ -415,13 +413,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"fa fa-circle-o text-tertiary clickable",
-styleclass:"fa fa-circle-o text-tertiary clickable"
+styleClass:"text-primary clickable select-icon"
 },
 location:"1,1",
 name:"iconBetween",
 size:"25,25",
-styleClass:"fa fa-circle-o text-tertiary clickable",
+styleClass:"text-primary clickable select-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"5BB653BD-1E33-4C01-A7B7-EB65D6E7B57E"
@@ -535,7 +532,7 @@ uuid:"392322FF-8930-413D-BAFE-D4ED8F8DAE7A"
 },
 {
 json:{
-alignment:null,
+imageStyleClass:"fa-regular fa-circle",
 location:{
 x:1,
 y:1
@@ -545,13 +542,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"fa fa-circle-o text-tertiary clickable",
-styleclass:"fa fa-circle-o text-tertiary clickable"
+styleClass:"text-primary clickable select-icon"
 },
 location:"1,1",
 name:"iconSmaller",
 size:"25,25",
-styleClass:"fa fa-circle-o text-tertiary clickable",
+styleClass:"text-primary clickable select-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"87D4EBCC-107F-472D-BF8C-0147A9D37092"
@@ -672,8 +668,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-faclass:"fa fa-close",
-imageStyleClass:"fa fa-close",
+imageStyleClass:"fa-solid fa-xmark",
 location:{
 x:1,
 y:1
@@ -683,8 +678,7 @@ size:{
 height:25,
 width:25
 },
-styleClass:"pull-right close-button text-tertiary clickable",
-styleclass:"fa fa-close pull-right close-button text-tertiary clickable"
+styleClass:"pull-right close-button text-tertiary clickable"
 },
 location:"1,1",
 name:"faClose",

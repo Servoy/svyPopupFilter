@@ -44,8 +44,7 @@ specname:\"div\"\
 items:[
 {
 json:{
-faclass:"fa fa-close",
-imageStyleClass:"fa fa-close",
+imageStyleClass:"fa-solid fa-xmark",
 location:{
 x:2,
 y:2
@@ -55,8 +54,7 @@ size:{
 height:25,
 width:25
 },
-styleClass:"pull-right close-button text-tertiary clickable",
-styleclass:"pull-right close-button text-tertiary clickable"
+styleClass:"pull-right close-button text-tertiary clickable"
 },
 location:"2,2",
 name:"faClose",
@@ -137,9 +135,8 @@ uuid:"565D5A67-1ADE-49B3-B570-660DD736BC81"
 },
 {
 json:{
-alignment:null,
-faclass:"fa fa-trash text-danger clickable svy-popup-filter-token-icon",
 formIndex:0,
+imageStyleClass:"fa-solid fa-trash",
 location:{
 x:1,
 y:1
@@ -149,12 +146,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"text-danger clickable svy-popup-filter-token-icon"
+styleClass:"text-danger clickable svy-popup-filter-token-icon margin-right-10"
 },
 location:"1,1",
 name:"iconRemoveAll",
 size:"25,25",
-styleClass:"text-danger clickable svy-popup-filter-token-icon",
+styleClass:"text-danger clickable svy-popup-filter-token-icon margin-right-10",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"9A163BB7-51AB-4844-9461-A4FB0A44894F"

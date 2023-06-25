@@ -12,18 +12,18 @@ function onLoad(event) {
 }
 
 /**
- * @protected 
+ * @protected
  * @param firstShow
  * @param event
  *
  * @properties={typeid:24,uuid:"0D79E880-F8C6-487A-919D-7F5A4AF03DDA"}
  * @override
  */
-function onShow(firstShow,event) {
+function onShow(firstShow, event) {
 	if (filter && filter.getText()) {
 		elements.labelTitle.text = filter.getText();
 	}
-	_super.onShow(firstShow,event);
+	_super.onShow(firstShow, event);
 }
 
 /**
@@ -37,12 +37,12 @@ function toggleOperator(newOperator) {
 }
 
 /**
- * @public  
+ * @public
  * @param {String} defaultOperator
  *
  * @properties={typeid:24,uuid:"A939C8B3-1E22-44E3-B184-42A4078F8459"}
  */
- function setOperator(defaultOperator) {
+function setOperator(defaultOperator) {
 	_super.setOperator(defaultOperator);
 	updateUI();
 }
@@ -92,35 +92,29 @@ function onActionToggleBetween(event) {
 }
 
 /**
- * @protected 
+ * @protected
  * @param {RuntimeWebComponent<bootstrapcomponents-label>} element
  *
  * @properties={typeid:24,uuid:"24EDBA5E-5CE5-4975-A584-25CC47D235E0"}
  */
 function setIconUnselected(element) {
-	element.removeStyleClass('fa-dot-circle');
-	if(!element.hasStyleClass('fa-circle-o')) {
-		element.addStyleClass('fa-circle-o');
-	}
+	element.imageStyleClass = 'fa-regular fa-circle';
 	element.removeStyleClass('text-primary');
-	if(!element.hasStyleClass('text-tertiary')) {
+	if (!element.hasStyleClass('text-tertiary')) {
 		element.addStyleClass('text-tertiary');
 	}
 }
 
 /**
- * @protected 
+ * @protected
  * @param {RuntimeWebComponent<bootstrapcomponents-label>} element
- * 
+ *
  * @properties={typeid:24,uuid:"DF5B1D2E-C0E3-4982-806B-DFC0185BE237"}
  */
 function setIconSelected(element) {
-	element.removeStyleClass('fa-circle-o');
-	if(!element.hasStyleClass('fa-dot-circle')) {
-		element.addStyleClass('fa-dot-circle');
-	}
+	element.imageStyleClass = 'fa-solid fa-circle-dot';
 	element.removeStyleClass('text-tertiary');
-	if(!element.hasStyleClass('text-primary')) {
+	if (!element.hasStyleClass('text-primary')) {
 		element.addStyleClass('text-primary');
 	}
 }

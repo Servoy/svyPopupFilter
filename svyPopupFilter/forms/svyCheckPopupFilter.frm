@@ -69,7 +69,6 @@ uuid:"007BC9DB-CAE3-473A-B54B-4CE6A4C50158"
 },
 {
 json:{
-alignment:null,
 imageStyleClass:"fas fa-dot-circle",
 location:{
 x:1,
@@ -80,8 +79,7 @@ size:{
 height:25,
 width:25
 },
-styleClass:"text-primary clickable",
-styleclass:"fas fa-dot-circle text-primary clickable"
+styleClass:"text-primary clickable"
 },
 location:"1,1",
 name:"radioChecked",
@@ -204,8 +202,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-faclass:"fa fa-close",
-imageStyleClass:"fa fa-close",
+imageStyleClass:"fa-solid fa-xmark",
 location:{
 x:1,
 y:1
@@ -215,8 +212,7 @@ size:{
 height:25,
 width:25
 },
-styleClass:"pull-right close-button text-tertiary clickable",
-styleclass:"pull-right close-button text-tertiary clickable"
+styleClass:"pull-right close-button text-tertiary clickable"
 },
 location:"1,1",
 name:"faClose",
@@ -310,7 +306,6 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-alignment:null,
 imageStyleClass:"fa fa-circle-o",
 location:{
 x:1,
@@ -321,8 +316,7 @@ size:{
 height:25,
 width:25
 },
-styleClass:"text-tertiary clickable",
-styleclass:"fa fa-circle-o text-tertiary clickable"
+styleClass:"text-tertiary clickable"
 },
 location:"1,1",
 name:"radioUnchecked",

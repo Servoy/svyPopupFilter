@@ -63,8 +63,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-faclass:"fa fa-close",
-imageStyleClass:"fa fa-close",
+imageStyleClass:"fa-solid fa-xmark",
 location:{
 x:1,
 y:1
@@ -74,8 +73,7 @@ size:{
 height:25,
 width:25
 },
-styleClass:"pull-right close-button text-tertiary clickable",
-styleclass:"fa fa-close pull-right close-button text-tertiary clickable"
+styleClass:"pull-right close-button text-tertiary clickable"
 },
 location:"1,1",
 name:"faClose",
@@ -209,7 +207,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-alignment:null,
+imageStyleClass:"fa-regular fa-circle",
 location:{
 x:1,
 y:1
@@ -219,13 +217,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"fa fa-circle-o text-tertiary clickable",
-styleclass:"fa fa-circle-o text-tertiary clickable"
+styleClass:"text-primary clickable select-icon"
 },
 location:"1,1",
 name:"iconBetween",
 size:"25,25",
-styleClass:"fa fa-circle-o text-tertiary clickable",
+styleClass:"text-primary clickable select-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"245DD8ED-3E05-48E8-B203-FF747C36B32A"
@@ -339,7 +336,7 @@ uuid:"A62E710F-9961-4676-A2FE-640E193FABC8"
 },
 {
 json:{
-alignment:null,
+imageStyleClass:"fa-solid fa-circle-dot",
 location:{
 x:1,
 y:1
@@ -349,13 +346,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"fa fa-dot-circle text-primary clickable",
-styleclass:"fas fa-dot-circle text-primary clickable"
+styleClass:"text-primary clickable select-icon"
 },
 location:"1,1",
 name:"iconEqualTo",
 size:"25,25",
-styleClass:"fa fa-dot-circle text-primary clickable",
+styleClass:"text-primary clickable select-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"CB23062F-D3EF-47D3-A141-D61D75273E43"
@@ -496,7 +492,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-alignment:null,
+imageStyleClass:"fa-regular fa-circle",
 location:{
 x:1,
 y:1
@@ -506,13 +502,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"fa fa-circle-o text-tertiary clickable",
-styleclass:"fa fa-circle-o text-tertiary clickable"
+styleClass:"text-primary clickable select-icon"
 },
 location:"1,1",
 name:"iconSmaller",
 size:"25,25",
-styleClass:"fa fa-circle-o text-tertiary clickable",
+styleClass:"text-primary clickable select-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"331244D5-D93B-41F4-8C5F-11F9434DD874"
@@ -626,7 +621,7 @@ uuid:"1C5E88AA-6399-46FF-AE09-E84523DE5BA0"
 },
 {
 json:{
-alignment:null,
+imageStyleClass:"fa-regular fa-circle",
 location:{
 x:1,
 y:1
@@ -636,13 +631,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"fa fa-circle-o text-tertiary clickable",
-styleclass:"fa fa-circle-o text-tertiary clickable"
+styleClass:"text-primary clickable select-icon"
 },
 location:"1,1",
 name:"iconGreater",
 size:"25,25",
-styleClass:"fa fa-circle-o text-tertiary clickable",
+styleClass:"text-primary clickable select-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"4799C449-0A08-461C-98CC-EE2125526418"

@@ -151,6 +151,10 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 	
 }
 
+.svy-popup-filter-number .flex-item .select-icon {
+	margin-right: 5px;
+}
+
 .svy-popup-filter-number .form-control {
 	background: transparent;
 	border: 0;
@@ -204,6 +208,7 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 
 .svy-popup-filter .svy-popup-filter-token-icon {
 	cursor: pointer;
+	margin-right: 10px;
 }
 
 .svy-popup-filter .svy-popup-filter-token-text {
