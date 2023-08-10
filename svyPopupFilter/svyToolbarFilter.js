@@ -1156,14 +1156,17 @@ function initAbstractToolbarFilterUX() {
 		if (filters.length) {			
 			// apply the query as filter
 			// DO NOTHING if onSearchCommand is set
-			if ((this.autoApply === true || forceApply === true) && !this.onSearchCommand) {
+			if (this.autoApply === true || forceApply === true) {
 				filterQuery = getFilterQuery(filters, foundset, onFilterApplyQueryFunction);
 				
-				if (foundset.getRelationName()) {
-					// since 2022.3 addFoundSetFilterParam(filterQuery) is not allowed anymore
-					foundset.loadRecords(filterQuery);
-				} else {
-					foundset.addFoundSetFilterParam(filterQuery, TOOLBAR_FILTER_NAME);
+				// load the records if there is no onSearchCommand
+				if (!this.onSearchCommand) {
+					if (foundset.getRelationName()) {
+						// since 2022.3 addFoundSetFilterParam(filterQuery) is not allowed anymore
+						foundset.loadRecords(filterQuery);
+					} else {
+						foundset.addFoundSetFilterParam(filterQuery, TOOLBAR_FILTER_NAME);
+					}
 				}
 			}
 		} else {
