@@ -795,6 +795,11 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 				continue;
 			}
 		}
+		
+		// ignore cross DB
+		if (dataProviderHasXDBRelation(dp)) {
+			continue;
+		}
 
 		/** @type {QBSelect} */
 		var querySource = null;
@@ -3193,6 +3198,27 @@ function getFilterUiDisplayValues(filterUI, filter, values) {
 	});
 
 	return displayValues;
+}
+
+/**
+ * Check a data provider string for presence of a relation which is cross-database
+ * @private 
+ * @param {String} dataProviderID
+ * @return {Boolean}
+ *
+ * @properties={typeid:24,uuid:"D60E41E7-99F5-468C-8D10-0C33FDE51B8E"}
+ */
+function dataProviderHasXDBRelation(dataProviderID) {
+	var path = dataProviderID.split('.');
+	path.pop();
+	while (path.length) {
+		var relationName = path.pop()
+		if (scopes.svyDataUtils.isCrossDBRelation(relationName)) {
+			application.output('Invalid data provider [' + dataProviderID + '] has a cross-database relation [' + relationName + '] which is not supported', LOGGINGLEVEL.WARNING);
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
