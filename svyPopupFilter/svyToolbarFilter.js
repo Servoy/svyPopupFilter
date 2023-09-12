@@ -1459,7 +1459,7 @@ function initAbstractToolbarFilterUX() {
 	 *  
 	 * Override this method in a subclass to adjust the UI to the updated values for the given dataprovider
 	 * 
-	 * @param {String} dataprovider
+	 * @param {String} dataProvider
 	 * @param {Array} values
 	 * @param {String} operator
 	 * 
@@ -1467,7 +1467,7 @@ function initAbstractToolbarFilterUX() {
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
-	AbstractToolbarFilterUX.prototype.updateFilterUI = function(dataprovider, values, operator) {
+	AbstractToolbarFilterUX.prototype.updateFilterUI = function(dataProvider, values, operator) {
 		throw scopes.svyExceptions.AbstractMethodInvocationException("updateGridFilter not implemented")
 	}
 
@@ -2184,6 +2184,27 @@ function initAbstractToolbarFilterUX() {
 		var filterPopupMenu = this.createPopupFilterPicker();
 		
 		filterPopupMenu.show(target);
+	}
+	
+	/**
+	 * Will show the filter in the toolbar. Useful to offer quick access for commonly used filters.
+	 * 
+     * @param {String} dataProvider
+	 * 
+	 * @public
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.showFilterInToolbar = function(dataProvider) {
+		
+		var filter = this.getFilter(dataProvider);
+		if (!filter) {
+			throw "Cannot find filter with dataProviderID " + dataProvider;
+		}
+		
+		if (!this.isFilterActive(filter)) {
+			this.addFilterUI(filter);
+		}
 	}
 
 	/**
