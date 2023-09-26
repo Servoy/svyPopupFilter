@@ -184,6 +184,10 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 	margin-bottom: 8px;
 }
 
+.svy-popup-filter-check .flex-item .select-icon {
+	margin-right: 5px;
+}
+
 /**************************************
 *
 *  Token Filter 

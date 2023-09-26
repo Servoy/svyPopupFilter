@@ -79,12 +79,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"text-primary clickable"
+styleClass:"text-primary clickable select-icon"
 },
 location:"1,1",
 name:"radioChecked",
 size:"25,25",
-styleClass:"text-primary clickable",
+styleClass:"text-primary clickable select-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"F2968EC8-08E2-444E-A288-9CE3D8709585"
@@ -316,12 +316,12 @@ size:{
 height:25,
 width:25
 },
-styleClass:"text-tertiary clickable"
+styleClass:"text-tertiary clickable select-icon"
 },
 location:"1,1",
 name:"radioUnchecked",
 size:"25,25",
-styleClass:"text-tertiary clickable",
+styleClass:"text-tertiary clickable select-icon",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"63D429BC-AB9C-448A-9045-AD20ECDA4C54"
