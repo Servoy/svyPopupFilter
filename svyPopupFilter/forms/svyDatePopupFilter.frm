@@ -268,7 +268,7 @@ right:"10",
 top:"8",
 width:"25"
 },
-imageStyleClass:"fa-solid fa-xmark",
+imageStyleClass:"fa fa-times fa-solid fa-xmark",
 onActionMethodID:"F18750A2-44A6-4CC0-B6A9-C973F0569851",
 size:{
 height:25,

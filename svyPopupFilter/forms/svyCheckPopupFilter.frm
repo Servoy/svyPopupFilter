@@ -69,7 +69,7 @@ uuid:"007BC9DB-CAE3-473A-B54B-4CE6A4C50158"
 },
 {
 json:{
-imageStyleClass:"fas fa-dot-circle",
+imageStyleClass:"fas fa-dot-circle fa-solid fa-circle-dot",
 location:{
 x:1,
 y:1
@@ -202,7 +202,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-imageStyleClass:"fa-solid fa-xmark",
+imageStyleClass:"fa fa-times fa-solid fa-xmark",
 location:{
 x:1,
 y:1
@@ -306,7 +306,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-imageStyleClass:"fa fa-circle-o",
+imageStyleClass:"fa fa-regular fa-circle",
 location:{
 x:1,
 y:1

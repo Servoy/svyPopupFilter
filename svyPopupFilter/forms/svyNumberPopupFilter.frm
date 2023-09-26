@@ -63,7 +63,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-imageStyleClass:"fa-solid fa-xmark",
+imageStyleClass:"fa fa-times fa-solid fa-xmark",
 location:{
 x:1,
 y:1
@@ -336,7 +336,7 @@ uuid:"A62E710F-9961-4676-A2FE-640E193FABC8"
 },
 {
 json:{
-imageStyleClass:"fa-solid fa-circle-dot",
+imageStyleClass:"fas fa-dot-circle fa-solid fa-circle-dot",
 location:{
 x:1,
 y:1

@@ -44,7 +44,7 @@ specname:\"div\"\
 items:[
 {
 json:{
-imageStyleClass:"fa-solid fa-xmark",
+imageStyleClass:"fa fa-times fa-solid fa-xmark",
 location:{
 x:2,
 y:2

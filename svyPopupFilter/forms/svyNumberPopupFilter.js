@@ -112,7 +112,7 @@ function setIconUnselected(element) {
  * @properties={typeid:24,uuid:"05318382-7231-48C9-9F63-E1BDB095281C"}
  */
 function setIconSelected(element) {
-	element.imageStyleClass = 'fa-solid fa-circle-dot';
+	element.imageStyleClass = 'fas fa-dot-circle fa-solid fa-circle-dot';
 	element.removeStyleClass('text-tertiary');
 	if(!element.hasStyleClass('text-primary')) {
 		element.addStyleClass('text-primary');

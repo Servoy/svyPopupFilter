@@ -1544,6 +1544,7 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype.getToolbarFiltersState = function() {
 		var jsonState = [];
 		for (var dp in this.toolbarFilters) {
+			/** @type {scopes.svyPopupFilter.AbstractPopupFilter} */
 			var filter = this.toolbarFilters[dp];
 			var filterState = filter.getState();
 			jsonState.push(filterState);

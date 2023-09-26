@@ -69,7 +69,7 @@ uuid:"11F09BCB-5F41-44C9-BC7D-AF06681FD0EF"
 },
 {
 json:{
-imageStyleClass:"fa-solid fa-circle-dot",
+imageStyleClass:"fas fa-dot-circle fa-solid fa-circle-dot",
 location:{
 x:1,
 y:1
@@ -212,7 +212,7 @@ uuid:"983F721F-1386-4D4A-957F-604EB71ECCEE"
 },
 {
 json:{
-imageStyleClass:"fa-regular fa-circle",
+imageStyleClass:"fa fa-regular fa-circle",
 location:{
 x:1,
 y:1
@@ -403,7 +403,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-imageStyleClass:"fa-regular fa-circle",
+imageStyleClass:"fa fa-regular fa-circle",
 location:{
 x:1,
 y:1
@@ -532,7 +532,7 @@ uuid:"392322FF-8930-413D-BAFE-D4ED8F8DAE7A"
 },
 {
 json:{
-imageStyleClass:"fa-regular fa-circle",
+imageStyleClass:"fa fa-regular fa-circle",
 location:{
 x:1,
 y:1
@@ -668,7 +668,7 @@ specname:\"flexitem\"\
 items:[
 {
 json:{
-imageStyleClass:"fa-solid fa-xmark",
+imageStyleClass:"fa fa-times fa-solid fa-xmark",
 location:{
 x:1,
 y:1
