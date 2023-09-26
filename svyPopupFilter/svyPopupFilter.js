@@ -49,6 +49,16 @@ var STYLING = {
 	 * */
 	INCLUDE_ICON: 'fas fa-check-circle fa-solid fa-circle-check',
 	/**  
+	 * Icon used for the radio option unchecked.
+	 * Applies to the filter toolbar.
+	 * */
+	RADIO_OPTION_ICON : 'fa fa-regular fa-circle',
+	/**  
+	 * Icon used for the radio option checked.
+	 * Applies to the filter toolbar.
+	 * */
+	RADIO_OPTION_CHECKED_ICON : 'fas fa-dot-circle fa-solid fa-circle-dot',
+	/**  
 	 * Show the filter popup clicking the toolbar filter.
 	 * Applies to the filter toolbar.
 	 * */

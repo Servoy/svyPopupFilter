@@ -98,7 +98,7 @@ function onActionToggleBetween(event) {
  * @properties={typeid:24,uuid:"24EDBA5E-5CE5-4975-A584-25CC47D235E0"}
  */
 function setIconUnselected(element) {
-	element.imageStyleClass = 'fa fa-regular fa-circle';
+	element.imageStyleClass = scopes.svyPopupFilter.STYLING.RADIO_OPTION_ICON;
 	element.removeStyleClass('text-primary');
 	if (!element.hasStyleClass('text-tertiary')) {
 		element.addStyleClass('text-tertiary');
@@ -112,7 +112,7 @@ function setIconUnselected(element) {
  * @properties={typeid:24,uuid:"DF5B1D2E-C0E3-4982-806B-DFC0185BE237"}
  */
 function setIconSelected(element) {
-	element.imageStyleClass = 'fas fa-dot-circle fa-solid fa-circle-dot';
+	element.imageStyleClass = scopes.svyPopupFilter.STYLING.RADIO_OPTION_CHECKED_ICON;
 	element.removeStyleClass('text-tertiary');
 	if (!element.hasStyleClass('text-primary')) {
 		element.addStyleClass('text-primary');
