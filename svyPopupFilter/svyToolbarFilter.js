@@ -36,7 +36,7 @@ var FILTER_TYPES = {
  * @type {Boolean}
  * @properties={typeid:35,uuid:"F1FBC320-45AF-4BEB-8AD2-269BA93B5F67",variableType:-4}
  */
-var defaultCaseSensitivity = application.getUserProperty('search.defaultCaseSensitivity') ? true : false;
+var defaultCaseSensitivity = application.getUserProperty('svy.search.defaultCaseSensitivity') == 'true' ? true : false;
 
 /**
  * @type {String}
