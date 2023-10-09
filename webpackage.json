@@ -7,6 +7,7 @@
     "wikiUrl": "https://github.com/Servoy/svyPopupFilter/wiki",
     "sourceUrl" : "https://github.com/Servoy/svyPopupFilter",
     "releases" : [
+        {"version":"2023.3.0","url":"https://github.com/Servoy/svyPopupFilter/releases/download/v2023.3.0/svyPopupFilter.servoy", "servoy-version":"2023.3.0", "dependency":"svyUtils#>=2023.3.1,svySearch#>=2022.3.0,svyLookup#>=2023.3.0,bootstrapcomponents#>=2023.3.0,servoyextra#>=2023.3.0,aggrid#>=2023.3.0,customrenderedcomponents#>=2023.6.0"},
         {"version":"2022.3.1","url":"https://github.com/Servoy/svyPopupFilter/releases/download/v2022.3.1/svyPopupFilter.servoy", "servoy-version":"2022.3.0", "dependency":"svyUtils#>=2022.3.1,svySearch#>=2022.3.0,svyLookup#>=2022.3.0,bootstrapcomponents#>=2022.3.0,servoyextra#>=2022.3.0,aggrid#>=2022.3.0,customrenderedcomponents#>=2022.3.0"},
         {"version":"2022.3.0","url":"https://github.com/Servoy/svyPopupFilter/releases/download/v2022.3.0/svyPopupFilter.servoy", "servoy-version":"2022.3.0", "dependency":"svySearch#>=2022.3.0,svyLookup#>=2022.3.0,bootstrapcomponents#>=2022.3.0,servoyextra#>=2022.3.0,aggrid#>=2022.3.0,customrenderedcomponents#>=2022.3.0"},
         {"version":"2.1.0","url":"https://github.com/Servoy/svyPopupFilter/releases/download/v2.1.0/svyPopupFilter.servoy", "servoy-version":"2021.12", "dependency":"svySearch#>=1.3.2,svyLookup#>=2.2.0,bootstrapcomponents#>=3.2.2,servoyextra#>=4.1.0,aggrid#>=2.7.0,customrenderedcomponents#>=1.0.0"},
