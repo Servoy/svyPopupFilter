@@ -377,6 +377,7 @@ function initPopupRendererForms() {
 
 /**
  * @param {RuntimeComponent} uiComponent
+ * @param {JSFoundSet} customFs
  * 
  * @private
  * @constructor
@@ -384,7 +385,7 @@ function initPopupRendererForms() {
  * @properties={typeid:24,uuid:"D21B3F79-9C77-4006-8A82-95AA24DC56AA"}
  * @AllowToRunInFind
  */
-function AbstractToolbarFilterUX(uiComponent) {
+function AbstractToolbarFilterUX(uiComponent, customFs) {
 	
 	/**
 	 * @protected 
@@ -449,6 +450,12 @@ function AbstractToolbarFilterUX(uiComponent) {
 	 * @type {Array<Filter>}
 	 */
 	this.filters = [];
+
+	/**
+	 * @protected 
+	 * @type {JSFoundSet}
+	 */
+	this.customFoundset = customFs;
 	
 	/**
 	 * @protected
@@ -525,7 +532,7 @@ function ListComponentFilterRenderer(listComponent, foundsetToFilter) {
 		throw "The given listComponent element should be an element of type customrenderedcomponents-customlist; check the 'Custom List' from the Custom Rendered Components package";
 	}
 	
-	AbstractToolbarFilterUX.call(this, listComponent);
+	AbstractToolbarFilterUX.call(this, listComponent, foundsetToFilter);
 	
 	/**
 	 * @protected 
@@ -2279,7 +2286,7 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.getFoundSet = function() {
-		return forms[this.formName].foundset;
+		return this.customFoundset||forms[this.formName].foundset;
 	}
 	
 	/**
