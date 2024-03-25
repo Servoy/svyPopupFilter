@@ -2122,7 +2122,7 @@ function initAbstractToolbarFilterUX() {
 			if (popupFilter) {
 				// set filter's dataprovider
 				popupFilter.setDataProvider(filter.dataprovider);
-				popupFilter.setText(filter.text);
+				popupFilter.setText(filter.text||scopes.svyUI.getColumnTitle(scopes.svyDataUtils.getDataProviderRelationName(filter.dataprovider)||this.getFoundSet().getDataSource(),filter.dataprovider));
 				
 				// set default operator
 				var operator = filter.getOperator() || popupTemplates.getDefaultOperator(filterType);
@@ -2165,7 +2165,7 @@ function initAbstractToolbarFilterUX() {
 			var columnFilter = columnFilters[index];
 			var check = filterPopupMenu.addCheckBox(columnFilter.dataprovider);
 			check.selected = this.isFilterActive(columnFilter);
-			check.text = columnFilter.text;
+			check.text = columnFilter.text||scopes.svyUI.getColumnTitle(scopes.svyDataUtils.getDataProviderRelationName(columnFilter.dataprovider)||this.getFoundSet().getDataSource(),columnFilter.dataprovider);
 			check.methodArguments = [columnFilter.id, columnFilter.dataprovider]
 			check.setMethod(onFilterPopupMenuClicked);
 		}
@@ -2463,7 +2463,7 @@ function initListComponentFilterRenderer() {
 	 */
 	ListComponentFilterRenderer.prototype.addFilterUI = function(filter) {
 		var newFilter = this.getElement().newEntry();
-		newFilter.text = getI18nText(filter.text);
+		newFilter.text = getI18nText(filter.text)||scopes.svyUI.getColumnTitle(scopes.svyDataUtils.getDataProviderRelationName(filter.dataprovider)||this.getFoundSet().getDataSource(),filter.dataprovider);
 		newFilter.dataprovider = filter.dataprovider;
 		newFilter.value = "";
 		newFilter.operator = "";
@@ -3104,7 +3104,7 @@ function addSearchProvider(search, filter) {
 				var provider = search.addSearchProvider(filter.dataprovider.toLowerCase());
 
 				// set the provider alias
-				var alias = filter.text ? getI18nText(filter.text) : jsColumn.getDataProviderID();
+				var alias = filter.text ? getI18nText(filter.text) : scopes.svyUI.getColumnTitle(dataSource,filter.dataprovider);
 				if (alias) {
 					// TODO should also set lowercase ?
 					alias = alias.replace(/ /, '-');
