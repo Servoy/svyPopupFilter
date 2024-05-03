@@ -2533,6 +2533,7 @@ function initListComponentFilterRenderer() {
 		var operatorText = this.getOperatorText(operator);
 		
 		for (var i = 0; i < count; i++) {
+            /** @type {{dataprovider:String, id: String}} */
 			var filterTag = element.getEntry(i);
 			// TODO can i rely on dataprovider only !?
 			if (filterTag && filterTag.dataprovider == dataprovider) {
@@ -2638,6 +2639,7 @@ function initListComponentFilterRenderer() {
 	ListComponentFilterRenderer.prototype.getFilterTagIndex = function(filter) {
 		var count = this.getElement().getEntriesCount();
 		for (var i = 0; i < count; i++) {
+            /** @type {{dataprovider:String, id: String}} */
 			var filterTag = this.getElement().getEntry(i);
 			// TODO can i rely on dataprovider only !?
 			if (filterTag && filterTag.id == filter.id) {
