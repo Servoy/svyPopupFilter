@@ -821,8 +821,14 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 		// Don't use lower when column is not a text
 		if (whereClause && whereClause.getTypeAsString() != 'TEXT') {
 			useIgnoreCase = false;
+		} else {
+			// check if there is a UUID flag
+			var jsColumn = scopes.svyDataUtils.getDataProviderJSColumn(query.getDataSource(), dp);
+			if (jsColumn && jsColumn.hasFlag(JSColumn.UUID_COLUMN)) {
+				useIgnoreCase = false;
+			}
 		}
-		
+				
 		if (whereClause.getTypeAsString() == 'TEXT' && op == "isNull" && globalFilterConfig.treatEmptyStringsAsNull === true) {
 			op = 'isin';
 			value = ['', null];
