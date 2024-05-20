@@ -3271,10 +3271,4 @@ var init = (function() {
 	initListComponentFilterRenderer();
 	initNgGridListComponentFilterRenderer();
 	initFilter();
-	
-	// Use different Popup Form for TiNG
-	if (scopes.svySystem.isTINGClient()) {
-		setPopupRendererForm(FILTER_TYPES.DATE, forms.svyDatePopupFilterTiNG);
-	}
-	
 }());

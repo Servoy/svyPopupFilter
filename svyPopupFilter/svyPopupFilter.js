@@ -405,11 +405,7 @@ function SvyDateFilter(){
 	
 	AbstractPopupFilter.call(this);
 	
-	if (scopes.svySystem.isTINGClient()) {
-		this.setRendererForm(forms.svyDatePopupFilterTiNG);
-	} else {
-		this.setRendererForm(forms.svyDatePopupFilter);
-	}
+	this.setRendererForm(forms.svyDatePopupFilter);
 }
 
 /**

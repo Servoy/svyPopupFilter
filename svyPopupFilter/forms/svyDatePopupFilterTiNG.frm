@@ -1,5 +1,6 @@
 customProperties:"formComponent:false,\
 useCssPosition:true",
+deprecated:"deprecated. Use svyDatePopupFilter",
 extendsID:"E67271E6-B79B-47FA-9C80-F969398079DE",
 items:[
 {
