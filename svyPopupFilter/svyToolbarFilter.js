@@ -149,7 +149,6 @@ function getConfigSortPickerAlphabetically(sortAlphabetically) {
 	 return globalFilterConfig.sortPickerAlphabetically;
 }
 
-
 /**
  * Sets global display date format to be used
  * 
@@ -397,13 +396,13 @@ function AbstractToolbarFilterUX(uiComponent, customFs) {
 	 * @protected
 	 * @type {String}
 	 */
-	this.elementName = uiComponent.getName();
+	this.elementName = uiComponent ? uiComponent.getName() : null;
 
 	/**
 	 * @protected
 	 * @type {String}
 	 */
-	this.formName = uiComponent.getFormName();
+	this.formName = uiComponent ? uiComponent.getFormName() : null;
 	
 	/**
 	 * @protected 
@@ -447,15 +446,21 @@ function AbstractToolbarFilterUX(uiComponent, customFs) {
 	this.searchText = null;
 		
 	/**
+	 * @protected 
 	 * @type {Array<Filter>}
 	 */
 	this.filters = [];
-
+	
 	/**
-	 * @protected 
-	 * @type {JSFoundSet}
-	 */
-	this.customFoundset = customFs;
+	 * @protected  
+	 * @type {AbstractFilterSource} 
+	 * */
+	this.filterSourceProvider; 
+	
+	// default source provider
+	if (!this.filterSourceProvider) {
+		this.filterSourceProvider = new FoundSetFilterSource(customFs);
+	}
 	
 	/**
 	 * @protected
@@ -532,19 +537,35 @@ function ListComponentFilterRenderer(listComponent, foundsetToFilter) {
 		throw "The given listComponent element should be an element of type customrenderedcomponents-customlist; check the 'Custom List' from the Custom Rendered Components package";
 	}
 	
-	AbstractToolbarFilterUX.call(this, listComponent, foundsetToFilter);
+	/** 
+	 * Filters are re-defined here to solve a warning
+	 * @type {Array<Filter>} 
+	 * */
+	this.filters = [];
 	
 	/**
-	 * @protected 
-	 * @type {RuntimeWebComponent<customrenderedcomponents-customlist>|RuntimeWebComponent<customrenderedcomponents-customlist_abs>}
-	 */
-	this.element = listComponent;
+	 * @protected  
+	 * @type {FoundSetFilterSource} 
+	 * */
+	this.filterSourceProvider;
+	
+	if (!this.filterSourceProvider) {
+		this.filterSourceProvider = new FoundSetFilterSource(foundsetToFilter);
+	}
+	
+	AbstractToolbarFilterUX.call(this, listComponent, foundsetToFilter);
 	
 	/**
 	 * @protected
 	 * @type {Object<scopes.svyPopupFilter.AbstractPopupFilter>}
 	 */
 	this.toolbarFilters = new Object();
+	
+	/**
+	 * @protected 
+	 * @type {RuntimeWebComponent<customrenderedcomponents-customlist>|RuntimeWebComponent<customrenderedcomponents-customlist_abs>}
+	 */
+	this.element = listComponent;
 	
 	//TODO: remove when old list component has finally disappeared
 	if (listComponent.getElementType() == "customrenderedcomponents-listcomponent") {
@@ -576,31 +597,88 @@ function NgGridListComponentFilterRenderer(listComponent, tableComponent) {
 	}
 	
 	/**
-	 * @protected 
-	 * @type {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>}
-	 */
-	this.tableComponent = tableComponent;
+	 * @protected  
+	 * @type {NgGridFilterSource} 
+	 * */
+	this.filterSourceProvider = new NgGridFilterSource(tableComponent);
 	
-	/**
-	 * @protected 
-	 * @type {Array<Filter>}
-	 */
-	this.innerColumnFiltersCache = [];
 	
 	//first set the table component as it is needed when creating default search
 	ListComponentFilterRenderer.call(this, listComponent, tableComponent.myFoundset.foundset);
+}
 
+/**
+ * 
+ * @constructor 
+ * 
+ * @param {JSFoundSet} foundsetToFilter
+ * @param {RuntimeWebComponent<bootstrapcomponents-label>|RuntimeWebComponent<bootstrapcomponents-label_abs>} [counterComponent]
+ * 
+ * @extends {AbstractToolbarFilterUX}
+ * 
+ * @protected 
+ *
+ * @properties={typeid:24,uuid:"346203A7-5349-4F9E-9F61-9CE75DB353B5"}
+ */
+function PopupFilterRenderer(foundsetToFilter, counterComponent) {
+	
 	/**
-	 * @protected 
-	 * @type {Array<Filter>}
-	 */
-	this.filters = [];
+	 * @protected  
+	 * @type {FoundSetFilterSource} 
+	 * */
+	this.filterSourceProvider;
+	
+	if (!this.filterSourceProvider) {
+		this.filterSourceProvider = new FoundSetFilterSource(foundsetToFilter);
+	}
 	
 	/**
 	 * @protected 
-	 * @type {String}
+	 * @type {RuntimeWebComponent<bootstrapcomponents-label>}
 	 */
-	this.formName = listComponent.getFormName();
+	this.counterComponent;
+	
+	if (!this.counterComponent) {
+		this.counterComponent = counterComponent;
+	}
+
+	//first set the table component as it is needed when creating default search
+	AbstractToolbarFilterUX.call(this, counterComponent, foundsetToFilter);
+
+}
+
+/**
+ * 
+ * @constructor 
+ * 
+ * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} tableComponent
+ * @param {RuntimeWebComponent<bootstrapcomponents-label>|RuntimeWebComponent<bootstrapcomponents-label_abs>} [counterComponent]
+ * 
+ * @extends {PopupFilterRenderer}
+ * 
+ * @protected 
+ *
+ * @properties={typeid:24,uuid:"74E008A2-ACB4-4FFE-8066-46CF8A14ECB2"}
+ */
+function NgGridPopupFilterRenderer(tableComponent, counterComponent) {
+	if (tableComponent.getElementType() != "aggrid-groupingtable") {
+		throw "The given table element should be an element of type aggrid-groupingtable component; check the 'Data Grid' from the NG Grids package";
+	}
+	
+	/**
+	 * @protected  
+	 * @type {NgGridFilterSource} 
+	 * */
+	this.filterSourceProvider = new NgGridFilterSource(tableComponent);
+	
+	/**
+	 * @protected 
+	 * @type {RuntimeWebComponent<bootstrapcomponents-label>}
+	 */
+	this.counterComponent = counterComponent;
+
+	//first set the table component as it is needed when creating default search
+	PopupFilterRenderer.call(this, tableComponent.myFoundset.foundset, tableComponent);
 }
 
 /**
@@ -821,14 +899,8 @@ function getFilterQuery(filters, foundset, onFilterApplyQueryCondition) {
 		// Don't use lower when column is not a text
 		if (whereClause && whereClause.getTypeAsString() != 'TEXT') {
 			useIgnoreCase = false;
-		} else {
-			// check if there is a UUID flag
-			var jsColumn = scopes.svyDataUtils.getDataProviderJSColumn(query.getDataSource(), dp);
-			if (jsColumn && jsColumn.hasFlag(JSColumn.UUID_COLUMN)) {
-				useIgnoreCase = false;
-			}
 		}
-				
+		
 		if (whereClause.getTypeAsString() == 'TEXT' && op == "isNull" && globalFilterConfig.treatEmptyStringsAsNull === true) {
 			op = 'isin';
 			value = ['', null];
@@ -1028,7 +1100,7 @@ function clearFilters(foundset) {
  * Make sure to re-direct the onClick event of the "List Component" to the toolbar.onClick(entry, index, dataTarget, event);
  * 
  * @param {RuntimeWebComponent<customrenderedcomponents-customlist>|RuntimeWebComponent<customrenderedcomponents-customlist_abs>} listComponent
- * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} tableOrFoundSet
+ * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} tableComponent
  *
  * @returns {NgGridListComponentFilterRenderer}
  * @public
@@ -1054,8 +1126,8 @@ function clearFilters(foundset) {
  * 
  * @properties={typeid:24,uuid:"4BB94EC8-F877-445D-93E1-541F0A58D664"}
  */
-function createFilterToolbar(listComponent, tableOrFoundSet) {
-	return new NgGridListComponentFilterRenderer(listComponent, tableOrFoundSet);
+function createFilterToolbar(listComponent, tableComponent) {
+	return new NgGridListComponentFilterRenderer(listComponent, tableComponent);
 }
 
 /**
@@ -1104,6 +1176,88 @@ function createFilterToolbar(listComponent, tableOrFoundSet) {
  */
 function createSimpleFilterToolbar(listComponent, foundsetToFilter) {
 	return new ListComponentFilterRenderer(listComponent, foundsetToFilter);
+}
+
+/**
+ * Creates a filter implementation where filter items are displayed in a popup dialog<br><br>
+ * 
+ * This implementation expects an NG "Data Grid" table component and optionally a "Label" component.<br><br>
+ * 
+ * The filters offered from this implementation are generated from the table provided as follows:
+ * 
+ * <ul><li>any column with its <code>filterType</code> property set to TEXT will be offered as a token popup, allowing the user to enter any number of Strings to match</li>
+ * <li>any column with its <code>filterType</code> property set to TEXT and the <code>valuelist</code> will be offered as a lookup where the user can search for and select any number of values</li>
+ * <li>any column with its <code>filterType</code> property set to NUMBER will be offered as a number filter with a number of operators</li>
+ * <li>any column with its <code>filterType</code> property set to DATE will be offered as a date filter with a number of operators</li></ul>
+ * 
+ * You should create a toolbar filter instance at the onLoad of your form and assign it to a form variable.
+ * 
+ * @param {JSFoundSet} foundsetToFilter
+ * @param {RuntimeWebComponent<bootstrapcomponents-label>|RuntimeWebComponent<bootstrapcomponents-label_abs>} [counterComponent]
+ * 
+ *
+ * @returns {PopupFilterRenderer}
+ * @public
+ * @example <pre>
+ * //keep track of toolbarFilter object in a form variable
+ * var toolbarFilter;
+ * 
+ * //init the toolbarFilter at the onLoad.
+ * function onLoad(event) {
+ *  toolbarFilter = scopes.svyToolbarFilter.createSimplePopupFilterToolbar(foundset, elements.labelCounter)
+ * }
+ * 
+ * //optionally set a searchText for a cross-field search to further filter the result set
+ * function search() {
+ *  toolbarFilter.search(searchText);
+ * }
+ * </pre>
+ * 
+ * @properties={typeid:24,uuid:"4295824C-0D4C-4793-91E8-91CED8B91CBF"}
+ */
+function createSimplePopupFilterToolbar(foundsetToFilter, counterComponent) {
+	return new PopupFilterRenderer(foundsetToFilter, counterComponent)
+}
+
+/**
+ * Creates a filter implementation where filter items are displayed in a popup dialog<br><br>
+ * 
+ * This implementation expects an NG "Data Grid" table component and optionally a "Label" component.<br><br>
+ * 
+ * The filters offered from this implementation are generated from the table provided as follows:
+ * 
+ * <ul><li>any column with its <code>filterType</code> property set to TEXT will be offered as a token popup, allowing the user to enter any number of Strings to match</li>
+ * <li>any column with its <code>filterType</code> property set to TEXT and the <code>valuelist</code> will be offered as a lookup where the user can search for and select any number of values</li>
+ * <li>any column with its <code>filterType</code> property set to NUMBER will be offered as a number filter with a number of operators</li>
+ * <li>any column with its <code>filterType</code> property set to DATE will be offered as a date filter with a number of operators</li></ul>
+ * 
+ * You should create a toolbar filter instance at the onLoad of your form and assign it to a form variable.
+ * 
+ * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} tableComponent
+ * @param {RuntimeWebComponent<bootstrapcomponents-label>|RuntimeWebComponent<bootstrapcomponents-label_abs>} [counterComponent]
+ * 
+ *
+ * @returns {NgGridPopupFilterRenderer}
+ * @public
+ * @example <pre>
+ * //keep track of toolbarFilter object in a form variable
+ * var toolbarFilter;
+ * 
+ * //init the toolbarFilter at the onLoad.
+ * function onLoad(event) {
+ *  toolbarFilter = scopes.svyToolbarFilter.createPopupFilterToolbar(elements.table, elements.labelCounter)
+ * }
+ * 
+ * //optionally set a searchText for a cross-field search to further filter the result set
+ * function search() {
+ *  toolbarFilter.search(searchText);
+ * }
+ * </pre>
+ * 
+ * @properties={typeid:24,uuid:"47834AAD-AE11-4FEA-BBC0-6725B02D29D9"}
+ */
+function createPopupFilterToolbar(tableComponent, counterComponent) {
+	return new NgGridPopupFilterRenderer(tableComponent, counterComponent)
 }
 
 /**
@@ -1359,14 +1513,17 @@ function initAbstractToolbarFilterUX() {
 	 * 
 	 * @param {Filter} filter
 	 * 
-	 * @return {Boolean}
-	 * 
 	 * @public 
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
 	AbstractToolbarFilterUX.prototype.addFilterUI = function(filter) {
-		throw scopes.svyExceptions.AbstractMethodInvocationException("addFilterUI not implemented")
+		//throw scopes.svyExceptions.AbstractMethodInvocationException("addFilterUI not implemented")
+		
+		// TODO is this ok ?
+		if (this.onFilterAddedEvent) {
+			scopes.svySystem.callMethod(this.onFilterAddedEvent, [filter])
+		}
 	}
 	
 	/**
@@ -1390,14 +1547,29 @@ function initAbstractToolbarFilterUX() {
 	 * 
 	 * @param {Filter} filter
 	 * 
-	 * @return {Boolean}
-	 * 
 	 * @public 
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
 	AbstractToolbarFilterUX.prototype.removeFilterUI = function(filter) {
-		throw scopes.svyExceptions.AbstractMethodInvocationException("removeGridFilter not implemented")
+	//	throw scopes.svyExceptions.AbstractMethodInvocationException("removeGridFilter not implemented")
+		
+		var popupFilter = this.toolbarFilters[filter.dataprovider];
+		var hasValues = popupFilter && popupFilter.getValues().length > 0 ? true : false;
+		
+		// remove the filter from cache
+		delete this.toolbarFilters[filter.dataprovider];
+		
+		//filter had values -> search again
+		if (hasValues) {
+			this.executeSearch();
+		}
+		
+		// on filter removed event
+		if (this.onFilterRemovedEvent) {
+			scopes.svySystem.callMethod(this.onFilterRemovedEvent);
+		}
+		
 	}
 	
 	/**
@@ -1920,7 +2092,8 @@ function initAbstractToolbarFilterUX() {
 	
 	/**
 	 * @param {String} dataprovider
-	 * @param {JSEvent} event
+	 * @param {JSEvent|Component|Number} target
+	 * @param {Number} [y]
 	 * 
 	 * @this {AbstractToolbarFilterUX}
 	 * 
@@ -1928,13 +2101,26 @@ function initAbstractToolbarFilterUX() {
 	 *
 	 * @properties={typeid:24,uuid:"06EB08B6-AA6C-4DC8-A0A7-B7CF3C140D77"}
 	 */
-	AbstractToolbarFilterUX.prototype.showPopupFilter = function (dataprovider, event) {
+	AbstractToolbarFilterUX.prototype.showPopupFilter = function (dataprovider, target, y) {
 		var filter = this.getOrCreateToolbarFilter(dataprovider);
 
 		// show the filter
 		var popup = filter.createPopUp(this.onFilterApply);
-		popup.x(event.getX());
-		popup.y(event.getY());
+		
+		if (target instanceof JSEvent) {
+			popup.x(target.getX());
+			popup.y(target.getY());
+		} else if (target instanceof Component) {
+			/** @type {Component} */
+			var component = target
+			popup.component(component)
+		} else if (target instanceof Number && y instanceof Number) {
+			/** @type {Number} */
+			var x = target;
+			popup.x(x);
+			popup.y(y);
+		}
+		
 		// popup.width(300);
 		popup.show();
 	}
@@ -2279,7 +2465,7 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.getDataSource = function() {
-		return this.getFoundSet().getDataSource();
+		return this.filterSourceProvider.getDataSource()||this.getFoundSet().getDataSource();
 	}	
 	
 	/**
@@ -2292,7 +2478,7 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.getFoundSet = function() {
-		return this.customFoundset||forms[this.formName].foundset;
+		return this.filterSourceProvider.getFoundSet()||forms[this.formName].foundset;
 	}
 	
 	/**
@@ -2334,10 +2520,12 @@ function initAbstractToolbarFilterUX() {
 		
 		// if has active filters
 		var element = thisIntance.getElement();
-		if (thisIntance.getActiveFilters().length) {
-			element.addStyleClass('has-active-filter');
-		} else {
-			element.removeStyleClass('has-active-filter');
+		if (element) {
+			if (thisIntance.getActiveFilters().length) {
+				element.addStyleClass('has-active-filter');
+			} else {
+				element.removeStyleClass('has-active-filter');
+			}
 		}
 	
 		if (thisIntance['onFilterApplyEvent']) {
@@ -2479,9 +2667,8 @@ function initListComponentFilterRenderer() {
 		var element = this.getElement();
 		element.addStyleClass('has-filter');
 		
-		if (this.onFilterAddedEvent) {
-			scopes.svySystem.callMethod(this.onFilterAddedEvent, [filter])
-		}
+		// call the super
+		AbstractToolbarFilterUX.prototype.addFilterUI.call(this, filter);
 	}
 
 	/**
@@ -2536,7 +2723,7 @@ function initListComponentFilterRenderer() {
 		var count = element.getEntriesCount();
 		var entries = [];
 		
-		var operatorText = this.getOperatorText(operator);
+		var operatorText = getOperatorText(operator);
 		
 		for (var i = 0; i < count; i++) {
             /** @type {{dataprovider:String, id: String}} */
@@ -2656,7 +2843,7 @@ function initListComponentFilterRenderer() {
 	}
 	
 	/**
-	 *  
+	 * @deprecated use getOperatorText
 	 * @protected 
 	 * @param {String} operator
 	 * 
@@ -2665,43 +2852,10 @@ function initListComponentFilterRenderer() {
 	 * @this {ListComponentFilterRenderer}
 	 *  */
 	ListComponentFilterRenderer.prototype.getOperatorText = function(operator) {
-		var operatorText = "";
-		var OPERATOR = scopes.svyPopupFilter.OPERATOR;
-		switch (operator) {
-		case OPERATOR.GREATER_THEN:
-			operatorText = ">";
-			break;
-		case OPERATOR.GREATER_EQUAL:
-			operatorText = ">";
-			break;
-		case OPERATOR.SMALLER_THEN:
-			operatorText = "<";
-			break;
-		case OPERATOR.SMALLER_EQUAL:
-			operatorText = "<";
-			break;
-		case OPERATOR.BETWEEN:
-			operatorText = "...";
-			break;
-		case OPERATOR.IS_NULL:
-			operatorText = scopes.svyPopupFilter.LOCALE.filterToolbar.operator.IS_NULL;
-			break;
-		case OPERATOR.NOT_NULL:
-			operatorText = scopes.svyPopupFilter.LOCALE.filterToolbar.operator.NOT_NULL;
-			break;
-		case OPERATOR.EQUALS:
-		case OPERATOR.LIKE:
-		case OPERATOR.LIKE_CONTAINS:
-		case OPERATOR.IS_IN:
-		default:
-			break;
-		}
-		
-		return operatorText;
+		return getOperatorText(operator)
 	}	
 
 }
-
 
 
 /**
@@ -2715,67 +2869,6 @@ function initNgGridListComponentFilterRenderer() {
 	NgGridListComponentFilterRenderer.prototype.constructor = NgGridListComponentFilterRenderer;
 	
 	/**
-	 * Returns the datasource to be filtered as the datasource of the NG Grid
-	 * 
-	 * @public 
-	 * @return {String}
-	 * 
-	 * @this {NgGridListComponentFilterRenderer}
-	 */
-	NgGridListComponentFilterRenderer.prototype.getDataSource = function() {
-		var tableComponent = this.tableComponent;
-		
-		if (!tableComponent) {
-			return null;
-		}
-		
-		var tableFoundset = tableComponent.myFoundset.foundset;
-		var tableDataSource;		
-		
-		var jsForm = solutionModel.getForm(tableComponent.getFormName());
-		var jsTable = jsForm.findWebComponent(tableComponent.getName());
-		var foundsetSelector = jsTable.getJSONProperty("myFoundset").foundsetSelector;
-		
-		try {
-			if (foundsetSelector) {
-				if (databaseManager.getTable(foundsetSelector)) {
-					tableDataSource = foundsetSelector;
-				} else if (foundsetSelector.split('.').length > 1) {
-					tableDataSource = scopes.svyDataUtils.getRelationForeignDataSource(foundsetSelector)
-				} else if (solutionModel.getRelation(foundsetSelector)) {
-					var jsRel = solutionModel.getRelation(foundsetSelector);
-					tableDataSource = jsRel.foreignDataSource;
-				}
-			}
-		} catch (e) {
-			application.output(e, LOGGINGLEVEL.ERROR);
-		}
-		
-		if (tableDataSource) {
-			// do nothing
-		} else if (tableFoundset) {
-			tableDataSource = tableFoundset.getDataSource();
-		} else {
-			var form = forms[tableComponent.getFormName()];
-			tableDataSource = form ? form.foundset.getDataSource() : null;
-		}
-
-		return tableDataSource || null;
-	}	
-	
-	/**
-	 * Returns the foundset to be filtered as the foundset of the NG Grid
-	 * 
-	 * @public 
-	 * @return {JSFoundSet}
-	 * 
-	 * @this {NgGridListComponentFilterRenderer}
-	 */
-	NgGridListComponentFilterRenderer.prototype.getFoundSet = function() {
-		return this.tableComponent.myFoundset.foundset;
-	}
-	
-	/**
 	 * Returns all filters of this ToolbarFilter
 	 * 
 	 * @public 
@@ -2784,104 +2877,15 @@ function initNgGridListComponentFilterRenderer() {
 	 * @this {NgGridListComponentFilterRenderer}
 	 */
 	NgGridListComponentFilterRenderer.prototype.getFilters = function() {
-		var column;
-		var filter;
-		/** Array<Filter> */
-		var filters = [];
-		var innerColumnFiltersCache = this.innerColumnFiltersCache;
-
-		/** @type {AbstractToolbarFilterUX} */
-		var thisInstance = this;
-		var table = this.tableComponent;
+		
 		var sortByName = globalFilterConfig.sortPickerAlphabetically;
-
-		/**
-		 * @param {CustomType<aggrid-groupingtable.column>} col
-		 * @private
-		 * @return {Filter}
-		 *  */
-		function innerGetOrFreateFilterFromGridColumn(col) {
-			for (var cacheIndex = 0; cacheIndex < innerColumnFiltersCache.length; cacheIndex++) {
-				if ((col.id && col.id == innerColumnFiltersCache[cacheIndex].id) || (!col.id && col.dataprovider == innerColumnFiltersCache[cacheIndex].id)) {
-					return innerColumnFiltersCache[cacheIndex];
-				}
-			}
-			var innerColFilter = createFilterFromGridColumn(col, thisInstance);
-			innerColumnFiltersCache.push(innerColFilter);
-			return innerColFilter;
-		}
-		
-		/** 
-		 * @param {Filter} filterObj
-		 * @private 
-		 * */
-		function addFilterInner(filterObj) {
-			if (sortByName && filterObj.text && filters.length) {
-				
-				for (var sortIndex = 0; sortIndex < filters.length; sortIndex++) {
-					if (filterObj.text < filters[sortIndex].text) {
-						scopes.svyJSUtils.arrayInsert(filters, sortIndex, filterObj);
-						return;
-					}
-				}
-				
-			} 
-			// push filter at the end
-			filters.push(filterObj);
-		}
-		
-		//add all visible columns of the table
-		if (table) {
-			var columns = table.columns;
-			var useNonVisibleColumns = getConfigUseNonVisibleColumns();
-	
-			if (useNonVisibleColumns) {
-				// scan all columns
-				for (var index = 0; index < columns.length; index++) {
-					column = columns[index];
-					if (column.filterType && column.filterType != 'NONE') {
-						filter = innerGetOrFreateFilterFromGridColumn(column);
-						addFilterInner(filter);
-					}
-				}
-			} else if (table) {
-				// we have a table element to look for columns
-				// scan only visible columns. Access the column state
-				var jsonState = table.getColumnState();
-				if (jsonState) {
-					/** @type {{columnState:Array}} */
-					var state = JSON.parse(jsonState);
-					/** @type {Array} */
-					var colsState = state.columnState ? state.columnState : [];
-					for (var j = 0; j < colsState.length; j++) {
-						if (!colsState[j].hide) { // skip column if hidden
-							// NEW API
-							var colIndex = table.getColumnIndex(colsState[j].colId);
-							column = columns[colIndex];
-							if (column && column.filterType && column.filterType != 'NONE') {
-								//visibleColumns.push(col.dataprovider);
-								filter = innerGetOrFreateFilterFromGridColumn(column);
-								addFilterInner(filter);
-							}
-						}
-					}
-				} else {
-					for (var i = 0; i < columns.length; i++) {
-						column = columns[i];
-						if (column.filterType && column.filterType != 'NONE' && column.visible) {
-							filter = innerGetOrFreateFilterFromGridColumn(column);
-							addFilterInner(filter);
-						}
-					}
-				}
-			}
-		}
+		var filters = this.filterSourceProvider.getFilters();
 		
 		//add filters added by API
 		if (sortByName) {
 			// add filters sorted by name
-			for (i = 0; i < this.filters.length; i++) {
-				addFilterInner(this.filters[i]);
+			for (var i = 0; i < this.filters.length; i++) {
+				addFilterSorted(filters, this.filters[i], sortByName);
 			}
 		} else {
 			filters = filters.concat(this.filters);
@@ -2890,6 +2894,245 @@ function initNgGridListComponentFilterRenderer() {
 		return filters;
 	}
 
+}
+
+/**
+ * @private 
+ * 
+ * @properties={typeid:24,uuid:"AF16AC34-9576-4F58-95F2-FAABC2EA8D76"}
+ */
+function initPopupFilterRenderer() {
+	
+	PopupFilterRenderer.prototype = Object.create(AbstractToolbarFilterUX.prototype);
+	PopupFilterRenderer.prototype.constructor = PopupFilterRenderer;
+	
+	/**
+	 * Creates the filter picker popup that can be further added to before shown
+	 * 
+	 * @return {plugins.window.FormPopup}
+	 * 
+	 * @public
+	 *
+	 * @this {PopupFilterRenderer}
+	 */
+	PopupFilterRenderer.prototype.createPopupFilterPicker = function() {
+		
+		var columnNames = ['id', 'dataprovider', 'display_name', 'is_active', 'operator', 'values'];
+		var dataset = databaseManager.createEmptyDataSet(0, columnNames);
+
+		var columnFilters = this.getFilters();
+		for (var index = 0; index < columnFilters.length; index++) {
+			var columnFilter = columnFilters[index];
+			var text = columnFilter.text||scopes.svyUI.getColumnTitle(scopes.svyDataUtils.getDataProviderRelationName(columnFilter.dataprovider)||this.getFoundSet().getDataSource(),columnFilter.dataprovider);
+
+			
+			if (this.isFilterActive(columnFilter)) {
+
+				var filterUI = this.getFilterUI(columnFilter.dataprovider);
+				var displayValues = getFilterUiDisplayValues(filterUI, columnFilter, filterUI.getValues());
+				var values = displayValues ? displayValues.join(',') : null;
+				var operator = filterUI.getOperator();
+				var operatorText = getOperatorText(operator);
+				var OPERATOR = scopes.svyPopupFilter.OPERATOR;
+				
+				// parse operator
+				// show val1...val2
+				if (operator == OPERATOR.BETWEEN && displayValues.length) {
+					var displayValue1 = displayValues[0] ? displayValues[0] : "";
+					var displayValue2 = displayValues[1] ? displayValues[1] : "";
+					values =  displayValue1 + "..." + displayValue2;
+					operator = "";
+				} else {
+					// do not show operator unless value is set or operator IS_NULL OR NOT_NULL
+					var showOperator = ( operator == OPERATOR.IS_NULL || operator == OPERATOR.NOT_NULL) || ( displayValues.length && operatorText) ? true : false;
+					operator = showOperator ? " " + operatorText : "";
+				}
+				
+				dataset.addRow([columnFilter.id, columnFilter.dataprovider, text, 1, operator, values]);
+
+			} else {
+				// non-active filter
+				dataset.addRow([columnFilter.id, columnFilter.dataprovider, text, 0, null, null]);
+			}
+		}
+		
+		dataset.createDataSource('svy_toolbar_filters');
+		
+		// TODO make picker configurable
+		var filterPopupMenu = plugins.window.createFormPopup(forms.svyToolbarFilterPicker);
+		forms.svyToolbarFilterPicker.toolbarFilterUX = this;		
+
+		// cache the latest menu so it can be used in callback
+		latestToolbarFilter = this;
+		
+		return filterPopupMenu;
+	}
+	 
+	/**
+	 * Shows the filter picker popup
+	 * 
+	 * @param {RuntimeComponent} target
+	 * 
+	 * @public
+	 *
+	 * @this {PopupFilterRenderer}
+	 */
+	PopupFilterRenderer.prototype.showPopupFilterPicker = function(target) {
+
+		/** @type {plugins.window.FormPopup} */
+		var filterPopupMenu = this.createPopupFilterPicker();
+		filterPopupMenu.component(target);
+		filterPopupMenu.width(300);
+		filterPopupMenu.show();
+	}
+	
+	/**
+	 * Adds the given Filter to the UI
+	 * 
+	 * Should be overriden by a subclass implementing a UI
+	 * 
+	 * @protected  
+	 *
+	 * @this {PopupFilterRenderer}
+	 *  */
+	PopupFilterRenderer.prototype.updateCountLabel = function() {
+		if (this.counterComponent) {
+			this.counterComponent.text = utils.numberFormat(this.getActiveFilters().length, 0);
+		}
+	}
+	
+	/**
+	 * Adds the given Filter to the UI
+	 * 
+	 * Should be overriden by a subclass implementing a UI
+	 * 
+	 * @param {Filter} filter
+	 * 
+	 * @public 
+	 *
+	 * @this {PopupFilterRenderer}
+	 *  */
+	PopupFilterRenderer.prototype.addFilterUI = function(filter) {
+
+		// call the super
+		AbstractToolbarFilterUX.prototype.addFilterUI.call(this, filter);
+		
+		this.updateCountLabel();
+	}
+	
+	/**
+	 * Removes the given filter from the UI
+	 * 
+	 * Should be overriden by a subclass implementing a UI
+	 * 
+	 * @param {Filter} filter
+	 * 
+	 * @public 
+	 *
+	 * @this {PopupFilterRenderer}
+	 *  */
+	PopupFilterRenderer.prototype.removeFilterUI = function(filter) {
+		
+		// call the super
+		AbstractToolbarFilterUX.prototype.removeFilterUI.call(this, filter);
+		
+		this.updateCountLabel();
+	}
+	
+	/**
+	 * Clears all filters from the UI and fires the onFilterRemovedEvent
+	 * 
+	 * @return {Boolean}
+	 * 
+	 * @public
+	 *
+	 * @this {PopupFilterRenderer}
+	 */
+	PopupFilterRenderer.prototype.clearFilterUI = function() {
+		// call the super
+		AbstractToolbarFilterUX.prototype.clearFilterUI.call(this);
+		
+		this.updateCountLabel();
+		
+		return true;
+	}
+	
+	/**
+	 * @param {String} dataProvider
+	 * @param {Array} values
+	 * @param {String} operator
+	 * 
+	 * @return {Boolean}
+	 * 
+	 * @protected 
+	 *
+	 * @this {PopupFilterRenderer}
+	 */
+	PopupFilterRenderer.prototype.updateFilterUI = function(dataProvider,values,operator) {
+		this.updateCountLabel();
+		
+		return true;
+	}
+	
+	/**
+	 * Restores the filters' state 
+	 * 
+	 * @param {Array<{
+	 *			id: String,
+	 *			dataprovider: String,
+	 *			operator: String,
+	 *			customProperties: Object,
+	 *			text: String,
+	 *			values: Array}>} jsonState
+	 *
+	 * @public 
+	 * 
+	 * @this {PopupFilterRenderer}
+	 */
+	PopupFilterRenderer.prototype.restoreToolbarFiltersState = function(jsonState) {
+		
+		// call the super
+		AbstractToolbarFilterUX.prototype.restoreToolbarFiltersState.call(this, jsonState);
+		
+		this.updateCountLabel();
+	}
+}
+
+/**
+ * @private 
+ * 
+ * @properties={typeid:24,uuid:"4817F7B1-E95E-4CC9-B316-BDCC9E6290EF"}
+ */
+function initNgGridPopupFilterRenderer() {
+	
+	NgGridPopupFilterRenderer.prototype = Object.create(PopupFilterRenderer.prototype);
+	NgGridPopupFilterRenderer.prototype.constructor = NgGridPopupFilterRenderer;
+	
+	/**
+	 * Returns all filters of this ToolbarFilter
+	 * 
+	 * @public 
+	 * @return {Array<Filter>}
+	 * 
+	 * @this {NgGridPopupFilterRenderer}
+	 */
+	NgGridPopupFilterRenderer.prototype.getFilters = function() {
+		
+		var sortByName = globalFilterConfig.sortPickerAlphabetically;
+		var filters = this.filterSourceProvider.getFilters();
+		
+		//add filters added by API
+		if (sortByName) {
+			// add filters sorted by name
+			for (var i = 0; i < this.filters.length; i++) {
+				addFilterSorted(filters, this.filters[i], sortByName);
+			}
+		} else {
+			filters = filters.concat(this.filters);
+		}
+		
+		return filters;
+	}	
 }
 
 /**
@@ -3037,6 +3280,7 @@ function initFilter() {
 	}	
 	
 	/**
+	 * @public 
 	 * Returns search operator as one of the scopes.svyPopupFilter.OPERATOR enum values
 	 * @return {String}
 	 * @this {Filter}
@@ -3045,6 +3289,290 @@ function initFilter() {
 		return this.operator;
 	}	
 }
+
+/**
+ * 
+ * @constructor 
+ * 
+ * @private
+ * 
+ * @properties={typeid:24,uuid:"B8CA8348-E772-49AD-94D4-3F1DC9E0C0C3"}
+ */
+function AbstractFilterSource() {}
+
+/**
+ * @constructor 
+ * @extends {AbstractFilterSource}
+ * @param {JSFoundSet} foundset
+ * @private
+ * 
+ * @properties={typeid:24,uuid:"E4A21EB4-1E6B-4B7F-9219-526186012185"}
+ */
+function FoundSetFilterSource(foundset) {
+	/**
+	 * @protected  
+	 * @type {JSFoundSet} 
+	 * */
+	this.foundset = foundset;
+}
+
+/**
+ * @constructor 
+ * @extends {AbstractFilterSource}
+ * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} tableComponent
+ * @private
+ *
+ * @properties={typeid:24,uuid:"835F90BD-F7D2-4202-82BF-DDBFCB00EABE"}
+ */
+function NgGridFilterSource(tableComponent) {
+	
+	if (tableComponent.getElementType() != "aggrid-groupingtable") {
+		throw "The given table element should be an element of type aggrid-groupingtable component; check the 'Data Grid' from the NG Grids package";
+	}
+	
+	/**
+	 * @protected 
+	 * @type {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>}
+	 */
+	this.tableComponent = tableComponent;
+	
+	/**
+	 * @protected 
+	 * @type {Array<Filter>}
+	 */
+	this.innerColumnFiltersCache = [];
+	
+}
+
+/**
+ * @constructor 
+ * @this {Filter}
+ * @private 
+ * @properties={typeid:24,uuid:"308482FF-2A0A-41A1-9841-6CFF4F0B2E48"}
+ */
+function initAbstractFilterSource() {
+	AbstractFilterSource.prototype = Object.create(AbstractFilterSource.prototype);
+	AbstractFilterSource.prototype.constructor = AbstractFilterSource;
+	
+	/**
+	 * Returns the datasource to be filtered as the datasource of the NG Grid
+	 * 
+	 * @public 
+	 * @return {String}
+	 * 
+	 * @this {AbstractFilterSource}
+	 */
+	AbstractFilterSource.prototype.getDataSource = function() {
+		return null;
+	}
+	
+	/**
+	 * Returns the foundset to be filtered as the foundset of the NG Grid
+	 * 
+	 * @public 
+	 * @return {JSFoundSet}
+	 * 
+	 * @this {AbstractFilterSource}
+	 */
+	AbstractFilterSource.prototype.getFoundSet = function() {
+		return null;
+	}
+}
+
+/**
+ * @constructor
+ * @this {FoundSetFilterSource}
+ * @private
+ * @properties={typeid:24,uuid:"771D910F-DCC4-4417-88C1-6151FAA2DB32"}
+ */
+function initFoundSetFilterSource() {
+	FoundSetFilterSource.prototype = Object.create(AbstractFilterSource.prototype);
+	FoundSetFilterSource.prototype.constructor = FoundSetFilterSource;
+	
+	/**
+	 * Returns the datasource to be filtered as the datasource of the NG Grid
+	 * 
+	 * @public 
+	 * @return {String}
+	 * 
+	 * @this {FoundSetFilterSource}
+	 */
+	FoundSetFilterSource.prototype.getDataSource = function() {
+		return this.foundset ? this.foundset.getDataSource() : null;
+	}
+	
+	/**
+	 * Returns the foundset to be filtered as the foundset of the NG Grid
+	 * 
+	 * @public 
+	 * @return {JSFoundSet}
+	 * 
+	 * @this {FoundSetFilterSource}
+	 */
+	FoundSetFilterSource.prototype.getFoundSet = function() {
+		return this.foundset;
+	}
+}
+
+/**
+ * @constructor
+ * @this {NgGridFilterSource}
+ * @private
+ * @properties={typeid:24,uuid:"4C3477A2-7673-472C-81C2-661FFB40CC85"}
+ */
+function initNgGridFilterSource() {
+	NgGridFilterSource.prototype = Object.create(AbstractFilterSource.prototype);
+	NgGridFilterSource.prototype.constructor = NgGridFilterSource;
+	
+	/**
+	 * Returns the datasource to be filtered as the datasource of the NG Grid
+	 * 
+	 * @public 
+	 * @return {String}
+	 * 
+	 * @this {NgGridFilterSource}
+	 */
+	NgGridFilterSource.prototype.getDataSource = function() {
+		var tableComponent = this.tableComponent;
+		
+		if (!tableComponent) {
+			return null;
+		}
+		
+		var tableFoundset = tableComponent.myFoundset.foundset;
+		var tableDataSource;		
+		
+		var jsForm = solutionModel.getForm(tableComponent.getFormName());
+		var jsTable = jsForm.findWebComponent(tableComponent.getName());
+		var foundsetSelector = jsTable.getJSONProperty("myFoundset").foundsetSelector;
+		
+		try {
+			if (foundsetSelector) {
+				if (databaseManager.getTable(foundsetSelector)) {
+					tableDataSource = foundsetSelector;
+				} else if (foundsetSelector.split('.').length > 1) {
+					tableDataSource = scopes.svyDataUtils.getRelationForeignDataSource(foundsetSelector)
+				} else if (solutionModel.getRelation(foundsetSelector)) {
+					var jsRel = solutionModel.getRelation(foundsetSelector);
+					tableDataSource = jsRel.foreignDataSource;
+				}
+			}
+		} catch (e) {
+			application.output(e, LOGGINGLEVEL.ERROR);
+		}
+		
+		if (tableDataSource) {
+			// do nothing
+		} else if (tableFoundset) {
+			tableDataSource = tableFoundset.getDataSource();
+		} else {
+			var form = forms[tableComponent.getFormName()];
+			tableDataSource = form ? form.foundset.getDataSource() : null;
+		}
+
+		return tableDataSource || null;
+	}	
+	
+	/**
+	 * Returns the foundset to be filtered as the foundset of the NG Grid
+	 * 
+	 * @public 
+	 * @return {JSFoundSet}
+	 * 
+	 * @this {NgGridFilterSource}
+	 */
+	NgGridFilterSource.prototype.getFoundSet = function() {
+		return this.tableComponent.myFoundset.foundset;
+	}
+	
+	/**
+	 * Returns all filters of this ToolbarFilter
+	 * 
+	 * @public 
+	 * @return {Array<Filter>}
+	 * 
+	 * @this {NgGridFilterSource}
+	 */
+	NgGridFilterSource.prototype.getFilters = function() {
+		var column;
+		var filter;
+		/** Array<Filter> */
+		var filters = [];
+		var innerColumnFiltersCache = this.innerColumnFiltersCache;
+
+		/** @type {AbstractToolbarFilterUX} */
+		var thisInstance = this;
+		var table = this.tableComponent;
+		var sortByName = globalFilterConfig.sortPickerAlphabetically;
+
+		/**
+		 * @param {CustomType<aggrid-groupingtable.column>} col
+		 * @private
+		 * @return {Filter}
+		 *  */
+		function innerGetOrFreateFilterFromGridColumn(col) {
+			for (var cacheIndex = 0; cacheIndex < innerColumnFiltersCache.length; cacheIndex++) {
+				if ((col.id && col.id == innerColumnFiltersCache[cacheIndex].id) || (!col.id && col.dataprovider == innerColumnFiltersCache[cacheIndex].id)) {
+					return innerColumnFiltersCache[cacheIndex];
+				}
+			}
+			var innerColFilter = createFilterFromGridColumn(col, thisInstance);
+			innerColumnFiltersCache.push(innerColFilter);
+			return innerColFilter;
+		}
+		
+		//add all visible columns of the table
+		if (table) {
+			var columns = table.columns;
+			var useNonVisibleColumns = getConfigUseNonVisibleColumns();
+	
+			if (useNonVisibleColumns) {
+				// scan all columns
+				for (var index = 0; index < columns.length; index++) {
+					column = columns[index];
+					if (column.filterType && column.filterType != 'NONE') {
+						filter = innerGetOrFreateFilterFromGridColumn(column);
+						addFilterSorted(filters, filter, sortByName);
+					}
+				}
+			} else if (table) {
+				// we have a table element to look for columns
+				// scan only visible columns. Access the column state
+				var jsonState = table.getColumnState();
+				if (jsonState) {
+					/** @type {{columnState:Array}} */
+					var state = JSON.parse(jsonState);
+					/** @type {Array} */
+					var colsState = state.columnState ? state.columnState : [];
+					for (var j = 0; j < colsState.length; j++) {
+						if (!colsState[j].hide) { // skip column if hidden
+							// NEW API
+							var colIndex = table.getColumnIndex(colsState[j].colId);
+							column = columns[colIndex];
+							if (column && column.filterType && column.filterType != 'NONE') {
+								//visibleColumns.push(col.dataprovider);
+								filter = innerGetOrFreateFilterFromGridColumn(column);
+								addFilterSorted(filters, filter, sortByName);
+							}
+						}
+					}
+				} else {
+					for (var i = 0; i < columns.length; i++) {
+						column = columns[i];
+						if (column.filterType && column.filterType != 'NONE' && column.visible) {
+							filter = innerGetOrFreateFilterFromGridColumn(column);
+							addFilterSorted(filters, filter, sortByName);
+						}
+					}
+				}
+			}
+		}
+		
+		return filters;
+	}
+
+}
+
 
 /**
  * Creates a Filter from the given NG Grid column
@@ -3137,6 +3665,51 @@ function addSearchProvider(search, filter) {
 		}
 	}
 }
+
+/**
+ *  
+ * @private  
+ * @param {String} operator
+ * 
+ * @return {String}
+ *
+ * @properties={typeid:24,uuid:"E28C1BE6-1094-45AC-82CC-4C0045BE65CF"}
+ */
+function getOperatorText(operator) {
+	var operatorText = "";
+	var OPERATOR = scopes.svyPopupFilter.OPERATOR;
+	switch (operator) {
+	case OPERATOR.GREATER_THEN:
+		operatorText = ">";
+		break;
+	case OPERATOR.GREATER_EQUAL:
+		operatorText = ">";
+		break;
+	case OPERATOR.SMALLER_THEN:
+		operatorText = "<";
+		break;
+	case OPERATOR.SMALLER_EQUAL:
+		operatorText = "<";
+		break;
+	case OPERATOR.BETWEEN:
+		operatorText = "...";
+		break;
+	case OPERATOR.IS_NULL:
+		operatorText = scopes.svyPopupFilter.LOCALE.filterToolbar.operator.IS_NULL;
+		break;
+	case OPERATOR.NOT_NULL:
+		operatorText = scopes.svyPopupFilter.LOCALE.filterToolbar.operator.NOT_NULL;
+		break;
+	case OPERATOR.EQUALS:
+	case OPERATOR.LIKE:
+	case OPERATOR.LIKE_CONTAINS:
+	case OPERATOR.IS_IN:
+	default:
+		break;
+	}
+	
+	return operatorText;
+}	
 
 /**
  * Returns an array of display values for the given values
@@ -3258,6 +3831,29 @@ function dataProviderHasXDBRelation(dataProviderID) {
 	return false;
 }
 
+/** 
+ * @param {Array<Filter>} filters
+ * @param {Filter} filterObj
+ * @param {Boolean} sortByName
+ * @private 
+ * *
+ * @properties={typeid:24,uuid:"B6D9FB57-640D-477D-9ACA-B67121397B20"}
+ */
+function addFilterSorted(filters, filterObj, sortByName) {
+	if (sortByName && filterObj.text && filters.length) {
+		
+		for (var sortIndex = 0; sortIndex < filters.length; sortIndex++) {
+			if (filterObj.text < filters[sortIndex].text) {
+				scopes.svyJSUtils.arrayInsert(filters, sortIndex, filterObj);
+				return;
+			}
+		}
+		
+	} 
+	// push filter at the end
+	filters.push(filterObj);
+}
+
 /**
  * @private
  * @SuppressWarnings(unused)
@@ -3270,5 +3866,10 @@ var init = (function() {
 	initAbstractToolbarFilterUX();
 	initListComponentFilterRenderer();
 	initNgGridListComponentFilterRenderer();
+	initPopupFilterRenderer();
+	initNgGridPopupFilterRenderer();
 	initFilter();
+	initAbstractFilterSource();
+	initFoundSetFilterSource();
+	initNgGridFilterSource();
 }());

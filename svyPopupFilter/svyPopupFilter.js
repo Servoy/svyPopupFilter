@@ -134,8 +134,13 @@ var LOCALE = {
 		labelGreater: 'Bigger than',
 		labelSmaller: 'Smaller than',
 		labelBetween: 'Between'
+	},
+	svyToolbarFilterPicker : {
+		labelTitle: 'Filter',
+		labelClearAll: 'Clear all',
+		searchbox: { placeholderText: 'Search...' }
 	}
-}
+};
 
 /**
  * @public 

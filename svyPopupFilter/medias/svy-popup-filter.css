@@ -254,3 +254,57 @@ body > .ui-select-bootstrap.svy-popup-filter-select.open {
 .svy-toolbar-filter .toolbar-filter-tag-icon {
 	margin-left: 5px;
 }
+
+/***************************************
+*
+*	Toolbar Filter Picker Form
+*
+***************************************/
+
+
+.svy-popup-filter-picker {
+	.checkbox {
+		border: 0;
+	}
+}
+
+.svy-popup-filter-picker-header {
+		
+	margin-top: 15px;
+	margin-bottom: 10px;
+	
+	/* font-size: 16px; */
+	
+	.form-control {
+		margin-top: 10px;
+	}
+	
+}
+
+.svy-popup-filter-picker-body {
+	margin-bottom: 10px;	
+}
+
+.svy-toolbarpicker-list {
+	
+	/* Using this to let LFC increase in height automatically */
+	height: auto !important;
+	
+	.ag-root-wrapper-body.ag-layout-normal {
+		height: initial !important;
+	}
+}
+
+.svy-toolbarpicker-list-active {
+	
+	.svy-popup-filter-picker-name {
+		font-weight: bold;
+	}
+	
+	.svy-popup-filter-picker-values {
+		margin-left: 5px;
+		font-style: italic;
+		word-break: break-all;
+	}
+}
+
