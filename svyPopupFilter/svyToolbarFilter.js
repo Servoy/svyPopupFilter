@@ -55,6 +55,14 @@ var TOOLBAR_FILTER_NAME = "svy-toolbar-filter";
 var latestToolbarFilter = null;
 
 /**
+ * @type {String}
+ * cache locally the latest popup filter target, used by showPreviousToolbarFilter
+ * @private 
+ * @properties={typeid:35,uuid:"72CC1819-F201-4E35-A8CC-83A303F5BBBA"}
+ */
+var latestToolbarFilterTarget = null;
+
+/**
  * This is a Singleton
  * @type {PopupRendererForms}
  * @private  
@@ -544,6 +552,12 @@ function ListComponentFilterRenderer(listComponent, foundsetToFilter) {
 	this.filters = [];
 	
 	/**
+	 * @protected
+	 * @type {Object<scopes.svyPopupFilter.AbstractPopupFilter>}
+	 */
+	this.toolbarFilters = new Object();
+	
+	/**
 	 * @protected  
 	 * @type {FoundSetFilterSource} 
 	 * */
@@ -554,12 +568,6 @@ function ListComponentFilterRenderer(listComponent, foundsetToFilter) {
 	}
 	
 	AbstractToolbarFilterUX.call(this, listComponent, foundsetToFilter);
-	
-	/**
-	 * @protected
-	 * @type {Object<scopes.svyPopupFilter.AbstractPopupFilter>}
-	 */
-	this.toolbarFilters = new Object();
 	
 	/**
 	 * @protected 
@@ -2383,6 +2391,8 @@ function initAbstractToolbarFilterUX() {
 
 		var filterPopupMenu = this.createPopupFilterPicker();
 		
+		latestToolbarFilterTarget = target.getFormName() + '.' + target.getName();
+		
 		filterPopupMenu.show(target);
 	}
 	
@@ -2960,7 +2970,7 @@ function initPopupFilterRenderer() {
 		
 		// TODO make picker configurable
 		var filterPopupMenu = plugins.window.createFormPopup(forms.svyToolbarFilterPicker);
-		forms.svyToolbarFilterPicker.toolbarFilterUX = this;		
+		forms.svyToolbarFilterPicker['toolbarFilterUX'] = this;		
 
 		// cache the latest menu so it can be used in callback
 		latestToolbarFilter = this;
@@ -2979,6 +2989,8 @@ function initPopupFilterRenderer() {
 	 */
 	PopupFilterRenderer.prototype.showPopupFilterPicker = function(target) {
 
+		latestToolbarFilterTarget = target.getFormName() + '.' + target.getName();
+		
 		/** @type {plugins.window.FormPopup} */
 		var filterPopupMenu = this.createPopupFilterPicker();
 		filterPopupMenu.component(target);
@@ -3852,6 +3864,18 @@ function addFilterSorted(filters, filterObj, sortByName) {
 	} 
 	// push filter at the end
 	filters.push(filterObj);
+}
+
+/**
+ * @public 
+ * @properties={typeid:24,uuid:"31F414D9-DB08-4104-B121-EC25BC937978"}
+ */
+function showPreviousPopupFilterPicker() {
+	if (latestToolbarFilter && latestToolbarFilterTarget) {
+		var formName = latestToolbarFilterTarget.split('.')[0]
+		var elementName = latestToolbarFilterTarget.split('.')[1]
+		latestToolbarFilter.showPopupFilterPicker(forms[formName].elements[elementName])
+	}
 }
 
 /**
