@@ -284,6 +284,26 @@ typeid:47,
 uuid:"A159D254-8C83-4D01-A915-08C5927D10CC"
 },
 {
+cssPosition:"7,-1,-1,101,131,32",
+json:{
+cssPosition:{
+bottom:"-1",
+height:"32",
+left:"101",
+right:"-1",
+top:"7",
+width:"131"
+},
+dataProviderID:"operator",
+onDataChangeMethodID:"5F50F324-FFA8-4B4B-9C78-F010DE4CC94F",
+valuelistID:"AB7E5251-B609-47A3-BE05-B8F9302656C5"
+},
+name:"selectSelectionType",
+typeName:"bootstrapcomponents-combobox",
+typeid:47,
+uuid:"B1043EEB-4020-4FD9-81B0-DA8900E51F9E"
+},
+{
 cssPosition:"60,15,-1,-1,calc( 50% - 30px),260",
 json:{
 cssPosition:{
@@ -322,18 +342,6 @@ styleClass:"text-tertiary text-center text-center-vertical clickable",
 typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"C6365AF8-9908-4B2C-9F8B-FF7F475AD4BB"
-},
-{
-cssPosition:"7,-1,-1,101,131,32",
-dataProviderID:"operator",
-displayType:2,
-editable:false,
-name:"selectSelectionType",
-onDataChangeMethodID:"5F50F324-FFA8-4B4B-9C78-F010DE4CC94F",
-styleClass:"border-round svy-popup-filter-select",
-typeid:4,
-uuid:"D8610419-6788-463C-BB7E-4BCF08485EE5",
-valuelistID:"AB7E5251-B609-47A3-BE05-B8F9302656C5"
 },
 {
 cssPosition:"372,15,-1,calc(75% - 15px),78,32",
