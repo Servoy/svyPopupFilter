@@ -386,7 +386,7 @@ function dismiss() {
 		window.hide();
 		window = null;
 	} else {
-		plugins.window.closeFormPopup(null);
+		plugins.window.cancelFormPopup();
 	}
 }
 

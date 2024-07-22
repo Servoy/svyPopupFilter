@@ -249,8 +249,8 @@ function onClickInactiveFilter(event, dataTarget) {
 function showPopupFilter(dataproviderID, event) {
 	var location = plugins.ngclientutils.getAbsoluteLocation(elements.labelTitle);
 	
-	// TODO resolve warning
+	plugins.window.cancelFormPopup();
+	
 	// show the popup filter
-	toolbarFilterUX.showPopupFilter(dataproviderID, location.x, location.y);
+	toolbarFilterUX.showPopupFilter(dataproviderID, location.x + 15, location.y - 15);
 }
-
