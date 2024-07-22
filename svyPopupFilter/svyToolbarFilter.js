@@ -1304,7 +1304,12 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype.applyFilters = function() {
 		//force apply filters
 		this._applyFilters(true);
-		return this.getFoundSet().loadAllRecords();
+		var fs = this.getFoundSet();
+		if (fs.getRelationName()) {
+			//don't apply a loadAllRecords on a related foundset
+			return true;
+		}
+		return fs.loadAllRecords();
 	}
 	
 	/**

@@ -190,12 +190,6 @@ typeid:47,
 uuid:"C2C5072A-8F40-47AC-B35C-A823CD83FA45"
 },
 {
-cssPosition:"7,-1,-1,101,131,32",
-extendsID:"D8610419-6788-463C-BB7E-4BCF08485EE5",
-typeid:4,
-uuid:"CDC431BC-2AFC-4D55-8A59-ADAB4F4AA5CD"
-},
-{
 cssPosition:"463,50%,-1,calc(25% + 15px),0,32",
 extendsID:"C6365AF8-9908-4B2C-9F8B-FF7F475AD4BB",
 json:{
