@@ -1231,10 +1231,33 @@ function initSvySelectFilter() {
 	 */
 	SvySelectFilter.prototype.restoreState = function(jsonState) {
 
+		
+		var values = jsonState.values;
+		
+		// check if column has type UUID
+		if (values && values.length && values[0] instanceof String ) {
+			
+			/** @type {String} */
+			var testValue = values[0];
+			var testValueUUID = application.getUUID(testValue)
+			if (testValueUUID && testValueUUID.toString() === testValue) {
+				var jsColumn = scopes.svyDataUtils.getDataProviderJSColumn(this.lookup.getDataSource(), this.lookup.getLookupDataProvider());
+				if (jsColumn && jsColumn.hasFlag(JSColumn.UUID_COLUMN)) {
+					
+					// convert restored values to UUID
+					values = values.map(function toUUID(value) {
+						return value ? application.getUUID(value) : value;
+					})
+					jsonState.values = values;
+				}
+			}
+		}
+		
 		AbstractPopupFilter.prototype.restoreState.call(this, jsonState);
-		if (jsonState.values) {
+		
+		if (values) {
 			// TODO this may not be enough if the in-memory datasource of the lookup is refreshed before show.
-			this.lookup.setSelectedValues(jsonState.values);
+			this.lookup.setSelectedValues(values);
 		}
 		return this;
 	}
