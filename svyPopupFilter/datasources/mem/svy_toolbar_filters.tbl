@@ -40,6 +40,12 @@ allowNull:true,
 creationOrderIndex:6,
 dataType:12,
 name:"values"
+},
+{
+allowNull:true,
+creationOrderIndex:7,
+dataType:4,
+name:"sort_index"
 }
 ],
 name:"svy_toolbar_filters",

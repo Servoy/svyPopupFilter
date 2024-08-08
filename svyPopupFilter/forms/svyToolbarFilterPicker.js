@@ -167,9 +167,11 @@ function refreshFilterLists(text) {
 	}
 
 	qa.where.add(qa.getColumn('is_active').eq(0));
+	qa.sort.add(qa.columns.sort_index.asc);
 	elements.filters.foundset.foundset.loadRecords(qa)
 
 	qi.where.add(qi.getColumn('is_active').eq(1));
+	qi.sort.add(qi.columns.sort_index.asc);
 	elements.activeFilters.foundset.foundset.loadRecords(qi)
 }
 

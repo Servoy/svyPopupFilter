@@ -2932,14 +2932,14 @@ function initPopupFilterRenderer() {
 	 */
 	PopupFilterRenderer.prototype.createPopupFilterPicker = function() {
 		
-		var columnNames = ['id', 'dataprovider', 'display_name', 'is_active', 'operator', 'values'];
+		var columnNames = ['id', 'dataprovider', 'display_name', 'is_active', 'operator', 'values', 'sort_index'];
 		var dataset = databaseManager.createEmptyDataSet(0, columnNames);
 
 		var columnFilters = this.getFilters();
 		for (var index = 0; index < columnFilters.length; index++) {
 			var columnFilter = columnFilters[index];
 			var text = columnFilter.text||scopes.svyUI.getColumnTitle(scopes.svyDataUtils.getDataProviderRelationName(columnFilter.dataprovider)||this.getFoundSet().getDataSource(),columnFilter.dataprovider);
-
+			var sortIndex = index + 1;
 			
 			if (this.isFilterActive(columnFilter)) {
 
@@ -2963,11 +2963,11 @@ function initPopupFilterRenderer() {
 					operator = showOperator ? " " + operatorText : "";
 				}
 				
-				dataset.addRow([columnFilter.id, columnFilter.dataprovider, text, 1, operator, values]);
+				dataset.addRow([columnFilter.id, columnFilter.dataprovider, text, 1, operator, values, sortIndex]);
 
 			} else {
 				// non-active filter
-				dataset.addRow([columnFilter.id, columnFilter.dataprovider, text, 0, null, null]);
+				dataset.addRow([columnFilter.id, columnFilter.dataprovider, text, 0, null, null, sortIndex]);
 			}
 		}
 		
