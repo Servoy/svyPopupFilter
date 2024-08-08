@@ -563,6 +563,37 @@ function ListComponentFilterRenderer(listComponent, foundsetToFilter) {
 	 * */
 	this.filterSourceProvider;
 	
+	/**
+	 * The render template used to render the active filters
+	 * @protected  
+	 * @type {String} 
+	 * */
+	this.filterRenderTemplate = "(function renderFilterEntry(entry) {  \n\
+		var template = '';\n\
+		var strDivider = ' : ';\n\
+		var entryValue = entry.value ? entry.value.toString() : ''; \n\
+		var valuesArr = entryValue.split(',');\n\
+		for ( var i = 0; i < valuesArr.length ; i++ ) {\n\
+			if (valuesArr[i].indexOf('!=') === 0) { \n\
+				valuesArr[i] = '-' + valuesArr[i].substring(2, valuesArr[i].length); \n\
+			} else if (valuesArr[i].indexOf('!') === 0) { \n\
+				valuesArr[i] = '-' + valuesArr[i].substring(1, valuesArr[i].length); \n\
+			} else if (valuesArr[i].indexOf('%!=') === 0) { \n\
+				valuesArr[i] = '-' + valuesArr[i].substring(3, valuesArr[i].length); \n\
+			} \n\
+		}\n\
+		template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \n\
+		'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + entry.operator + \\' \\' + entry.value\">' + \n\
+			'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
+			'<span class=\"toolbar-filter-tag-operator\">' + entry.operator + '</span>' + \n\
+			'<span class=\"toolbar-filter-tag-value\"> ' + valuesArr.join(', ') + ' </span>' + \n\
+			'<span class=\"toolbar-filter-tag-icon " + scopes.svyPopupFilter.STYLING.OPEN_FILTER_ICON +"\">' + '</span>' + \n\
+		'</button>' + \n\
+		'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"close\">' + \n\
+		'<span class=\"" + scopes.svyPopupFilter.STYLING.REMOVE_FILTER_ICON +" text-danger\">' + '</span>' + '</button>' + '</div>'; \n\
+		return template; \n\
+	})";
+	
 	if (!this.filterSourceProvider) {
 		this.filterSourceProvider = new FoundSetFilterSource(foundsetToFilter);
 	}
@@ -2603,36 +2634,60 @@ function initListComponentFilterRenderer() {
 	/**
 	 * @return {String}
 	 * 
-	 * @protected
+	 * @public 
 	 *
 	 * @this {ListComponentFilterRenderer}
 	 */
 	ListComponentFilterRenderer.prototype.getRenderTemplate = function() {
-		return "(function renderFilterEntry(entry) {  \n\
-			var template = '';\n\
-			var strDivider = ' : ';\n\
-			var entryValue = entry.value ? entry.value.toString() : ''; \n\
-			var valuesArr = entryValue.split(',');\n\
-			for ( var i = 0; i < valuesArr.length ; i++ ) {\n\
-				if (valuesArr[i].indexOf('!=') === 0) { \n\
-					valuesArr[i] = '-' + valuesArr[i].substring(2, valuesArr[i].length); \n\
-				} else if (valuesArr[i].indexOf('!') === 0) { \n\
-					valuesArr[i] = '-' + valuesArr[i].substring(1, valuesArr[i].length); \n\
-				} else if (valuesArr[i].indexOf('%!=') === 0) { \n\
-					valuesArr[i] = '-' + valuesArr[i].substring(3, valuesArr[i].length); \n\
-				} \n\
-			}\n\
-			template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \n\
-			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + entry.operator + \\' \\' + entry.value\">' + \n\
-				'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
-				'<span class=\"toolbar-filter-tag-operator\">' + entry.operator + '</span>' + \n\
-				'<span class=\"toolbar-filter-tag-value\"> ' + valuesArr.join(', ') + ' </span>' + \n\
-				'<span class=\"toolbar-filter-tag-icon " + scopes.svyPopupFilter.STYLING.OPEN_FILTER_ICON +"\">' + '</span>' + \n\
-			'</button>' + \n\
-			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"close\">' + \n\
-			'<span class=\"" + scopes.svyPopupFilter.STYLING.REMOVE_FILTER_ICON +" text-danger\">' + '</span>' + '</button>' + '</div>'; \n\
-			return template; \n\
-		})";
+		return this.filterRenderTemplate;
+	}
+	
+	/**
+	 * @param {String} templateFunc
+	 * 
+	 * @return {ListComponentFilterRenderer}
+	 * 
+	 * @public 
+	 * 
+	 * @example <pre>
+	 * toolbarFilter.setRenderTemplate("(function renderFilterEntry(entry) {  \n\
+	 *	var template = '';\n\
+	 *	var strDivider = ' : ';\n\
+	 *	var entryValue = entry.value ? entry.value.toString() : ''; \n\
+	 *	var valuesArr = entryValue.split(',');\n\
+	 *	for ( var i = 0; i < valuesArr.length ; i++ ) {\n\
+	 *		if (valuesArr[i].indexOf('!=') === 0) { \n\
+	 *			valuesArr[i] = '-' + valuesArr[i].substring(2, valuesArr[i].length); \n\
+	 *		} else if (valuesArr[i].indexOf('!') === 0) { \n\
+	 *			valuesArr[i] = '-' + valuesArr[i].substring(1, valuesArr[i].length); \n\
+	 *		} else if (valuesArr[i].indexOf('%!=') === 0) { \n\
+	 *			valuesArr[i] = '-' + valuesArr[i].substring(3, valuesArr[i].length); \n\
+	 *		} \n\
+	 *	}\n\
+	 *	template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \n\
+	 *	'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\">' + \n\
+	 *		'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
+	 *		'<span class=\"toolbar-filter-tag-operator\">' + entry.operator + '</span>' + \n\
+	 *		'<span class=\"toolbar-filter-tag-value\"> ' + valuesArr.join(', ') + ' </span>' + \n\
+	 *		'<span class=\"toolbar-filter-tag-icon fas fa-solid fa-angle-down\">' + '</span>' + \n\
+	 *	'</button>' + \n\
+	 *	'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"close\">' + \n\
+	 *	'<span class=\"fa fa-times fa-solid fa-xmark text-danger\">' + '</span>' + '</button>' + '</div>'; \n\
+	 *	return template; \n\
+	 * })");
+	 *</pre>
+	 *
+	 * @this {ListComponentFilterRenderer}
+	 */
+	ListComponentFilterRenderer.prototype.setRenderTemplate = function(templateFunc) {
+		this.filterRenderTemplate = templateFunc;
+		//TODO: remove when old list component has finally disappeared
+		if (this.element.getElementType() == "customrenderedcomponents-listcomponent") {
+			this.element['entryRendererFunc'] = this.getRenderTemplate();
+		} else {
+			this.element.entryRendererFunction = this.getRenderTemplate();
+		}
+		return this;
 	}
 	
 	/**
