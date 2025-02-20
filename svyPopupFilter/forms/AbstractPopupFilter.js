@@ -97,7 +97,7 @@ function showPopUp(callback, target, width, height) {
  * @param {function(Array<String|Date|Number>,String,scopes.svyPopupFilter.AbstractPopupFilter)} callback The function that is called when selection happens
  * @param {String} [initialValue] Initial value in search. Optional. Default is empty.
  * 
- * @return {plugins.window.FormPopup}
+ * @return {CustomType<window.FormPopup>}
  *
  * @properties={typeid:24,uuid:"FA38C5FD-BD64-4B0C-A9C6-CBF1C15E96A3"}
  */

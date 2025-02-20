@@ -991,7 +991,7 @@ function initAbstractPopupFilter() {
 	 * 
 	 * @public 
 	 * @param {function(Array<String|Date|Number>,String,scopes.svyPopupFilter.AbstractPopupFilter)} callback The function that will be called when a selection is made; the callback returns the following arguments: {Array<JSRecord>} record, {Array<String|Date|Number>} popupFilterValue , {AbstractPopupFilter} popupFilter
-	 * @return {plugins.window.FormPopup}
+	 * @return {CustomType<window.FormPopup>}
 	 * @this {AbstractPopupFilter}
 	 */
 	AbstractPopupFilter.prototype.createPopUp = function(callback) {
@@ -1297,7 +1297,7 @@ function initSvySelectFilter() {
 	 * 
 	 * @public 
 	 * @param {function(Array<String|Date|Number>,String,scopes.svyPopupFilter.AbstractPopupFilter)} callback The function that will be called when a selection is made; the callback returns the following arguments: {Array<JSRecord>} record, {Array<String|Date|Number>} popupFilterValue , {AbstractPopupFilter} popupFilter
-	 * @return {plugins.window.FormPopup}
+	 * @return {CustomType<window.FormPopup>}
 	 * @this {SvySelectFilter}
 	 */
 	SvySelectFilter.prototype.createPopUp = function(callback) {

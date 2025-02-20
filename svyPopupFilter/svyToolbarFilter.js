@@ -2158,7 +2158,7 @@ function initAbstractToolbarFilterUX() {
 	/**
 	 * Creates the filter picker popup that can be further added to before shown
 	 * 
-	 * @return {plugins.window.Popup}
+	 * @return {CustomType<window.Popup>}
 	 * 
 	 * @public
 	 *
