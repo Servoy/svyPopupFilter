@@ -232,7 +232,7 @@ function FilterParam(filterName){
 	 * @type {String}
 	 * @private 
 	 * */
-	var name = filterName ? filterName : this.getDataSource();
+	var name = filterName;
 		
 	/** 
 	 * @private 
