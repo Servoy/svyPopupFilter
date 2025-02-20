@@ -1123,7 +1123,7 @@ function getI18nText(headerTitle) {
 }
 
 /**
- * @constructor
+ * @parse
  * @private
  * @properties={typeid:24,uuid:"E8CB92CC-FCCF-4A46-B180-9CF800899C2E"}
  * @AllowToRunInFind

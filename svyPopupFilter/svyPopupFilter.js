@@ -493,7 +493,7 @@ function SvySelectFilter(dataProvider, lookup){
 }
 
 /**
- * @constructor
+ * @parse
  * @private 
  * @properties={typeid:24,uuid:"EFDE7B95-A6D0-4FF4-B5D3-BC4C57711061"}
  */
