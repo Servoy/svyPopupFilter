@@ -5,7 +5,7 @@
  * @param {function(Array<JSRecord>,Array<String|Date|Number>,scopes.svyLookup.Lookup)} callback The function that is called when selection happens
  * @param {String} [initialValue] Initial value in search. Optional. Default is empty.
  * 
- * @return {plugins.window.FormPopup}
+ * @return {CustomType<window.FormPopup>}
  *
  * @properties={typeid:24,uuid:"D3295993-D47C-4A16-AA61-4A05ACB209E4"}
  */
