@@ -1707,31 +1707,8 @@ function initAbstractToolbarFilterUX() {
 			this.simpleSearch.setSearchText(this.searchText);			
 		}
 		if (this.searchText) {
-			
-			// filters need to be applied
-			if (this.onSearchCommand && this.getActiveFilters().length) {
-				
-				// include filters in query
-				var foundset = databaseManager.getFoundSet(this.simpleSearch.getDataSource());
-				var searchQuery = this.simpleSearch.getQuery();
-				
-				// add temp filters to make sure filterQuery is merged with searchQuery
-				var toolbarFilterName = TOOLBAR_FILTER_NAME + "-temp";
-				var searchFilterName = TOOLBAR_FILTER_NAME + "-temp-search";
-				foundset.addFoundSetFilterParam(filterQuery, toolbarFilterName);
-				foundset.addFoundSetFilterParam(searchQuery, searchFilterName);
-				foundset.loadRecords();
-				
-				query = foundset.getQuery();
-				
-				// remove filters from query
-				foundset.removeFoundSetFilterParam(toolbarFilterName);
-				foundset.removeFoundSetFilterParam(searchFilterName);
-				foundset.loadRecords();
-
-			} else {
-				query = this.simpleSearch.getQuery();
-			}
+			// search needs to be added to filterQuery
+			query = this.simpleSearch.getQuery(filterQuery);
 		} else {
 			query = filterQuery;
 		}
