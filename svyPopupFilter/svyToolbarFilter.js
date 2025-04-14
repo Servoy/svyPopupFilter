@@ -1,4 +1,10 @@
 /**
+ * @private 
+ * @properties={typeid:35,uuid:"B18CA752-7905-4F89-B746-7DC53CE2A89A",variableType:-4}
+ */
+var log = application.getLogger('com.servoy.extensions.ToolbarFilter');
+
+/**
  * @public 
  * Enum of all renderer form types available
  * @properties={typeid:35,uuid:"E4F70004-F7BE-4806-AC3C-F727EC06AF8F",variableType:-4}
@@ -1158,7 +1164,7 @@ function initAbstractToolbarFilterUX() {
 	AbstractToolbarFilterUX.prototype._applyFilters = function(forceApply) {
 		var foundset = this.getFoundSet();
 		if (!foundset) {
-			application.output("cannot apply filters for undefined foundset. May happen for a related foundset where parent record is undefined.", LOGGINGLEVEL.DEBUG)
+			log.debug.log("cannot apply filters for undefined foundset. May happen for a related foundset where parent record is undefined.")
 			return null;
 		}
 		
@@ -1847,7 +1853,7 @@ function initAbstractToolbarFilterUX() {
 		var searchTextChanged = this.searchText !== this.simpleSearch.getSearchText() ? true : false;
 		var foundset = this.getFoundSet();
 		if (!foundset) {
-			application.output("cannot apply search in an undefined foundset. May happen for a related foundset where parent record is undefined. ", LOGGINGLEVEL.DEBUG)
+			log.debug.log("cannot apply search in an undefined foundset. May happen for a related foundset where parent record is undefined. ")
 			return;
 		}
 		
@@ -2730,7 +2736,7 @@ function initNgGridListComponentFilterRenderer() {
 				}
 			}
 		} catch (e) {
-			application.output(e, LOGGINGLEVEL.ERROR);
+			log.error.log(e);
 		}
 		
 		if (tableDataSource) {
@@ -2996,7 +3002,7 @@ function initFilter() {
 		} else {
 			//search providers cannot be removed currently
 			if (toolbar.getSimpleSearch().getSearchProvider(this.dataprovider)) {
-				application.output("Operation not supported. Search provider cannot be removed; " + this.dataprovider, LOGGINGLEVEL.WARNING)
+				log.warn.log("Operation not supported. Search provider cannot be removed; " + this.dataprovider)
 			}
 		}
 		return this;
@@ -3083,7 +3089,7 @@ function addSearchProvider(search, filter) {
 			if (filter.valuelist) {
 				vlItems = application.getValueListItems(filter.valuelist);
 				if (!vlItems.getMaxRowIndex()) {
-					application.output("skip search on column with valuelist " + filter.valuelist);
+					log.debug.log("skip search on column with valuelist " + filter.valuelist);
 					return;
 				}
 			}
@@ -3114,7 +3120,7 @@ function addSearchProvider(search, filter) {
 				}
 			} catch (e) {
 				// when addSearchProvider fails due to a cross-db  dataprovider it throws an exception and the toolbar filter is not created
-				application.output("skip search on column with dataprovider: " + filter.dataprovider + '. Please check other log messages to see if this is a cross-db dataprovider which it is not supported');
+				log.debug.log("skip search on column with dataprovider: " + filter.dataprovider + '. Please check other log messages to see if this is a cross-db dataprovider which it is not supported');
 			}
 		}
 	}
@@ -3233,7 +3239,7 @@ function dataProviderHasXDBRelation(dataProviderID) {
 	while (path.length) {
 		var relationName = path.pop()
 		if (scopes.svyDataUtils.isCrossDBRelation(relationName)) {
-			application.output('Invalid data provider [' + dataProviderID + '] has a cross-database relation [' + relationName + '] which is not supported', LOGGINGLEVEL.WARNING);
+			log.warn.log('Invalid data provider [' + dataProviderID + '] has a cross-database relation [' + relationName + '] which is not supported');
 			return true;
 		}
 	}
