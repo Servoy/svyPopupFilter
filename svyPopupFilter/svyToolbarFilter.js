@@ -81,13 +81,35 @@ var globalFilterConfig;
  * @properties={typeid:24,uuid:"51DB1DD3-1632-4667-82F9-C2EF07BF1A5B"}
  */
 function FilterConfig() {
-	// TODO default auto-apply behavior
-	// this.autoApply = true;
-	
 	this.useNonVisibleColumns = true;
 	this.globalDateDisplayFormat = "dd-MM-yyyy";
 	this.sortPickerAlphabetically = false;
 	this.treatEmptyStringsAsNull = true;
+	this.rendererTemplate = "(function renderFilterEntry(entry) {  \n\
+		var template = '';\n\
+		var strDivider = ' : ';\n\
+		var entryValue = entry.value ? entry.value.toString() : ''; \n\
+		var valuesArr = entryValue.split(',');\n\
+		for ( var i = 0; i < valuesArr.length ; i++ ) {\n\
+			if (valuesArr[i].indexOf('!=') === 0) { \n\
+				valuesArr[i] = '-' + valuesArr[i].substring(2, valuesArr[i].length); \n\
+			} else if (valuesArr[i].indexOf('!') === 0) { \n\
+				valuesArr[i] = '-' + valuesArr[i].substring(1, valuesArr[i].length); \n\
+			} else if (valuesArr[i].indexOf('%!=') === 0) { \n\
+				valuesArr[i] = '-' + valuesArr[i].substring(3, valuesArr[i].length); \n\
+			} \n\
+		}\n\
+		template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \n\
+		'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\">' + \n\
+			'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
+			'<span class=\"toolbar-filter-tag-operator\">' + entry.operator + '</span>' + \n\
+			'<span class=\"toolbar-filter-tag-value\"> ' + valuesArr.join(', ') + ' </span>' + \n\
+			'<span class=\"toolbar-filter-tag-icon " + scopes.svyPopupFilter.STYLING.OPEN_FILTER_ICON +"\">' + '</span>' + \n\
+		'</button>' + \n\
+		'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"close\">' + \n\
+		'<span class=\"" + scopes.svyPopupFilter.STYLING.REMOVE_FILTER_ICON +" text-danger\">' + '</span>' + '</button>' + '</div>'; \n\
+		return template; \n\
+	})";
 }
 
 /**
@@ -167,6 +189,33 @@ function getConfigSortPickerAlphabetically(sortAlphabetically) {
 function setConfigDateDisplayFormat(displayFormat) {
 	if(displayFormat != null && displayFormat.trim() != "")
 		globalFilterConfig.globalDateDisplayFormat = displayFormat;
+}
+
+/**
+ * Sets the renderer template used to render the single filter entry.<br><br>
+ * 
+ * The function receives the single filter entry as parameter and should return a string with the HTML template to be used.<br><br>
+ * 
+ * The single filter entry is an object with the following properties:<br<br>
+ * 
+ * <ul>
+ * <li>text: the display value of the filter</li>
+ * <li>id: the filter id</li>
+ * <li>value: the value of the filter, mostly a comma separated string</li>
+ * <li>dataprovider: the dataProvider of the filter</li>
+ * <li>operator: the operator of the filter</li>
+ * </ul>
+ * 
+ * See the globalFilterConfig variable's rendererTemplate property for the default function used.
+ * 
+ * @since v2025.03
+ * @public 
+ * @param {String} rendererTemplate
+ *
+ * @properties={typeid:24,uuid:"0099C3D3-0C9A-46D4-BE6D-086B75307A0B"}
+ */
+function setConfigRendererTemplate(rendererTemplate) {
+	 globalFilterConfig.rendererTemplate = rendererTemplate;
 }
 
 /**
@@ -552,12 +601,7 @@ function ListComponentFilterRenderer(listComponent, foundsetToFilter) {
 	 */
 	this.toolbarFilters = new Object();
 	
-	//TODO: remove when old list component has finally disappeared
-	if (listComponent.getElementType() == "customrenderedcomponents-listcomponent") {
-		listComponent['entryRendererFunc'] = this.getRenderTemplate();
-	} else {
-		listComponent.entryRendererFunction = this.getRenderTemplate();
-	}
+	listComponent.entryRendererFunction = globalFilterConfig.rendererTemplate;
 	
 	listComponent.addStyleClass("svy-toolbar-filter")
 	listComponent.clear();
@@ -1923,7 +1967,6 @@ function initAbstractToolbarFilterUX() {
 		var popup = filter.createPopUp(this.onFilterApply);
 		popup.x(event.getX());
 		popup.y(event.getY());
-		// popup.width(300);
 		popup.show();
 	}
 	
@@ -2390,34 +2433,12 @@ function initListComponentFilterRenderer() {
 	 * 
 	 * @protected
 	 *
+	 * @deprecated template is taken from the global config
+	 *
 	 * @this {ListComponentFilterRenderer}
 	 */
 	ListComponentFilterRenderer.prototype.getRenderTemplate = function() {
-		return "(function renderFilterEntry(entry) {  \n\
-			var template = '';\n\
-			var strDivider = ' : ';\n\
-			var entryValue = entry.value ? entry.value.toString() : ''; \n\
-			var valuesArr = entryValue.split(',');\n\
-			for ( var i = 0; i < valuesArr.length ; i++ ) {\n\
-				if (valuesArr[i].indexOf('!=') === 0) { \n\
-					valuesArr[i] = '-' + valuesArr[i].substring(2, valuesArr[i].length); \n\
-				} else if (valuesArr[i].indexOf('!') === 0) { \n\
-					valuesArr[i] = '-' + valuesArr[i].substring(1, valuesArr[i].length); \n\
-				} else if (valuesArr[i].indexOf('%!=') === 0) { \n\
-					valuesArr[i] = '-' + valuesArr[i].substring(3, valuesArr[i].length); \n\
-				} \n\
-			}\n\
-			template += '<div class=\"btn-group push-right margin-left-10 toolbar-filter-tag\">' + \n\
-			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"open\" svy-tooltip=\"entry.text + entry.operator + \\' \\' + entry.value\">' + \n\
-				'<span class=\"toolbar-filter-tag-text\">' + entry.text + '</span>' + \n\
-				'<span class=\"toolbar-filter-tag-operator\">' + entry.operator + '</span>' + \n\
-				'<span class=\"toolbar-filter-tag-value\"> ' + valuesArr.join(', ') + ' </span>' + \n\
-				'<span class=\"toolbar-filter-tag-icon " + scopes.svyPopupFilter.STYLING.OPEN_FILTER_ICON +"\">' + '</span>' + \n\
-			'</button>' + \n\
-			'<button class=\"btn btn-default btn-sm btn-round\" data-target=\"close\">' + \n\
-			'<span class=\"" + scopes.svyPopupFilter.STYLING.REMOVE_FILTER_ICON +" text-danger\">' + '</span>' + '</button>' + '</div>'; \n\
-			return template; \n\
-		})";
+		return globalFilterConfig.rendererTemplate;
 	}
 	
 	/**
@@ -2430,7 +2451,7 @@ function initListComponentFilterRenderer() {
 	 *  
 	 * @public
 	 * @this {ListComponentFilterRenderer}
-	 *  */
+	 */
 	ListComponentFilterRenderer.prototype.onClick = function(entry, index, dataTarget, event) {
 		var filter = this.getFilter(entry['dataprovider']);
 		if (!dataTarget || dataTarget === "open") {
@@ -2968,7 +2989,6 @@ function Filter(titleText, dataprovider, toolbar) {
 
 /**
  * @constructor 
- * @this {Filter}
  * @private 
  * @properties={typeid:24,uuid:"BB3FE387-AE4B-46F9-820D-E532A6D1545D"}
  */
