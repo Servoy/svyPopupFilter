@@ -110,6 +110,9 @@ function FilterConfig() {
 		'<span class=\"" + scopes.svyPopupFilter.STYLING.REMOVE_FILTER_ICON +" text-danger\">' + '</span>' + '</button>' + '</div>'; \n\
 		return template; \n\
 	})";
+	this.tooltipFunction = 'function(dataTarget, entry) { \
+		return entry.text + (entry.value ? \': \' : \'\') + entry.operator + \' \' + entry.value.split(\',\').join(\', \'); \
+	}';
 }
 
 /**
@@ -216,6 +219,33 @@ function setConfigDateDisplayFormat(displayFormat) {
  */
 function setConfigRendererTemplate(rendererTemplate) {
 	 globalFilterConfig.rendererTemplate = rendererTemplate;
+}
+
+/**
+ * Sets the tooltip function used to render the tooltip for the filter entry.<br><br>
+ * 
+ * The function receives the data-target and the single filter entry as parameters and should return a string to be shown as tooltip.<br><br>
+ * 
+ * The single filter entry is an object with the following properties:<br<br>
+ * 
+ * <ul>
+ * <li>text: the display value of the filter</li>
+ * <li>id: the filter id</li>
+ * <li>value: the value of the filter, mostly a comma separated string</li>
+ * <li>dataprovider: the dataProvider of the filter</li>
+ * <li>operator: the operator of the filter</li>
+ * </ul>
+ * 
+ * See the globalFilterConfig variable's tooltipFunction property for the default function used.
+ * 
+ * @since v2025.03
+ * @public 
+ * @param {String} tooltipFunction
+ *
+ * @properties={typeid:24,uuid:"E17BC90C-B879-4893-9A33-39D048CD84E7"}
+ */
+function setConfigTooltipFunction(tooltipFunction) {
+	 globalFilterConfig.tooltipFunction = tooltipFunction;
 }
 
 /**
@@ -602,6 +632,7 @@ function ListComponentFilterRenderer(listComponent, foundsetToFilter) {
 	this.toolbarFilters = new Object();
 	
 	listComponent.entryRendererFunction = globalFilterConfig.rendererTemplate;
+	listComponent.tooltipFunction = globalFilterConfig.tooltipFunction;
 	
 	listComponent.addStyleClass("svy-toolbar-filter")
 	listComponent.clear();
