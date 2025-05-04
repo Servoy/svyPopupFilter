@@ -1282,7 +1282,8 @@ function initAbstractToolbarFilterUX() {
 				return foundset.getQuery();
 			}
 			
-			filterQuery = foundset.getQuery();			
+			//create new QBSelect, so search doesn't add same criteria several times
+			filterQuery = getFilterQuery(filters, foundset, onFilterApplyQueryFunction);
 		}
 		
 		// DO NOTHING if onSearchCommand is set
@@ -1937,6 +1938,11 @@ function initAbstractToolbarFilterUX() {
 
 		// quick search
 		var searchQuery = this._getQuery(forceApply);
+		
+		if (log.debugEnabled) {			
+			log.debug.log(searchQuery.getSQL());
+			log.debug.log(searchQuery.getSQLParameters());
+		}
 		
 		// keep the sort
 		if (searchQuery && sortString) {
@@ -3129,20 +3135,9 @@ function addSearchProvider(search, filter) {
 		var table = databaseManager.getTable(dataSource);
 		var jsColumn = table.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(filter.dataprovider));
 		if (jsColumn) {
-			var vlItems = null;
-
 			// skip media fields
 			if (jsColumn.getType() === JSColumn.MEDIA) {
 				return;
-			}
-
-			// check if valuelist substitions can be applied
-			if (filter.valuelist) {
-				vlItems = application.getValueListItems(filter.valuelist);
-				if (!vlItems.getMaxRowIndex()) {
-					log.debug.log("skip search on column with valuelist " + filter.valuelist);
-					return;
-				}
 			}
 
 			try {
@@ -3163,11 +3158,8 @@ function addSearchProvider(search, filter) {
                     provider.setUseLocalDateTime(filter.useLocalDateTime);
 				}
 
-				// add valuelist substitutions
-				for (var index = 1; vlItems && index <= vlItems.getMaxRowIndex(); index++) {
-					var vlItem = vlItems.getRowAsArray(index);
-					provider.addSubstitution(vlItem[0], vlItem[1])
-
+				if (filter.valuelist) {
+					provider.setValueList(filter.valuelist);
 				}
 			} catch (e) {
 				// when addSearchProvider fails due to a cross-db  dataprovider it throws an exception and the toolbar filter is not created
