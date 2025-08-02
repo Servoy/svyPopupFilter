@@ -664,6 +664,7 @@ function ListComponentFilterRenderer(listComponent, foundsetToFilter) {
  * @protected 
  *
  * @properties={typeid:24,uuid:"3766EBA9-B4A1-4656-8287-5347C914884C"}
+ * @AllowToRunInFind
  */
 function NgGridListComponentFilterRenderer(listComponent, tableComponent) {
 	if (tableComponent.getElementType() != "aggrid-groupingtable") {
@@ -2438,18 +2439,20 @@ function initAbstractToolbarFilterUX() {
 	
 	/**
 	 * @public
+	 * @param {Boolean} [onlyFiltersWithValues] when false returns all visible filters, when true only those with filters values (default)
 	 * @return {Array<scopes.svyPopupFilter.AbstractPopupFilter>}
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 */
-	AbstractToolbarFilterUX.prototype.getActiveFilters = function() {
+	AbstractToolbarFilterUX.prototype.getActiveFilters = function(onlyFiltersWithValues) {
 		/** @type {Array<scopes.svyPopupFilter.AbstractPopupFilter>} */
 		var activeFilters = [];
 		for (var dp in this.toolbarFilters) {
 			/** @type {scopes.svyPopupFilter.AbstractPopupFilter} */
 			var filter = this.toolbarFilters[dp];
-			var filterValues = filter.getValues();
-			if (filterValues && filterValues.length) {
+			// check if has values or operator is IS_NULL or NOT_NULL
+			var hasValues = onlyFiltersWithValues === false ? true : filter.getValues().length > 0 || filter.getOperator() === scopes.svyPopupFilter.OPERATOR.IS_NULL || filter.getOperator() === scopes.svyPopupFilter.OPERATOR.NOT_NULL;
+			if (hasValues) {
 				activeFilters.push(this.toolbarFilters[dp]);
 			}
 		}
@@ -2892,6 +2895,7 @@ function initListComponentFilterRenderer() {
  * @extends {ListComponentFilterRenderer}
  * @private
  * @properties={typeid:24,uuid:"1EF00502-EE35-4BEA-A14B-DBAF089F9D0E"}
+ * @AllowToRunInFind
  */
 function initNgGridListComponentFilterRenderer() {
 	NgGridListComponentFilterRenderer.prototype = Object.create(ListComponentFilterRenderer.prototype);
@@ -3279,6 +3283,7 @@ function initNgGridListComponentFilterRenderer() {
  * @private
  *
  * @properties={typeid:24,uuid:"803ED7DC-5206-4561-914C-3DE613DCA0EC"}
+ * @AllowToRunInFind
  */
 function Filter(titleText, dataprovider, toolbar) {
 	/**
@@ -3360,6 +3365,7 @@ function Filter(titleText, dataprovider, toolbar) {
  * @constructor 
  * @private 
  * @properties={typeid:24,uuid:"BB3FE387-AE4B-46F9-820D-E532A6D1545D"}
+ * @AllowToRunInFind
  */
 function initFilter() {
 	Filter.prototype = Object.create(Filter.prototype);
