@@ -1517,6 +1517,43 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
+	 * Clears all filter (values), but leaves the UI as is
+	 * 
+	 * When <code>apply</code> is true, the foundset is (re-)loaded without filters directly.
+	 * That leads to a query which is not required when for example another foundset is
+	 * about to be loaded into the form right after the filters were cleared
+	 * 
+	 * @param {Boolean} [apply] whether to directly apply the change or not
+	 * 
+	 * @return {Boolean}
+	 * 
+	 * @public
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.clearFilterValues = function(apply) {
+		var activeFilters = this.getActiveFilters() || [];
+		
+		if (activeFilters && activeFilters.length > 0) {
+			for (var a = 0; a < activeFilters.length; a++) {
+				if (activeFilters[a].getOperator() === scopes.svyPopupFilter.OPERATOR.IS_NULL || activeFilters[a].getOperator() === scopes.svyPopupFilter.OPERATOR.NOT_NULL) {
+                    //TODO: should we reset the operator to LIKE or EQUALS?
+					activeFilters[a].setOperator(scopes.svyPopupFilter.OPERATOR.LIKE);
+                }
+				activeFilters[a].setValues([]);
+				this.updateFilterUI(activeFilters[a].getDataProvider(), [], activeFilters[a].getOperator());			
+			}
+		}
+		if (apply === true) {
+			return this.applyFilters();
+		} else {
+			var fs = this.getFoundSet();
+			fs.removeFoundSetFilterParam(TOOLBAR_FILTER_NAME)
+		}
+		return true;
+	}
+	
+	/**
 	 * Clears all filters from the UI and fires the onFilterRemovedEvent
 	 * 
 	 * @return {Boolean}
