@@ -84,6 +84,9 @@ var LOCALE = {
 	filterPopupMenu: {
 		addFilter: 'Add filter'
 	},
+	searchFieldsPopupMenu: {
+		selectSearchField: 'Select search field'
+	},
 	svyCheckPopupFilter : {
 		labelChecked: 'Yes',
 		labelUnchecked: 'No'

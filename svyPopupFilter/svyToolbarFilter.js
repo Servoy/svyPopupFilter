@@ -113,6 +113,7 @@ function FilterConfig() {
 	this.tooltipFunction = 'function(dataTarget, entry) { \
 		return entry.text + (entry.value ? \': \' : \'\') + entry.operator + \' \' + entry.value.split(\',\').join(\', \'); \
 	}';
+	this.generateSearchAliases = false;
 }
 
 /**
@@ -180,7 +181,6 @@ function getConfigSortPickerAlphabetically(sortAlphabetically) {
 	 return globalFilterConfig.sortPickerAlphabetically;
 }
 
-
 /**
  * Sets global display date format to be used
  * 
@@ -246,6 +246,20 @@ function setConfigRendererTemplate(rendererTemplate) {
  */
 function setConfigTooltipFunction(tooltipFunction) {
 	 globalFilterConfig.tooltipFunction = tooltipFunction;
+}
+
+/**
+ * Sets whether short search aliases should be generated<br><br>
+ * 
+ * If <code>false</code> the search aliases will be taken from the column headers, where spaces are replaced with hyphens
+ * 
+ * @public 
+ * @param {Boolean} generateShortAliases
+ *
+ * @properties={typeid:24,uuid:"744B2E9E-5113-4348-AA5D-D33F0C47FD25"}
+ */
+function setConfigGenerateSearchAliases(generateShortAliases) {
+	globalFilterConfig.generateSearchAliases = generateShortAliases;
 }
 
 /**
@@ -546,7 +560,7 @@ function AbstractToolbarFilterUX(uiComponent, customFs) {
 	 * @protected
 	 * @type {scopes.svySearch.SimpleSearch}
 	 */
-	this.simpleSearch = this.getDefaultSearch();
+	this.simpleSearch = this._createSimpleSearch();
 	
 	/**
 	 * @protected
@@ -681,7 +695,7 @@ function NgGridListComponentFilterRenderer(listComponent, tableComponent) {
 	 * @protected 
 	 * @type {String}
 	 */
-	this.formName = listComponent.getFormName();
+	this.formName = listComponent.getFormName();	
 }
 
 /**
@@ -1861,12 +1875,14 @@ function initAbstractToolbarFilterUX() {
 	}
 	
 	/**
-	 * @public
+	 * Original implementation which creates search providers for each filter
+	 * Overwritten in NgGridListComponentFilterRenderer to create a search provider for each column of the grid
+	 * @protected 
 	 * @return {scopes.svySearch.SimpleSearch}
 	 *
 	 * @this {AbstractToolbarFilterUX}
 	 *  */
-	AbstractToolbarFilterUX.prototype.getDefaultSearch = function() {
+	AbstractToolbarFilterUX.prototype._createSimpleSearch = function() {
 		var tableDataSource = this.getDataSource();
 
 		if (!tableDataSource) {
@@ -1880,11 +1896,22 @@ function initAbstractToolbarFilterUX() {
 		simpleSearch.setSearchText(this.searchText);
 		var simpleSearchDateFormat = globalFilterConfig.globalDateDisplayFormat ? globalFilterConfig.globalDateDisplayFormat : "dd-MM-yyyy";
 		simpleSearch.setDateFormat(simpleSearchDateFormat);
-
+		
 		for (var i = 0; filters && i < filters.length; i++) {
 			addSearchProvider(simpleSearch, filters[i]);
 		}
 		return simpleSearch;
+	}
+	
+	/**
+	 * @public
+	 * @return {scopes.svySearch.SimpleSearch}
+	 * @deprecated use getSimpleSearch()
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 *  */
+	AbstractToolbarFilterUX.prototype.getDefaultSearch = function() {
+		return this.simpleSearch;
 	}
 	
 	/**
@@ -2228,7 +2255,6 @@ function initAbstractToolbarFilterUX() {
 	 * @this {AbstractToolbarFilterUX}
 	 */
 	AbstractToolbarFilterUX.prototype.createPopupFilterPicker = function() {
-
 		var filterPopupMenu = plugins.window.createPopupMenu();
 		var menuItem = filterPopupMenu.addMenuItem("title");
 		menuItem.enabled = false;
@@ -2250,7 +2276,46 @@ function initAbstractToolbarFilterUX() {
 		latestToolbarFilter = this;
 		
 		return filterPopupMenu;
-	}	
+	}
+	
+	/**
+	 * Creates a popup with all search fields for this toolbar
+	 * 
+	 * @param {Function} callbackMethod - method to be called when a search provider is selected, receives the scopes.svySearch.SearchProvider selected
+	 * 
+	 * @return {CustomType<window.Popup>}
+	 * 
+	 * @public
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.createPopupSearchFields = function(callbackMethod) {
+		var searchFieldsPopupMenu = plugins.window.createPopupMenu();
+		var menuItem = searchFieldsPopupMenu.addMenuItem("title");
+		menuItem.enabled = false;
+		menuItem.text = scopes.svyPopupFilter.LOCALE.searchFieldsPopupMenu.selectSearchField;
+
+		var simpleSearch = this.getSimpleSearch();
+		var searchProviders = simpleSearch.getAllSearchProviders();
+		for (var s = 0; s < searchProviders.length; s++) {
+			var searchProvider = searchProviders[s];
+			menuItem = searchFieldsPopupMenu.addMenuItem(searchProvider.getDataProviderID());
+			var menuItemText = searchProvider.getDataProviderID();
+			if (globalFilterConfig.generateSearchAliases === true && searchProvider.getAlias()) {
+				//if generateSearchAliases is false, the alias will not be shown as it is simply the column title
+				menuItemText += ' (' +  searchProvider.getAlias() + ')';
+			}
+			if (!searchProvider.isImpliedSearch()) {
+				menuItemText = '[' + menuItemText + ']';
+			}
+			menuItem.text = menuItemText;
+			menuItem.setMethod(onSearchFieldsPopupMenuClicked, [scopes.svySystem.convertServoyMethodToQualifiedName(callbackMethod), searchProvider]);
+		}
+		
+		searchFieldsPopupMenu.cssClass = "toolbar-filter-search-popup";
+		
+		return searchFieldsPopupMenu;
+	}		
 	
 	/**
 	 * Shows the filter picker popup
@@ -2266,6 +2331,23 @@ function initAbstractToolbarFilterUX() {
 		var filterPopupMenu = this.createPopupFilterPicker();
 		
 		filterPopupMenu.show(target);
+	}	
+	
+	/**
+	 * Shows the search fields popup
+	 * 
+	 * @param {JSEvent} event
+	 * @param {Function} callbackMethod
+	 * 
+	 * @public
+	 *
+	 * @this {AbstractToolbarFilterUX}
+	 */
+	AbstractToolbarFilterUX.prototype.showSearchFields = function(event, callbackMethod) {
+
+		var searchFieldsPopupMenu = this.createPopupSearchFields(callbackMethod);
+		
+		searchFieldsPopupMenu.show(event.getX(), event.getY());
 	}
 	
 	/**
@@ -2436,6 +2518,24 @@ function onFilterPopupMenuClicked(itemIndex, parentIndex, isSelected, parentText
 		} else {
 			toolbarFilterUX.addFilterUI(filter);
 		}
+	}
+}
+
+/**
+* @private 
+* @param {Number} itemIndex
+* @param {Number} parentIndex
+* @param {Boolean} isSelected
+* @param {String} parentText
+* @param {String} menuText
+* @param {String} [callbackMethod] the id of the column
+* @param {scopes.svySearch.SearchProvider} [searchProvider] dataprovider bound to the column
+*
+* @properties={typeid:24,uuid:"4D87ACB7-1182-4625-94D9-E5EE65EA3390"}
+*/
+function onSearchFieldsPopupMenuClicked(itemIndex, parentIndex, isSelected, parentText, menuText, callbackMethod, searchProvider) {
+	if (callbackMethod && searchProvider) {
+		scopes.svySystem.callMethod(callbackMethod, [searchProvider]);
 	}
 }
 
@@ -2935,6 +3035,201 @@ function initNgGridListComponentFilterRenderer() {
 		
 		return filters;
 	}
+	
+	/**
+	 * Overwritten to include all columns of the grid
+	 * @protected 
+	 * @return {scopes.svySearch.SimpleSearch}
+	 *
+	 * @this {NgGridListComponentFilterRenderer}
+	 */
+	NgGridListComponentFilterRenderer.prototype._createSimpleSearch = function() {
+		var tableDataSource = this.getDataSource();
+
+		if (!tableDataSource) {
+			return null;
+		}
+		
+		var columns = this.tableComponent.columns;
+		columns = columns.filter(col => col.dataprovider != null && col.dataprovider != undefined && col.dataprovider != '');
+
+		// create a simple search
+		var simpleSearch = scopes.svySearch.createSimpleSearch(tableDataSource);
+		simpleSearch.setSearchText(this.getSearchText());
+		var simpleSearchDateFormat = globalFilterConfig.globalDateDisplayFormat ? globalFilterConfig.globalDateDisplayFormat : "dd-MM-yyyy";
+		simpleSearch.setDateFormat(simpleSearchDateFormat);
+		
+		const searchAliases = globalFilterConfig.generateSearchAliases === true ? generateAliases(columns) : {};
+		
+		const mainJsTable = databaseManager.getTable(this.getDataSource());
+
+		for (var i = 0; columns && i < columns.length; i++) {
+			var column = columns[i];
+			var dp = column.dataprovider;
+			if (!dp) {
+				continue;
+			}
+			
+			var jsTable = mainJsTable;
+			var relationName = scopes.svyDataUtils.getDataProviderRelationName(dp);
+			if (relationName) {
+				var dataSource = scopes.svyDataUtils.getRelationForeignDataSource(relationName);
+				jsTable = databaseManager.getTable(dataSource);
+			}
+			
+			var jsColumn = jsTable.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(dp));
+			if (jsColumn) {
+				// skip media fields
+				if (jsColumn.getType() === JSColumn.MEDIA) {
+					return null;
+				}
+				try {
+					// create the search provider
+					var provider = simpleSearch.addSearchProvider(dp);
+					
+					//set alias if available
+					if (searchAliases.hasOwnProperty(dp)) {
+                        provider.setAlias(searchAliases[dp]);
+                    } else {
+                    	var alias = column.headerTitle ? getI18nText(column.headerTitle) : scopes.svyUI.getColumnTitle(dataSource, column.dataprovider);
+        				if (alias) {
+        					provider.setAlias(alias.replace(/\s/g, '-'));
+        				}
+                    }
+					
+                    // if is a date use explicit search
+    				if (jsColumn.getType() === JSColumn.DATETIME && column.format) {
+    					provider.useLocalDateTime = scopes.svyDateUtils.formatUsesLocalDateTime(column.format);
+    				}
+    				
+    				//set the value list
+    				if (column.valuelist) {
+    					provider.setValueList(column.valuelist);
+    				}
+				} catch (e) {
+					// when addSearchProvider fails due to a cross-db  dataprovider it throws an exception and the toolbar filter is not created
+					log.debug.log("skip search on column with dataprovider: " + dp + '. Please check other log messages to see if this is a cross-db dataprovider which it is not supported');
+				}
+			}
+		}
+		return simpleSearch;
+	}
+	
+	/**
+	 * Applies all filters and returns the query for this toolbar
+	 *
+	 * @return {QBSelect}
+	 * 
+	 * @param {Boolean} [forceApply]
+	 *
+	 * @protected  
+	 *
+	 * @this {NgGridListComponentFilterRenderer}
+	 */
+	NgGridListComponentFilterRenderer.prototype._getQuery = function(forceApply) {
+		//apply foundset filters and force when the search text has been changed
+		//TODO: filter restore (initially) applies filters once too often
+		var simpleSearch = this.getSimpleSearch();
+		var filterQuery = this._applyFilters(forceApply == true || this.searchText !== simpleSearch.getSearchText() ? true : false);
+
+		var query;
+		//quick search?
+		if (this.searchText !== simpleSearch.getSearchText()) {
+			simpleSearch.setSearchText(this.searchText);			
+		}
+		if (this.searchText) {
+			// update search providers' explicity depending on column visibility
+			var colStateObj = getColumnState(this.tableComponent);
+			var searchProviders = simpleSearch.getAllSearchProviders();
+			
+			//save the implied search state of each search provider
+			var impliedStates = {};
+			searchProviders.forEach(
+				/** @type {scopes.svySearch.SearchProvider} */ 
+				sp => impliedStates[sp.getDataProviderID()] = sp.isImpliedSearch() 
+			);
+			
+			for (var s = 0; s < searchProviders.length; s++) {
+				var sp = searchProviders[s];
+				var dp = sp.getDataProviderID();
+				var col = colStateObj[dp];
+				if (col && impliedStates[dp] !== false) {
+					//only explicitly search visible columns
+					searchProviders[s].setImpliedSearch(col.visible);
+				}
+			}
+			
+			// search needs to be added to filterQuery
+			query = simpleSearch.getQuery(filterQuery);
+			
+			//restore the implied search state of each search provider
+			searchProviders.forEach(
+				/** @type {scopes.svySearch.SearchProvider} */ 
+				sp => sp.setImpliedSearch(impliedStates[sp.getDataProviderID()]) 
+			);
+		} else {
+			query = filterQuery;
+		}
+		
+		return query;
+	}
+	
+	/**
+	 * Creates a popup with all search fields for this toolbar
+	 * 
+	 * @param {Function} callbackMethod - method to be called when a search provider is selected, receives the scopes.svySearch.SearchProvider selected
+	 * 
+	 * @return {CustomType<window.Popup>}
+	 * 
+	 * @public
+	 *
+	 * @this {NgGridListComponentFilterRenderer}
+	 */
+	NgGridListComponentFilterRenderer.prototype.createPopupSearchFields = function(callbackMethod) {
+		var searchFieldsPopupMenu = plugins.window.createPopupMenu();
+		var menuItem = searchFieldsPopupMenu.addMenuItem("title");
+		menuItem.enabled = false;
+		menuItem.text = scopes.svyPopupFilter.LOCALE.searchFieldsPopupMenu.selectSearchField;
+		
+		var tableComponent = this.tableComponent;
+		
+		if (!tableComponent) {
+			return null;
+		}
+		
+		var colStateObj = getColumnState(tableComponent);
+		if (!colStateObj) {
+			return null;
+		}
+		
+		var simpleSearch = this.getSimpleSearch();
+		var searchProviders = simpleSearch.getAllSearchProviders();
+		
+		for (var s = 0; s < searchProviders.length; s++) {
+			var searchProvider = searchProviders[s];
+			
+			var colState = colStateObj[searchProvider.getDataProviderID()];
+			if (!colState) {
+                //custom search provider
+                continue;
+            }
+			
+			menuItem = searchFieldsPopupMenu.addMenuItem(searchProvider.getDataProviderID());
+			var menuItemText = colState.title;
+			if (globalFilterConfig.generateSearchAliases === true && searchProvider.getAlias()) {
+				menuItemText += ' (' +  searchProvider.getAlias() + ')';
+			}
+			if (!colState.visible || !searchProvider.isImpliedSearch()) {
+				menuItemText = '[' + menuItemText + ']';
+			}
+			menuItem.text = menuItemText;
+			menuItem.setMethod(onSearchFieldsPopupMenuClicked, [scopes.svySystem.convertServoyMethodToQualifiedName(callbackMethod), searchProvider]);
+		}
+		
+		searchFieldsPopupMenu.cssClass = "toolbar-filter-search-popup";
+		
+		return searchFieldsPopupMenu;
+	}
 
 }
 
@@ -2979,7 +3274,7 @@ function Filter(titleText, dataprovider, toolbar) {
 	 * should this field also be used in the quicksearch 
 	 * @type {Boolean}
 	 */
-	this.useInSearch = false;
+	this.useInSearch = false;	
 	
 	/**
 	 * applicable to Date filters only; true if the Date uses the format useLocalDateTime
@@ -3045,7 +3340,18 @@ function initFilter() {
 	}
 	
 	/**
-	 * Sets whether this filter should be used in search as well (default is false)
+	 * Sets whether this filter should be used in search as well (default is false)<br><br>
+	 * 
+	 * This property is mainly used by the non ng-grid based toolbar filter renderer. In the newer<br>
+	 * NG grid based search all columns are automatically added as search providers and only visible<br>
+	 * columns are used in the search.<br><br>
+	 * 
+	 * If a column should be excluded from search in the NG grid based search, that search dataprovider<br>
+	 * should be set to excluded using the search provider's setExcluded() method. The search provider<br>
+	 * can be obtained from the simple search of the ToolbarFilter via getSimpleSearch().<br><br>
+	 * 
+	 * This is also what this method does when the toolbar is based on NG Grid.
+	 * 
 	 * @param {Boolean} useInSearch
 	 * @return {Filter}
 	 * @public 
@@ -3053,15 +3359,23 @@ function initFilter() {
 	 */
 	Filter.prototype.setUseInSearch = function(useInSearch) {
 		this.useInSearch = useInSearch;
+		
 		var toolbar = this.getToolbar();
-		if (useInSearch) {
-			addSearchProvider(toolbar.getSimpleSearch(), this);
-		} else {
-			//search providers cannot be removed currently
-			if (toolbar.getSimpleSearch().getSearchProvider(this.dataprovider)) {
-				log.warn.log("Operation not supported. Search provider cannot be removed; " + this.dataprovider)
+		var simpleSearch = toolbar.getSimpleSearch();
+		
+		if (toolbar instanceof NgGridListComponentFilterRenderer) {
+			var searchProvider = simpleSearch.getSearchProvider(this.dataprovider);
+			if (searchProvider) {
+                searchProvider.setExcluded(!useInSearch);
+            }
+		} else {			
+			if (useInSearch) {
+				addSearchProvider(toolbar.getSimpleSearch(), this);
+			} else {
+				toolbar.getSimpleSearch().removeSearchProvider(this.dataprovider);
 			}
 		}
+		
 		return this;
 	}
 	
@@ -3119,6 +3433,8 @@ function createFilterFromGridColumn(column, toolbar) {
 /**
  * Adds a search provider for a filter to the given search
  * 
+ * Only used by AbstractToolbarFilterUX._createSimpleSearch(), in NgGridListComponentFilterRenderer search providers are added in _createSimpleSearch()
+ * 
  * @param {scopes.svySearch.SimpleSearch} search
  * @param {Filter} filter
  * 
@@ -3135,6 +3451,7 @@ function addSearchProvider(search, filter) {
 		var table = databaseManager.getTable(dataSource);
 		var jsColumn = table.getColumn(scopes.svyDataUtils.getUnrelatedDataProviderID(filter.dataprovider));
 		if (jsColumn) {
+
 			// skip media fields
 			if (jsColumn.getType() === JSColumn.MEDIA) {
 				return;
@@ -3146,16 +3463,19 @@ function addSearchProvider(search, filter) {
 				var provider = search.addSearchProvider(filter.dataprovider.toLowerCase());
 
 				// set the provider alias
-				var alias = filter.text ? getI18nText(filter.text) : scopes.svyUI.getColumnTitle(dataSource,filter.dataprovider);
+				var alias = filter.text ? getI18nText(filter.text) : scopes.svyUI.getColumnTitle(dataSource, filter.dataprovider);
 				if (alias) {
-					// TODO should also set lowercase ?
-					alias = alias.replace(/ /, '-');
+					alias = alias.replace(/\s/g, '-');
 					provider.setAlias(alias);
 				}
 				// if is a date use explicit search
 				if (jsColumn.getType() === JSColumn.DATETIME) {
 					provider.setImpliedSearch(false);
                     provider.setUseLocalDateTime(filter.useLocalDateTime);
+				}
+				
+				if (!filter.useInSearch) {
+					provider.setImpliedSearch(false);
 				}
 
 				if (filter.valuelist) {
@@ -3287,6 +3607,97 @@ function dataProviderHasXDBRelation(dataProviderID) {
 		}
 	}
 	return false;
+}
+
+/**
+ * Creates short, unique alias names for the simple search
+ * @param {Array<CustomType<aggrid-groupingtable.column>>} columns
+ * @return {Object<String>} dataprovider to alias mapping
+ * @private 
+ *
+ * @properties={typeid:24,uuid:"B93E4B48-7101-4FC2-8405-6D9410123E76"}
+ */
+function generateAliases(columns) {
+	/** @type {Array<{dataProvider: String, text: String}>} */
+    const dataProviders = columns
+    	.filter(
+    		/** @type {CustomType<aggrid-groupingtable.column>} */ 
+    		col => col.dataprovider != null)
+		.map(
+			/** @type {CustomType<aggrid-groupingtable.column>} */ col => {
+		    	/** @type {String} */
+		    	let dp = col.dataprovider.split(' ')[0].trim();
+		        let text = col.headerTitle ? col.headerTitle.trim() : null;
+		        if (text && text.startsWith('i18n:')) {
+		        	text = getI18nText(text);
+		        }
+		        return {
+		        	dataProvider: dp,
+					text: text ? text.toLowerCase() : dp.split('_').join(' ')
+		        }
+	    }
+	);
+    
+    const aliases = {};
+    const used = new Set();
+
+    for (var col of dataProviders) {
+        var parts = col.text.split(' ');
+        // Ignore trailing 'id' or 'uuid'
+        if (parts.length > 1 && /^(id|uuid)$/i.test(parts[parts.length - 1])) {
+            parts = parts.slice(0, -1);
+        }
+        var alias = parts.map(p => p[0]).join('');
+        var n = 1;
+
+        // Ensure uniqueness
+        while (used.has(alias)) {
+            alias = parts.map(p => p.substring(0, Math.min(n, p.length))).join('');
+            n++;
+            if (used.has(alias) && n > parts.map(p => p.length).reduce((a, b) => Math.max(a, b), 0)) {
+                let i = 2;
+                while (used.has(alias + i)) i++;
+                alias = alias + i;
+                break;
+            }
+        }
+        used.add(alias);
+        aliases[col.dataProvider] = alias;
+    }
+    return aliases;
+}
+
+/**
+ * Returns an object with all columns with a dataprovider, their id, title text and visibility
+ * @param {RuntimeWebComponent<aggrid-groupingtable>|RuntimeWebComponent<aggrid-groupingtable_abs>} tableComponent
+ * @return {Object<{id: String, title: String, visible: Boolean}>}
+ * @private 
+ *
+ * @properties={typeid:24,uuid:"680F6377-5403-446A-8E0D-D32BE12B87B1"}
+ */
+function getColumnState(tableComponent) {
+	var columnStateJson = tableComponent.getColumnState();
+	if (!columnStateJson) {
+		return null;
+	}
+	
+	/** @type {{columnState: Array<{colId: String, hide: Boolean}>}} */
+	var columnState = JSON.parse(columnStateJson);
+	var colStateObj = {};
+	tableComponent.columns.forEach(/** @type {CustomType<aggrid-groupingtable.column>}*/ runtimeColumn => {
+		if (runtimeColumn.dataprovider) {				
+			colStateObj[runtimeColumn.dataprovider] = {id: runtimeColumn.id, title: runtimeColumn.headerTitle || runtimeColumn.dataprovider, visible: true};
+		}
+	});
+	
+	columnState.columnState.forEach(/** @type {{colId: String, hide: Boolean}}*/ colStat => {
+		var runtimeColumn = tableComponent.getColumnById(colStat.colId);
+		if (runtimeColumn && runtimeColumn.dataprovider) {				
+			colStateObj[runtimeColumn.dataprovider].visible = !colStat.hide;
+		}
+	})
+	
+	return colStateObj;
 }
 
 /**
