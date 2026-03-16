@@ -2,7 +2,7 @@
     "name":"svyPopupFilter",
     "displayName":"svyPopupFilter",
     "packageType": "Solution",
-    "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Gnome-folder-saved-search.svg/768px-Gnome-folder-saved-search.svg.png",
+    "icon": "https://raw.githubusercontent.com/Servoy/servoy-extra-components/master/servoy.png",
     "description": "UX patterns for table filters and other generic filter lookups",
     "wikiUrl": "https://github.com/Servoy/svyPopupFilter/wiki",
     "sourceUrl" : "https://github.com/Servoy/svyPopupFilter",
